@@ -11,7 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        Schema::create('atividades',function(Blueprint $table){
+            $table->id();
+            $table->intger('IDSala');
+            $table->string('Titulo',30);
+            $table->string('Descricao',100);
+            $table->date('Data');
+            $table->time('Inicio');
+            $table->time('Termino');
+            $table->json('Chat');
+        });
     }
 
     /**

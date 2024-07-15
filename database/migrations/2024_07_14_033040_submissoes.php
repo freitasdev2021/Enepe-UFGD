@@ -11,7 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        Schema::create('submissoes',function(Blueprint $table){
+            $table->id();
+            $table->integer('IDEvento');
+            $table->integer('IDAvaliador');
+            $table->string('Titulo',50);
+            $table->json('Regras');
+        });
     }
 
     /**

@@ -11,7 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        Schema::create('salas',function(Blueprint $table){
+            $table->id();
+            $table->string('Sala',50);
+            $table->bigInteger('Capacidade');
+        });
     }
 
     /**

@@ -11,7 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        Schema::create('certificados',function(Blueprint $table){
+            $table->id();
+            $table->longText('Certificado');
+            $table->integer('IDInscrito');
+            $table->string('Codigo',30);
+        });
     }
 
     /**

@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('participantes',function(Blueprint $table){
+        Schema::create('conversas',function(Blueprint $table){
             $table->id();
-            $table->integer('IDInscrito');
-            $table->integer('IDSala');
+            $table->integer('IDRemetente')->nullable(false);
+            $table->integer('IDDestinatario')->nullable(false);
         });
     }
 

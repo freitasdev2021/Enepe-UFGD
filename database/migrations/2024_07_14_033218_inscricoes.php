@@ -11,7 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        Schema::create('inscricoes',function(Blueprint $table){
+            $table->id();
+            $table->integer('IDEvento');
+            $table->integer('IDUser');
+        });
     }
 
     /**
