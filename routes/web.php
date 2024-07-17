@@ -44,6 +44,10 @@ Route::middleware('auth')->group(function () {
     Route::get('Eventos/{IDEvento}/Atividades/Cadastro/{id}',[AtividadesController::class,'cadastro'])->name('Eventos/Atividades/Edit');
     Route::post('Eventos/Atividades/Save',[AtividadesController::class,'save'])->name('Eventos/Atividades/Save');
     Route::post('Eventos/Atividades/Delete',[AtividadesController::class,'delete'])->name('Eventos/Atividades/Delete');
+    //Atividades
+    Route::get('Atividades/list',[AtividadesController::class,'getAtividades'])->name('Atividades/list');
+    Route::get('Atividades',[AtividadesController::class,'indexInscrito'])->name('Atividades/index');
+    Route::get('Atividades/Atividade/{IDAtividade}',[AtividadesController::class,'atividade'])->name('Atividades/Atividade');
     //Palestras
     Route::get('Palestras', [PalestrasController::class, 'index'])->name('Palestras/index');
     Route::get('Palestras/list', [PalestrasController::class, 'getPalestras'])->name('Palestras/list');
@@ -80,12 +84,9 @@ Route::middleware('auth')->group(function () {
     Route::post('Certificados/Delete', [CertificadosController::class, 'delete'])->name('Certificados/Delete');
     Route::get('Certificados/list', [CertificadosController::class, 'getCertificados'])->name('Certificados/list');
     //Inscrições
-    Route::get('Inscricoes', [InscricoesController::class, 'index'])->name('Inscricoes/index');
-    Route::get('Inscricoes/Cadastro', [InscricoesController::class, 'cadastro'])->name('Inscricoes/Novo');
-    Route::get('Inscricoes/Cadastro/{id}', [InscricoesController::class, 'cadastro'])->name('Inscricoes/Edit');
-    Route::post('Inscricoes/Save', [InscricoesController::class, 'save'])->name('Inscricoes/Save');
-    Route::post('Inscricoes/Delete', [InscricoesController::class, 'delete'])->name('Inscricoes/Delete');
-    Route::get('Inscricoes/list', [InscricoesController::class, 'getInscricoes'])->name('Inscricoes/list');
+    Route::post('Eventos/Inscrever',[EventosController::class,'inscrever'])->name('Eventos/Inscrever');
+    Route::post('Eventos/Desinscrever',[EventosController::class,'desinscrever'])->name('Eventos/Inscrever');
+    Route::get('Eventos/Inscricao/{IDEvento}', [EventosController::class, 'inscricao'])->name('Eventos/Inscricao');
     //
 });
 

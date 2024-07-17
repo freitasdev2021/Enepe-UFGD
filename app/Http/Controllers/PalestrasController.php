@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Palestra;
 use App\Models\Palestrante;
 use App\Models\Evento;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Storage;
 class PalestrasController extends Controller
@@ -22,10 +23,17 @@ class PalestrasController extends Controller
         "endereco" => 'index'
     ]);
     public function index(){
-        return view('Palestras.index',[
-            'submodulos' => self::submodulos,
+        $view = 'Palestras.index';
+        $data = [
+            'submodulos' => self::submodulosPalestrantes,
             'id' => ''
-        ]);
+        ];
+        
+        if(Auth::user()->tipo == 3){
+            $view = 'Palestras.indexInscrito';
+            $data['Palestras'] = DB::select("SELECT pl.*,pa.Nome,e.Titulo as Evento,pa.Foto FROM palestras pl INNER JOIN palestrantes pa ON(pl.IDPalestrante = pa.id) INNER JOIN eventos e ON(e.id = pl.IDEvento)");
+        }
+        return view($view,$data);
     }
 
     public function indexPalestrantes(){

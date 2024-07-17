@@ -7,6 +7,7 @@ use App\Models\Submissao;
 use App\Models\User;
 use App\Models\Evento;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class SubmissoesController extends Controller
 {
@@ -17,10 +18,23 @@ class SubmissoesController extends Controller
     ]);
 
     public function index(){
-        return view('Submissoes.index', [
+        $view = 'Submissoes.index';
+        $data = [
             'submodulos' => self::submodulos,
             'id' => ''
-        ]);
+        ];
+
+        if(Auth::user()->tipo == 3){
+            $view = 'Submissoes.indexInscrito';
+            $data['Submissoes'] = DB::select("SELECT 
+                s.Titulo,
+                s.id,
+                s.Regras
+            FROM submissoes s
+            INNER JOIN eventos e ON(s.IDEvento = e.id)
+        ");
+        }
+        return view($view,$data);
     }
 
     public function cadastro($id = null){

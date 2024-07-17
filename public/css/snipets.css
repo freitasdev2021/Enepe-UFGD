@@ -5,6 +5,10 @@
     --altura-subtracao: 150px; /* Definindo a altura a ser subtraída */
 }
 
+.sala{
+	padding: 0px;
+}
+
 body{
 	overflow:hidden;
 }
@@ -12,6 +16,26 @@ body{
 .periudos{
 	margin:10px;
 }
+
+.chats{
+	display:flex;
+	flex-direction:row;
+	justify-content:space-between;
+}
+
+.chat{
+	height:90dvh;
+}
+
+.video{
+	width:70%;
+}
+
+.conversa{
+	width:29%;
+}
+
+
 
 .central{
     display:flex;

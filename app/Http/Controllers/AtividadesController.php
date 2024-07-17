@@ -29,6 +29,12 @@ class AtividadesController extends Controller
         ]);
     }
 
+    public function indexInscrito(){
+        return view('Atividades.indexInscrito',[
+            'Atividades' => DB::select("SELECT a.id,a.Titulo,a.Data,s.Sala,a.Descricao,a.Inicio,a.Termino FROM atividades a INNER JOIN salas s ON(a.IDSala = s.id)")
+        ]);
+    }
+
     public function cadastro($IDEvento,$id = null){
         $view = array(
             'id' => '',
@@ -44,6 +50,10 @@ class AtividadesController extends Controller
         }
 
         return view('Atividades.cadastro', $view);
+    }
+
+    public function atividade($IDEvento){
+        return view('Salas.sala');
     }
 
     public function delete(Request $request){

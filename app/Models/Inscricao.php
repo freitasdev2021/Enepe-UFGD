@@ -13,6 +13,7 @@ class Inscricao extends Model
 
     protected $fillable = [
         'IDEvento',
-        'IDUser'
+        'IDUser',
+        'Categoria'
     ];
 }
