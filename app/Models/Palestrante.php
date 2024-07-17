@@ -13,6 +13,7 @@ class Palestrante extends Model
 
     protected $fillable = [
         'Nome',
-        'Curriculo'
+        'Curriculo',
+        'Foto'
     ];
 }

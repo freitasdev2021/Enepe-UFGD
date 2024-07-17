@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Palestra;
 use App\Models\Palestrante;
+use App\Models\Evento;
 use Illuminate\Support\Facades\DB;
+use Storage;
 class PalestrasController extends Controller
 {
     public const submodulos = array([
@@ -36,7 +38,9 @@ class PalestrasController extends Controller
     public function cadastro($id=null){
         $view = array(
             'id' => '',
-            'submodulos' => self::submodulos
+            'submodulos' => self::submodulos,
+            'palestrantes' => Palestrante::all(),
+            'eventos' => Evento::all()
         );
 
         if($id){
@@ -55,7 +59,7 @@ class PalestrasController extends Controller
 
         if($id){
             $view['id'] = $id;
-            $view['Registro'] = Palestra::find($id);
+            $view['Registro'] = Palestrante::find($id);
         }
 
         return view('Palestrantes.cadastro', $view);
@@ -94,14 +98,26 @@ class PalestrasController extends Controller
 
     public function savePalestrantes(Request $request){
         try{
+            $data = $request->all();
             if(!$request->id){
                 $rota = 'Palestrantes/Novo';
                 $aid = '';
-                Palestrante::create($request->all());
+                if($request->file('Foto')){
+                    $Foto = $request->file('Foto')->getClientOriginalName();
+                    $request->file('Foto')->storeAs('palestrantes',$Foto,'public');
+                    $data['Foto'] = $Foto;
+                }
+                Palestrante::create($data);
             }else{
+                if($request->file('Foto')){
+                    $Foto = $request->file('Foto')->getClientOriginalName();
+                    Storage::disk('public')->delete('palestrantes'.$request->oldFoto);
+                    $request->file('Foto')->storeAs('palestrantes',$Foto,'public');
+                    $data['Foto'] = $Foto;
+                }
                 $rota = 'Palestrantes/Edit';
                 $aid = $request->id;
-                Palestrante::find($request->id)->update($request->all());
+                Palestrante::find($request->id)->update($data);
             }
             $mensagem = "Salvo";
             $status = 'success';
@@ -116,10 +132,11 @@ class PalestrasController extends Controller
     }
 
     public function getPalestras(){
-        $registros = DB::select("SELECT pl.*,pa.Nome FROM palestras pl INNER JOIN palestrantes pa ON(pl.IDPalestrante = pa.id)");
+        $registros = DB::select("SELECT pl.*,pa.Nome,e.Titulo as Evento FROM palestras pl INNER JOIN palestrantes pa ON(pl.IDPalestrante = pa.id) INNER JOIN eventos e ON(e.id = pl.IDEvento)");
         if(count($registros) > 0){
             foreach($registros as $r){
                 $item = [];
+                $item[] = $r->Evento;
                 $item[] = $r->Titulo;
                 $item[] = $r->Nome;
                 $item[] = $r->Palestra;
@@ -147,6 +164,7 @@ class PalestrasController extends Controller
         if(count($registros) > 0){
             foreach($registros as $r){
                 $item = [];
+                $item[] = "<img src='palestrantes/$r->Foto' width='250px' height='250px'>";
                 $item[] = $r->Nome;
                 $item[] = $r->Curriculo;
                 $item[] = "<a href=".route('Palestrantes/Edit',$r->id).">Abrir</a>";

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Submissao;
+use App\Models\User;
+use App\Models\Evento;
 use Illuminate\Support\Facades\DB;
 
 class SubmissoesController extends Controller
@@ -24,7 +26,9 @@ class SubmissoesController extends Controller
     public function cadastro($id = null){
         $view = array(
             'id' => '',
-            'submodulos' => self::submodulos
+            'submodulos' => self::submodulos,
+            'avaliadores' => User::where('tipo',2)->get(),
+            'eventos' => Evento::all()
         );
 
         if($id){
@@ -67,6 +71,7 @@ class SubmissoesController extends Controller
             e.Titulo as Evento,
             a.name as Avaliador,
             s.Titulo,
+            s.id,
             s.Regras
         FROM submissoes s
         INNER JOIN eventos e ON(s.IDEvento = e.id)

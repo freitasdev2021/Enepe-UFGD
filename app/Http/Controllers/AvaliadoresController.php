@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 class AvaliadoresController extends Controller
 {
     public const submodulos = array([
@@ -26,7 +27,7 @@ class AvaliadoresController extends Controller
 
         if($id){
             $view['id'] = $id;
-            $view['Registro'] = User::find($id)->where('Tipo',2);
+            $view['Registro'] = User::where('Tipo',2)->where('id',$id)->first();
         }
 
         return view('Avaliadores.cadastro', $view);
@@ -38,14 +39,20 @@ class AvaliadoresController extends Controller
 
     public function save(Request $request){
         try{
+            $data = $request->all();
+            $data['tipo'] = 2;
             if(!$request->id){
                 $rota = 'Avaliadores/Novo';
                 $aid = '';
-                User::create($request->all());
+                $data['password'] = Hash::make(rand(100000,999999));
+                User::create($data);
             }else{
                 $rota = 'Avaliadores/Edit';
+                if($request->alteraSenha){
+                    $data['password'] = Hash::make(rand(100000,999999));
+                }
                 $aid = $request->id;
-                User::find($request->id)->update($request->all());
+                User::find($request->id)->update($data);
             }
             $mensagem = "Salvo";
             $status = 'success';

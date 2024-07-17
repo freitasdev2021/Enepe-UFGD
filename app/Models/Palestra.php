@@ -9,7 +9,7 @@ class Palestra extends Model
 {
     use HasFactory;
 
-    protected $table = 'palestra';
+    protected $table = 'palestras';
 
     protected $fillable = [
         'Titulo',
@@ -17,6 +17,7 @@ class Palestra extends Model
         'Data',
         'Inicio',
         'Termino',
-        'IDPalestrante'
+        'IDPalestrante',
+        'IDEvento'
     ];
 }

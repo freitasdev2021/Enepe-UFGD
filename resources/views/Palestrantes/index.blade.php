@@ -9,7 +9,7 @@
             <!--CABECALHO-->
             <div class="col-sm-12 p-2 row">
                 <div class="col-auto">
-                    <a href="{{route('Avaliadores/Novo')}}" class="btn btn-fr">Adicionar</a>
+                    <a href="{{route('Palestrantes/Novo')}}" class="btn btn-fr">Adicionar</a>
                 </div>
             </div>
             <!--LISTAS-->
@@ -18,6 +18,7 @@
                 <table class="table table-sm tabela" id="escolas" data-rota="{{route('Palestrantes/list')}}">
                     <thead>
                       <tr>
+                        <th style="text-align:center;" scope="col">Foto</th>
                         <th style="text-align:center;" scope="col">Nome</th>
                         <th style="text-align:center;" scope="col">Curriculo</th>
                         <th style="text-align:center;" scope="col">Opções</th>
