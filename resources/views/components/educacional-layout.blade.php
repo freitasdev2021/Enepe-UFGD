@@ -12,22 +12,22 @@
                 <a href="{{route('dashboard')}}" class="nav_logo"><i class='bx bxs-calendar-event text-white'></i></i><span class="nav_logo-name">FR Academy</span> </a>
                 <div class="nav_list">
                     @if(in_array(Auth::user()->tipo,[0,1]))
-                    <x-modulo nome="Eventos" icon="bx bxs-calendar-event" rota="profile.edit" endereco="Eventos"/>
-                    <x-modulo nome="Palestras" icon="bx bx-user-pin" rota="profile.edit" endereco="Palestras"/>
-                    <x-modulo nome="Palestrantes" icon="bx bxs-group" rota="profile.edit" endereco="Palestrantes"/>
-                    <x-modulo nome="Avaliadores" icon="bx bxs-user-check" rota="profile.edit" endereco="Avaliadores"/>
-                    <x-modulo nome="Submissões" icon="bx bx-task" rota="profile.edit" endereco="Submissoes"/>
-                    <x-modulo nome="Certificados" icon="bx bxs-certification" rota="profile.edit" endereco="Certificados"/>
-                    <x-modulo nome="Inscritos" icon="bx bx-group" rota="profile.edit" endereco="Inscritos"/>
+                    <x-modulo nome="Eventos" icon="bx bxs-calendar-event" rota="Eventos/index" endereco="Eventos"/>
+                    <x-modulo nome="Palestras" icon="bx bx-user-pin" rota="Palestras/index" endereco="Palestras"/>
+                    <x-modulo nome="Palestrantes" icon="bx bxs-group" rota="Palestrantes/index" endereco="Palestrantes"/>
+                    <x-modulo nome="Avaliadores" icon="bx bxs-user-check" rota="Avaliadores/index" endereco="Avaliadores"/>
+                    <x-modulo nome="Submissões" icon="bx bx-task" rota="Submissoes/index" endereco="Submissoes"/>
+                    <x-modulo nome="Certificados" icon="bx bxs-certification" rota="Certificados/index" endereco="Certificados"/>
+                    <x-modulo nome="Inscritos" icon="bx bx-group" rota="Inscricoes/index" endereco="Inscritos"/>
                     @elseif(in_array(Auth::user()->tipo,[0,2]))
-                    <x-modulo nome="Submissões" icon="bx bx-task" rota="profile.edit" endereco="Submissoes"/> 
-                    <x-modulo nome="Certificados" icon="bx bxs-certification" rota="profile.edit" endereco="Certificados"/>
+                    <x-modulo nome="Submissões" icon="bx bx-task" rota="Submissoes/index" endereco="Submissoes"/> 
+                    <x-modulo nome="Certificados" icon="bx bxs-certification" rota="Certificados/index" endereco="Certificados"/>
                     @elseif(in_array(Auth::user()->tipo,[0,3]))
-                    <x-modulo nome="Submissões" icon="bx bx-task" rota="profile.edit" endereco="Submissoes"/> 
-                    <x-modulo nome="Certificados" icon="bx bxs-certification" rota="profile.edit" endereco="Certificados"/>
-                    <x-modulo nome="Eventos" icon="bx bxs-calendar-event" rota="profile.edit" endereco="Eventos"/>
-                    <x-modulo nome="Palestras" icon="bx bx-user-pin" rota="profile.edit" endereco="Palestras"/>
-                    <x-modulo nome="Atividades" icon="bx bxs-pencil" rota="profile.edit" endereco="Atividades"/>
+                    <x-modulo nome="Submissões" icon="bx bx-task" rota="Submissoes/index" endereco="Submissoes"/> 
+                    <x-modulo nome="Certificados" icon="bx bxs-certification" rota="Certificados/index" endereco="Certificados"/>
+                    <x-modulo nome="Eventos" icon="bx bxs-calendar-event" rota="Eventos/index" endereco="Eventos"/>
+                    <x-modulo nome="Palestras" icon="bx bx-user-pin" rota="Palestras/index" endereco="Palestras"/>
+                    <x-modulo nome="Atividades" icon="bx bxs-pencil" rota="Atividades/index" endereco="Atividades"/>
                     @endif 
                 </div>
              </div>

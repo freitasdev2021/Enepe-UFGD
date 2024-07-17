@@ -16,6 +16,7 @@ class Palestra extends Model
         'Palestra',
         'Data',
         'Inicio',
-        'Termino'
+        'Termino',
+        'IDPalestrante'
     ];
 }
