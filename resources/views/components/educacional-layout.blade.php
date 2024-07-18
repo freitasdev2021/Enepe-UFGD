@@ -18,7 +18,7 @@
                     <x-modulo nome="Avaliadores" icon="bx bxs-user-check" rota="Avaliadores/index" endereco="Avaliadores"/>
                     <x-modulo nome="Submissões" icon="bx bx-task" rota="Submissoes/index" endereco="Submissoes"/>
                     <x-modulo nome="Certificados" icon="bx bxs-certification" rota="Certificados/index" endereco="Certificados"/>
-                    <x-modulo nome="Inscritos" icon="bx bx-group" rota="Inscricoes/index" endereco="Inscritos"/>
+                    {{-- <x-modulo nome="Inscritos" icon="bx bx-group" rota="Inscricoes/index" endereco="Inscritos"/> --}}
                     @elseif(in_array(Auth::user()->tipo,[0,2]))
                     <x-modulo nome="Submissões" icon="bx bx-task" rota="Submissoes/index" endereco="Submissoes"/> 
                     <x-modulo nome="Certificados" icon="bx bxs-certification" rota="Certificados/index" endereco="Certificados"/>

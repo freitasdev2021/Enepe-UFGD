@@ -15,9 +15,9 @@ class Atividade extends Model
         'IDSala',
         'Titulo',
         'Descricao',
-        'Data',
         'Inicio',
-        'Termino',
-        'Chat'
+        'Chat',
+        'URLMeeting',
+        'IDMeeting'
     ];
 }

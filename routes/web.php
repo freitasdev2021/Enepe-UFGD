@@ -9,6 +9,7 @@ use App\Http\Controllers\CertificadosController;
 use App\Http\Controllers\SalasController;
 use App\Http\Controllers\AtividadesController;
 use App\Http\Controllers\InscricoesController;
+use App\Http\Controllers\ZoomController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -87,6 +88,9 @@ Route::middleware('auth')->group(function () {
     Route::post('Eventos/Inscrever',[EventosController::class,'inscrever'])->name('Eventos/Inscrever');
     Route::post('Eventos/Desinscrever',[EventosController::class,'desinscrever'])->name('Eventos/Inscrever');
     Route::get('Eventos/Inscricao/{IDEvento}', [EventosController::class, 'inscricao'])->name('Eventos/Inscricao');
+    //
+    // Rota para gerar a assinatura para ingressar na reunião
+    Route::get('/zoom/signature', [AtividadesController::class, 'generateZoomSignature'])->name('zoom.signature');
     //
 });
 

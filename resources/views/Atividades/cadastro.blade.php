@@ -31,8 +31,8 @@
                             <input type="text" name="Titulo" class="form-control" value="{{isset($Registro) ? $Registro->Titulo : ''}}" required>
                         </div>
                         <div class="col-sm-3">
-                            <label>Data</label>
-                            <input type="date" name="Data" class="form-control" value="{{isset($Registro) ? $Registro->Data : ''}}" required>
+                            <label>Inicio</label>
+                            <input type="datetime-local" name="Inicio" class="form-control" value="{{isset($Registro) ? $Registro->Inicio : ''}}" required>
                         </div>
                         <div class="col-sm-4">
                             <label>Sala</label>
@@ -42,16 +42,6 @@
                                 <option value="{{$s->id}}" {{isset($Registro) && $Registro->IDSala == $s->id ? 'selected' : ''}}>{{$s->Sala}}</option>
                                 @endforeach
                             </select>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <label>Inicio</label>
-                            <input type="time" name="Inicio" class="form-control" value="{{(isset($Registro)) ? $Registro->Inicio : ''}}" >
-                        </div>
-                        <div class="col-sm-6">
-                            <label>Termino</label>
-                            <input type="time" name="Termino" class="form-control" value="{{(isset($Registro)) ? $Registro->Termino : ''}}">
                         </div>
                     </div>
                     <div class="row">

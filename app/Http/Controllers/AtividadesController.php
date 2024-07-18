@@ -3,9 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\ZoomController;
 use App\Models\Atividade;
 use App\Models\Sala;
+use Firebase\JWT\JWT;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 class AtividadesController extends Controller
 {
     public const submodulos = array([
@@ -31,7 +36,7 @@ class AtividadesController extends Controller
 
     public function indexInscrito(){
         return view('Atividades.indexInscrito',[
-            'Atividades' => DB::select("SELECT a.id,a.Titulo,a.Data,s.Sala,a.Descricao,a.Inicio,a.Termino FROM atividades a INNER JOIN salas s ON(a.IDSala = s.id)")
+            'Atividades' => DB::select("SELECT a.id,a.Titulo,s.Sala,a.Descricao,a.Inicio FROM atividades a INNER JOIN salas s ON(a.IDSala = s.id)")
         ]);
     }
 
@@ -52,8 +57,44 @@ class AtividadesController extends Controller
         return view('Atividades.cadastro', $view);
     }
 
-    public function atividade($IDEvento){
-        return view('Salas.sala');
+    public function generateZoomSignature(Request $request)
+    {
+        $zoomService = new ZoomController();
+        $meetingNumber = $request->input('meetingNumber');
+        $role = $request->input('role'); // 0 para participantes, 1 para anfitriões
+
+        // Obtenha um token de acesso válido usando OAuth Server-to-Server
+        $accessToken = $zoomService->getStoredOrRenewZoomAccessToken();
+
+        // Gere a assinatura para ingresso na reunião
+        $signature = $this->generateZoomMeetingSignature($meetingNumber, $role, $accessToken);
+
+        return response()->json([
+            'signature' => $signature,
+        ]);
+    }
+
+    private function generateZoomMeetingSignature($meetingNumber, $role, $accessToken)
+    {
+        $apiKey = env('ZOOM_CLIENT_ID');
+        $apiSecret = env('ZOOM_CLIENT_SECRET');
+
+        $payload = array(
+            'iss' => $apiKey,
+            'exp' => strtotime('+1 hour'),
+        );
+
+        $token = JWT::encode($payload, $apiSecret,'HS256');
+
+        return $token;
+    }
+
+    public function atividade($IDAtividade){
+        return view('Salas.sala',[
+            'Sala' => Atividade::find($IDAtividade),
+            'Nome' => Auth::user()->name,
+            'Email' => Auth::user()->email
+        ]);
     }
 
     public function delete(Request $request){
@@ -62,10 +103,28 @@ class AtividadesController extends Controller
 
     public function save(Request $request){
         try{
+            $data = $request->all();
             if(!$request->id){
+
+                //dd($accessToken);
+                ////
                 $rota = 'Eventos/Atividades/Novo';
                 $aid = $request->IDEvento;
-                Atividade::create($request->all());
+                $zoomService = new ZoomController();
+                $accessToken = $zoomService->getAccessToken();
+                $meetingData = [
+                    'topic' => $request->Titulo,
+                    'type' => 2,
+                    'start_time' => $request->Inicio,
+                    // 'duration' => 30,
+                    'timezone'=> "America/Campo_Grande"
+                ];
+                $meeting = $zoomService->createMeeting($accessToken, $meetingData);
+
+                $data['IDMeeting'] = $meeting['id'];
+                $data['URLMeeting'] = $meeting['join_url'];
+                
+                Atividade::create($data);
             }else{
                 $rota = 'Eventos/Atividades/Edit';
                 $aid = array("IDEvento" => $request->IDEvento,"id"=>$request->id);
@@ -75,7 +134,7 @@ class AtividadesController extends Controller
             $status = 'success';
         }catch(\Throwable $th){
             $mensagem = 'Erro '. $th->getMessage();
-            $aid = '';
+            $aid = $request->IDEvento;
             $rota = 'Eventos/Atividades/Novo';
             $status = 'error';
         }finally{
@@ -85,15 +144,14 @@ class AtividadesController extends Controller
     }
 
     public function getAtividades($IDEvento){
-        $registros = DB::select("SELECT s.IDEvento,a.id,a.Titulo,a.Data,s.Sala,a.Descricao,a.Inicio,a.Termino FROM atividades a INNER JOIN salas s ON(a.IDSala = s.id)");
+        $registros = DB::select("SELECT s.IDEvento,a.id,a.Titulo,s.Sala,a.Descricao,a.Inicio FROM atividades a INNER JOIN salas s ON(a.IDSala = s.id)");
         if(count($registros) > 0){
             foreach($registros as $r){
                 $item = [];
                 $item[] = $r->Titulo;
                 $item[] = $r->Sala;
-                $item[] = Controller::data($r->Data,'d/m/Y');
                 $item[] = $r->Descricao;
-                $item[] = $r->Inicio." - ".$r->Termino;
+                $item[] = $r->Inicio;
                 $item[] = "<a href=".route('Eventos/Atividades/Edit',['id'=>$r->id,'IDEvento'=>$r->IDEvento])." class='btn bg-fr text-white btn-xs'>Abrir</a>";
                 $itensJSON[] = $item;
             }
