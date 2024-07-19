@@ -74,7 +74,7 @@ class AtividadesController extends Controller
         ]);
     }
 
-    private function generateZoomMeetingSignature($meetingNumber, $role, $accessToken)
+    public function generateZoomMeetingSignature($meetingNumber, $role, $accessToken)
     {
         $apiKey = env('ZOOM_CLIENT_ID');
         $apiSecret = env('ZOOM_CLIENT_SECRET');
@@ -117,10 +117,18 @@ class AtividadesController extends Controller
                     'type' => 2,
                     'start_time' => $request->Inicio,
                     // 'duration' => 30,
-                    'timezone'=> "America/Campo_Grande"
+                    'timezone'=> "America/Campo_Grande",
+                    'password' => '123',
+                    'settings' => [
+                        'join_before_host' => true, // Permitir ingresso antes do host
+                        'host_video' => true,
+                        'participant_video' => true,
+                        'mute_upon_entry' => true,
+                        'waiting_room' => false,
+                    ]
                 ];
                 $meeting = $zoomService->createMeeting($accessToken, $meetingData);
-
+                $data['PWMeeting'] = 123;
                 $data['IDMeeting'] = $meeting['id'];
                 $data['URLMeeting'] = $meeting['join_url'];
                 
