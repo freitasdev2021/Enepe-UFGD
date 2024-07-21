@@ -6,7 +6,7 @@
             <div class="card-body">
               <h5 class="card-title">{{$s->Titulo}}</h5>
               <p class="card-text">{{$s->Regras}}</p>
-              <a href="#" class="btn bg-fr text-white">Visualizar</a>
+              <a href="{{route('Submissoes/Entrega',$s->id)}}" class="btn bg-fr text-white">Visualizar</a>
             </div>
         </div>
         @endforeach

@@ -13,6 +13,7 @@ class Reprovacao extends Model
 
     protected $fillable = [
         'IDEntrega',
-        'Feedback'
+        'Feedback',
+        'Status'
     ];
 }

@@ -39,12 +39,12 @@
                             </select>
                         </div>
                         <div class="col-sm-4">
-                            <label>Palestrante</label>
-                            <select name="IDAvaliador" class="form-control">
-                                <option value="">Selecione</option>
-                                @foreach($avaliadores as $a)
-                                <option value="{{$a->id}}" {{isset($Registro) && $Registro->IDAvaliador == $a->id ? 'selected' : ''}}>{{$a->name}}</option>
-                                @endforeach
+                            <label>Categoria</label>
+                            <select name="Categoria" class="form-control">
+                                <option value="Ensino">Ensino</option>
+                                <option value="Pesquisa">Pesquisa</option>
+                                <option value="Extensão">Extensão</option>
+                                <option value="Pós-Graduação">Pós-Graduação</option>
                             </select>
                         </div>
                     </div>

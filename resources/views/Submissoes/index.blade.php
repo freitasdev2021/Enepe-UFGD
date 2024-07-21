@@ -6,6 +6,7 @@
            @endforeach
         </div>
         <div class="fr-card-body">
+            @if(Auth::user()->tipo == 1)
             <!--CABECALHO-->
             <div class="col-sm-12 p-2 row">
                 <div class="col-auto">
@@ -19,7 +20,7 @@
                     <thead>
                       <tr>
                         <th style="text-align:center;" scope="col">Evento</th>
-                        <th style="text-align:center;" scope="col">Avaliador</th>
+                        <th style="text-align:center;" scope="col">Categoria</th>
                         <th style="text-align:center;" scope="col">Titulo</th>
                         <th style="text-align:center;" scope="col">Regras</th>
                         <th style="text-align:center;" scope="col">Opções</th>
@@ -31,6 +32,26 @@
                   </table>
             </div>
             <!--//-->
+            @elseif(Auth::user()->tipo == 2)
+            <!--LISTAS-->
+            <div class="col-sm-12 p-2">
+                <table class="table table-sm tabela" id="escolas" data-rota="{{route('Submissoes/list')}}">
+                    <thead>
+                      <tr>
+                        <th style="text-align:center;" scope="col">Evento</th>
+                        <th style="text-align:center;" scope="col">Inscrito</th>
+                        <th style="text-align:center;" scope="col">Titulo do Trabalho</th>
+                        <th style="text-align:center;" scope="col">Categoria</th>
+                        <th style="text-align:center;" scope="col">Opções</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      
+                    </tbody>
+                  </table>
+            </div>
+            <!--//-->
+            @endif
         </div>
     </div>
 </x-educacional-layout>

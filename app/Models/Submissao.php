@@ -13,7 +13,7 @@ class Submissao extends Model
 
     protected $fillable = [
         'IDEvento',
-        'IDAvaliador',
+        'Categoria',
         'Titulo',
         'Regras'
     ];

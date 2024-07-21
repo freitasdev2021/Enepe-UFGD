@@ -14,8 +14,10 @@ class Entrega extends Model
     protected $fillable = [
         'IDInscrito',
         'IDSubmissao',
+        'IDAvaliador',
         'Titulo',
         'Descricao',
-        'Trabalho'
+        'Autores',
+        'palavrasChave'
     ];
 }

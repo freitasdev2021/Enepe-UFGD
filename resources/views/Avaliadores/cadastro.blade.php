@@ -29,15 +29,9 @@
                             <label>Nome</label>
                             <input type="text" name="name" class="form-control" value="{{isset($Registro) ? $Registro->name : ''}}" required>
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="col-sm-6">
                             <label>Email</label>
                             <input type="text" name="email" class="form-control" value="{{(isset($Registro)) ? $Registro->email : ''}}" required>
-                        </div>
-                        <div class="col-sm-6">
-                            <label>CPF</label>
-                            <input type="text" name="cpf" class="form-control" value="{{(isset($Registro)) ? $Registro->cpf : ''}}" required>
                         </div>
                     </div>
                     @if(isset($Registro))
