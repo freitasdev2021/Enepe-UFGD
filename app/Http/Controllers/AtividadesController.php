@@ -25,6 +25,10 @@ class AtividadesController extends Controller
         'nome' => 'Atividades',
         'rota' => 'Eventos/Atividades/index',
         'endereco' => 'Atividades'
+    ],[
+        'nome' => 'Inscrições',
+        'rota' => 'Eventos/Inscricoes',
+        'endereco' => 'Inscricoes'
     ]);
 
     public function index($IDEvento){

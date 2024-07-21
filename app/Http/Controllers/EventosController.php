@@ -4,9 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Evento;
+use App\Models\User;
+use App\Mail\Confirmacao;
 use App\Models\Inscricao;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 class EventosController extends Controller
 {
     public const submodulos = array([
@@ -27,6 +31,10 @@ class EventosController extends Controller
         'nome' => 'Atividades',
         'rota' => 'Eventos/Atividades/index',
         'endereco' => 'Atividades'
+    ],[
+        'nome' => 'Inscrições',
+        'rota' => 'Eventos/Inscricoes',
+        'endereco' => 'Inscricoes'
     ]);
 
     public function index(){
@@ -47,6 +55,85 @@ class EventosController extends Controller
             ");
         }
         return view($view,$data);
+    }
+
+    public function inscricoes($IDEvento){
+        return view("Eventos.inscritos",[
+            "IDEvento" => $IDEvento,
+            "submodulos" => self::cadastroSubmodulos
+        ]);
+    }
+
+    public function inscreverAluno($IDEvento){
+        return view('Eventos.inscreverAluno',[
+            "IDEvento" => $IDEvento,
+            "submodulos" => self::cadastroSubmodulos
+        ]);
+    }
+
+    public function saveInscricaoAluno(Request $request){
+        try{
+            $RandPW = rand(100000,999999);
+            $dataUser = array(
+                "name" => $request->name,
+                "email" => $request->email,
+                "password" => Hash::make($RandPW),
+                'tipo' => 3
+            );
+            $setUser = User::create($dataUser);
+            Inscricao::create([
+                'IDUser' => $setUser->id,
+                'IDEvento' => $request->IDEvento,
+                'Categoria' => $request->Categoria
+            ]);
+            // Enviar e-mail de confirmação com a senha
+            $resp = Mail::to($request->email)->send(new Confirmacao($request->name, $RandPW));
+            dd($resp);
+            $mensagem = 'Inscrição Concluida! O Comprovante e os dados de Acesso a Plataforma serão enviados via Email';
+            $aid = $request->IDEvento;
+            $rota = 'Eventos/Inscricoes/inscreverAluno';
+            $status = 'success';
+        }catch(\Throwable $th){
+            $mensagem = 'Erro '. $th->getMessage();
+            $aid = $request->IDEvento;
+            $rota = 'Eventos/Inscricoes/inscreverAluno';
+            $status = 'error';
+        }finally{
+            return redirect()->route($rota,$aid)->with($status,$mensagem);
+        }
+    }
+
+
+    public function getInscricoes($IDEvento){
+        $SQL = <<<SQL
+            SELECT
+                u.name as Nome,
+                i.Categoria,
+                u.email as Email
+            FROM inscricoes i
+            INNER JOIN users u ON(u.id = i.IDUser)
+            WHERE i.IDEvento = $IDEvento
+        SQL;
+        $registros = DB::select($SQL);
+        if(count($registros) > 0){
+            foreach($registros as $r){
+                $item = [];
+                $item[] = $r->Nome;
+                $item[] = $r->Categoria;
+                $item[] = $r->Email;
+                $itensJSON[] = $item;
+            }
+        }else{
+            $itensJSON = [];
+        }
+        
+        $resultados = [
+            "recordsTotal" => intval(count($registros)),
+            "recordsFiltered" => intval(count($registros)),
+            "data" => $itensJSON 
+        ];
+        
+        echo json_encode($resultados);
     }
 
     public function cadastro($id=null){
