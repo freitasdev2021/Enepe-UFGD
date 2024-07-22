@@ -10,7 +10,7 @@ use App\Models\Inscricao;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Session;
 class EventosController extends Controller
 {
     public const submodulos = array([
@@ -54,11 +54,35 @@ class EventosController extends Controller
                     eventos e
                 LEFT JOIN 
                     inscricoes i ON(i.IDEvento = e.id)
+                WHERE e.Termino > NOW()
                 GROUP BY 
                     e.Titulo, e.Descricao
             ");
         }
         return view($view,$data);
+    }
+
+    public function entrar(Request $request){
+        try{
+            if(!Inscricao::where('IDUser',Auth::user()->id)){
+                $mensagem = 'Você não está inscrito nesse Evento!';
+                $status = 'error';
+                $rota = 'Eventos/index';
+                return false;
+            }
+            Session::put('IDEvento',$request->IDEvento);
+            $aid = '';
+            $mensagem = '';
+            $status = 'success';
+            $rota = 'Palestras/index';
+        }catch(\Throwable $th){
+            $mensagem = 'Erro '. $th->getMessage();
+            $aid = '';
+            $rota = 'Eventos/incex';
+            $status = 'error';
+        }finally{
+            return redirect()->route($rota,$aid)->with($status,$mensagem);
+        }
     }
 
     public function inscricoes($IDEvento){

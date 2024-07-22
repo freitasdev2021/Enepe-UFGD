@@ -4,7 +4,7 @@
 <body className='snippet-body'>
     <body classname="snippet-body" id="body-pd" class="body-pd" cz-shortcut-listen="true">
        <header class="header bg-fr" id="header">
-                
+      
        </header>
        <div class="l-navbar show" id="nav-bar">
           <nav class="nav" >
@@ -23,11 +23,14 @@
                     <x-modulo nome="Submissões" icon="bx bx-task" rota="Submissoes/index" endereco="Submissoes"/> 
                     <x-modulo nome="Certificados" icon="bx bxs-certification" rota="Certificados/index" endereco="Certificados"/>
                     @elseif(in_array(Auth::user()->tipo,[0,3]))
+                    @if(!Session::has('IDEvento'))
+                    <x-modulo nome="Eventos" icon="bx bxs-calendar-event" rota="Eventos/index" endereco="Eventos"/>
+                    @else
                     <x-modulo nome="Submissões" icon="bx bx-task" rota="Submissoes/index" endereco="Submissoes"/> 
                     <x-modulo nome="Certificados" icon="bx bxs-certification" rota="Certificados/index" endereco="Certificados"/>
-                    <x-modulo nome="Eventos" icon="bx bxs-calendar-event" rota="Eventos/index" endereco="Eventos"/>
                     <x-modulo nome="Palestras" icon="bx bx-user-pin" rota="Palestras/index" endereco="Palestras"/>
                     <x-modulo nome="Atividades" icon="bx bxs-pencil" rota="Atividades/index" endereco="Atividades"/>
+                    @endif
                     @endif 
                 </div>
              </div>

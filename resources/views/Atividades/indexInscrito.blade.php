@@ -1,6 +1,4 @@
 <x-educacional-layout>
-    <link type="text/css" rel="stylesheet" href="https://source.zoom.us/2.9.7/css/bootstrap.css" />
-      <link type="text/css" rel="stylesheet" href="https://source.zoom.us/2.9.7/css/react-select.css" />
     <div class="row salas">
         @foreach($Atividades as $a)
         <div class="card sala" style="width: 18rem;">

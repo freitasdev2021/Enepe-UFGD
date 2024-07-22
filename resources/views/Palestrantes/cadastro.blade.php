@@ -8,7 +8,7 @@
         <div class="fr-card-body">
             <!--LISTAS-->
             <div class="col-sm-12 p-2 center-form">
-                <form action="{{route('Palestrantes/Save')}}" method="POST">
+                <form action="{{route('Palestrantes/Save')}}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method("POST")
                     @if(session('success'))

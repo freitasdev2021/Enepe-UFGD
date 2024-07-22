@@ -18,7 +18,7 @@
                 <table class="table table-sm tabela" id="escolas" data-rota="{{route('Palestrantes/list')}}">
                     <thead>
                       <tr>
-                        <th style="text-align:center;" scope="col">Foto</th>
+                        <th style="text-align:center; width:150px;" scope="col">Foto</th>
                         <th style="text-align:center;" scope="col">Nome</th>
                         <th style="text-align:center;" scope="col">Curriculo</th>
                         <th style="text-align:center;" scope="col">Opções</th>

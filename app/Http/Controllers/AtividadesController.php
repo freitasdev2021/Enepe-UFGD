@@ -8,9 +8,8 @@ use App\Models\Atividade;
 use App\Models\Sala;
 use Firebase\JWT\JWT;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
 class AtividadesController extends Controller
 {
     public const submodulos = array([
@@ -39,8 +38,12 @@ class AtividadesController extends Controller
     }
 
     public function indexInscrito(){
+        $AND = '';
+        if(Session::has('IDEvento')){
+            $AND = ' WHERE s.IDEvento='.Session::get('IDEvento');
+        }
         return view('Atividades.indexInscrito',[
-            'Atividades' => DB::select("SELECT a.id,a.Titulo,s.Sala,a.Descricao,a.Inicio FROM atividades a INNER JOIN salas s ON(a.IDSala = s.id)")
+            'Atividades' => DB::select("SELECT a.id,a.Titulo,s.Sala,a.Descricao,a.Inicio FROM atividades a INNER JOIN salas s ON(a.IDSala = s.id) $AND")
         ]);
     }
 

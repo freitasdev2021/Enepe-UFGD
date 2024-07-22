@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Submissao;
 use App\Models\Entrega;
+use Illuminate\Support\Facades\Session;
 use App\Models\Reprovacao;
 use App\Models\User;
 use App\Models\Evento;
@@ -38,12 +39,16 @@ class SubmissoesController extends Controller
 
         if(Auth::user()->tipo == 3){
             $view = 'Submissoes.indexInscrito';
+            $AND = '';
+            if(Session::has('IDEvento')){
+                $AND = ' WHERE s.IDEvento='.Session::get('IDEvento');
+            }
             $data['Submissoes'] = DB::select("SELECT 
                 s.Titulo,
                 s.id,
                 s.Regras
             FROM submissoes s
-            INNER JOIN eventos e ON(s.IDEvento = e.id)
+            INNER JOIN eventos e ON(s.IDEvento = e.id) $AND
         ");
         }
         return view($view,$data);

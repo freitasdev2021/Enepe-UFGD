@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Palestra;
 use App\Models\Palestrante;
 use App\Models\Evento;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Storage;
@@ -31,7 +32,11 @@ class PalestrasController extends Controller
         
         if(Auth::user()->tipo == 3){
             $view = 'Palestras.indexInscrito';
-            $data['Palestras'] = DB::select("SELECT pl.*,pa.Nome,e.Titulo as Evento,pa.Foto FROM palestras pl INNER JOIN palestrantes pa ON(pl.IDPalestrante = pa.id) INNER JOIN eventos e ON(e.id = pl.IDEvento)");
+            $AND = '';
+            if(Session::has('IDEvento')){
+                $AND = ' WHERE pl.IDEvento='.Session::get('IDEvento');
+            }
+            $data['Palestras'] = DB::select("SELECT pl.*,pa.Nome,e.Titulo as Evento,pa.Foto FROM palestras pl INNER JOIN palestrantes pa ON(pl.IDPalestrante = pa.id) INNER JOIN eventos e ON(e.id = pl.IDEvento) $AND");
         }
         return view($view,$data);
     }
@@ -119,7 +124,7 @@ class PalestrasController extends Controller
             }else{
                 if($request->file('Foto')){
                     $Foto = $request->file('Foto')->getClientOriginalName();
-                    Storage::disk('public')->delete('palestrantes'.$request->oldFoto);
+                    Storage::disk('public')->delete('palestrantes/'.$request->oldFoto);
                     $request->file('Foto')->storeAs('palestrantes',$Foto,'public');
                     $data['Foto'] = $Foto;
                 }
@@ -172,7 +177,7 @@ class PalestrasController extends Controller
         if(count($registros) > 0){
             foreach($registros as $r){
                 $item = [];
-                $item[] = "<img src='palestrantes/$r->Foto' width='250px' height='250px'>";
+                $item[] = "<img src='" . url('storage/palestrantes/' . $r->Foto) . "' width='150px' height='100px'>";
                 $item[] = $r->Nome;
                 $item[] = $r->Curriculo;
                 $item[] = "<a href=".route('Palestrantes/Edit',$r->id).">Abrir</a>";

@@ -98,7 +98,7 @@ Route::middleware('auth')->group(function () {
     Route::get('Eventos/Inscricoes/inscreverAluno/{IDEvento}',[EventosController::class,'inscreverAluno'])->name('Eventos/Inscricoes/inscreverAluno');
     Route::get('Eventos/Inscricoes/{IDEvento}',[EventosController::class,'inscricoes'])->name('Eventos/Inscricoes');
     Route::get('Eventos/Inscricoes/list/{IDEvento}',[EventosController::class,'getInscricoes'])->name('Eventos/Inscricoes/list');
-    Route::post('Eventos/Desinscrever',[EventosController::class,'desinscrever'])->name('Eventos/Inscrever');
+    Route::post('Eventos/Entrar',[EventosController::class,'entrar'])->name('Eventos/Entrar');
     Route::post('Eventos/inscreverAluno',[EventosController::class,'inscreverAluno'])->name('Eventos/inscreverAluno');
     Route::get('Eventos/Inscricao/{IDEvento}', [EventosController::class, 'inscricao'])->name('Eventos/Inscricao');
     //
