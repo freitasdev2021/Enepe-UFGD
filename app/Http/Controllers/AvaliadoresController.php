@@ -42,14 +42,18 @@ class AvaliadoresController extends Controller
             $data = $request->all();
             $data['tipo'] = 2;
             if(!$request->id){
+                $RandPW = rand(100000,999999);
                 $rota = 'Avaliadores/Novo';
                 $aid = '';
-                $data['password'] = Hash::make(rand(100000,999999));
+                $data['password'] = Hash::make($RandPW);
+                MailController::send($request->email,'Confirmação - Avaliador','Mail.cadastroavaliador',array('Senha'=> $RandPW,'Email'=> $request->email));
                 User::create($data);
             }else{
                 $rota = 'Avaliadores/Edit';
                 if($request->alteraSenha){
-                    $data['password'] = Hash::make(rand(100000,999999));
+                    $RandPW = rand(100000,999999);
+                    $data['password'] = Hash::make($RandPW);
+                    MailController::send($request->email,'Confirmação - Avaliador','Mail.cadastroavaliador',array('Senha'=> $RandPW,'Email'=> $request->email));
                 }
                 $aid = $request->id;
                 User::find($request->id)->update($data);

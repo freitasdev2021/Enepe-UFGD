@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Evento;
 use App\Models\User;
-use App\Mail\Confirmacao;
+use App\Http\Controllers\MailController;;
 use App\Models\Inscricao;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -46,12 +46,16 @@ class EventosController extends Controller
         if(Auth::user()->tipo == 3){
             $view = 'Eventos.indexInscrito';
             $data['Eventos'] = DB::select("SELECT 
-                e.Titulo as Evento,
-                e.id as IDEvento,
-                e.Descricao as Descricao,
-                CASE WHEN e.id = i.IDEvento THEN 1 ELSE 0 END AS Inscrito
-                FROM eventos e
-                LEFT JOIN inscricoes i ON(i.IDEvento = e.id)
+                    e.Titulo as Evento,
+                    MIN(e.id) as IDEvento,  -- Usa MIN para obter o menor id do grupo
+                    e.Descricao as Descricao,
+                    MAX(CASE WHEN e.id = i.IDEvento THEN 1 ELSE 0 END) AS Inscrito  -- Usa MAX para obter um valor representativo
+                FROM 
+                    eventos e
+                LEFT JOIN 
+                    inscricoes i ON(i.IDEvento = e.id)
+                GROUP BY 
+                    e.Titulo, e.Descricao
             ");
         }
         return view($view,$data);
@@ -87,8 +91,7 @@ class EventosController extends Controller
                 'Categoria' => $request->Categoria
             ]);
             // Enviar e-mail de confirmação com a senha
-            $resp = Mail::to($request->email)->send(new Confirmacao($request->name, $RandPW));
-            dd($resp);
+            MailController::send($request->email,'Confirmação de Inscrição pela Universidade','Mail.inscrito',array('Senha'=> $RandPW,'Email'=>$request->email));
             $mensagem = 'Inscrição Concluida! O Comprovante e os dados de Acesso a Plataforma serão enviados via Email';
             $aid = $request->IDEvento;
             $rota = 'Eventos/Inscricoes/inscreverAluno';
@@ -165,6 +168,8 @@ class EventosController extends Controller
             $aid = '';
             $rota = 'Eventos/index';
             $status = 'success';
+            $Evento = Evento::find($request->IDEvento)->Titulo;
+            MailController::send(Auth::user()->email,'Confirmação de Inscrição','Mail.confirmacao',array('Senha'=> $Evento));
             Inscricao::create($data);
         }catch(\Throwable $th){
             $mensagem = 'Erro '. $th->getMessage();
