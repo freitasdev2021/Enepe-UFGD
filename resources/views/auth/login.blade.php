@@ -44,7 +44,7 @@
                         <input class="form-check-input me-2" id="remember-me" name="remember"  {{ old('remember') ? 'checked' : '' }} type="checkbox" />
                         <label class="form-check-label" for="form2Example3">Lembrar acesso</label>
                     </div>
-                    {{-- <a href="https://api.whatsapp.com/send/?phone=31983086235&text&type=phone_number" target="_blank" class="text-body">Esqueceu a senha? (Chamar suporte)</a> --}}
+                    <a href="{{route('register')}}" class="text-body">Cadastre-se</a>
                 </div>
 
                 <div class="text-center text-lg-start mt-4 pt-2">

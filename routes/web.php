@@ -13,7 +13,7 @@ use App\Http\Controllers\ZoomController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.register');
 });
 
 Route::get('/dashboard', function () {
@@ -87,10 +87,11 @@ Route::middleware('auth')->group(function () {
     Route::post('Submissoes/Entregues/setAvaliador', [SubmissoesController::class, 'setAvaliador'])->name('Submissoes/Entregues/setAvaliador');
     //Certificados
     Route::get('Certificados', [CertificadosController::class, 'index'])->name('Certificados/index');
-    Route::get('Certificados/Cadastro', [CertificadosController::class, 'cadastro'])->name('Certificados/Novo');
-    Route::get('Certificados/Cadastro/{id}', [CertificadosController::class, 'cadastro'])->name('Certificados/Edit');
+    Route::get('Certificados/Modelos', [CertificadosController::class, 'modelos'])->name('Certificados/Modelos');
+    Route::get('Certificados/Modelos/Cadastro', [CertificadosController::class, 'cadastroModelos'])->name('Certificados/Modelos/Novo');
     Route::post('Certificados/Save', [CertificadosController::class, 'save'])->name('Certificados/Save');
     Route::post('Certificados/Delete', [CertificadosController::class, 'delete'])->name('Certificados/Delete');
+    Route::post('Certificados/Modelos/Save', [CertificadosController::class, 'saveModelo'])->name('Certificados/Modelos/Save');
     Route::get('Certificados/list', [CertificadosController::class, 'getCertificados'])->name('Certificados/list');
     //Inscrições
     Route::post('Eventos/Inscrever',[EventosController::class,'inscrever'])->name('Eventos/Inscrever');

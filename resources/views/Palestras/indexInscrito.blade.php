@@ -2,7 +2,7 @@
     <div class="row salas">
         @foreach($Palestras as $p)
         <div class="card sala" style="width: 18rem;">
-            <img src="{{url('storage/'.$p->Foto)}}" class="card-img-top" alt="...">
+            <img src="{{url('storage/palestrantes/'.$p->Foto)}}" class="card-img-top" alt="...">
             <div class="card-body">
               <h5 class="card-title">{{$p->Titulo}}</h5>
               <br>
