@@ -4,6 +4,11 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\Modelo;
+use App\Models\User;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Laravel\Facades\Image;
+use Intervention\Image\Drivers\Gd\Driver;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Evento;
 
 class CertificadosController extends Controller
@@ -11,7 +16,7 @@ class CertificadosController extends Controller
 
     public const submodulos = array([
         "nome" => "Emitir Certificados",
-        "rota" => "Certificados/index",
+        "rota" => "Certifica/index",
         "endereco" => 'index'
     ],[
         "nome" => "Modelos",
@@ -57,6 +62,78 @@ class CertificadosController extends Controller
             'submodulos' => self::submodulos,
             'Modelos' => Modelo::all()
         ]);
+    }
+
+    public function gerarCertificados(Request $request){
+        try{
+            $studentIds = $request->IDParticipante;
+            $students = User::whereIn('id', $studentIds)->get();
+            $certificatesPath = storage_path('app/public/modelos');
+            $publicCertificatesPath = public_path('certificados');
+            //dd($certificatesPath);
+            // Verificar se a pasta de certificados públicos existe, caso contrário, criar
+            if (!file_exists($publicCertificatesPath)) {
+                mkdir($publicCertificatesPath, 0755, true);
+            }
+
+            $certificadoManager = new ImageManager(new Driver());
+            //dd(realpath(storage_path('app/public/modelos/'.$request->Modelo)));
+           
+            foreach ($students as $student) {
+                // Carregar o modelo de certificado
+                $certificado = $certificadoManager->read(realpath(storage_path('app/public/modelos/'.$request->Modelo)));
+    
+                // Defina o texto com quebras de linha
+                $textLines = [
+                    'Certificamos que',
+                    $student->name,
+                    'concluiu o curso XXXX'
+                ];
+
+                // Definir as propriedades da fonte
+                $fontSize = 130;
+                $lineHeight = $fontSize * 1.2; // Altura da linha
+                $x = 1600; // Posição horizontal
+                $initialY = 800; // Posição inicial vertical
+                $fontPath = public_path('fonts/arial.ttf');
+
+                // Desenhar cada linha de texto no certificado
+                foreach ($textLines as $index => $line) {
+                    $y = $initialY + ($lineHeight * $index); // Ajustar a posição vertical para cada linha
+                    $certificado->text($line, $x, $y, function($font) use ($fontPath, $fontSize) {
+                        $font->file($fontPath);
+                        $font->size($fontSize);
+                        $font->color('#000000');
+                        $font->align('center');
+                        $font->valign('top');
+                    });
+                }
+    
+                // Nome do arquivo do certificado
+                $fileName = 'certificado_' . $student->id . '.jpg';
+    
+                // Salvar o certificado na pasta de armazenamento
+                $certificado->save($certificatesPath . '/' . $fileName);
+    
+                // Copiar o certificado para a pasta pública
+                copy($certificatesPath . '/' . $fileName, $publicCertificatesPath . '/' . $fileName);
+    
+                // Atualizar o registro do aluno com o caminho do certificado público
+                // $student->certificate_path = 'certificados/' . $fileName;
+                // $student->save();
+            }
+            $aid = '';
+            $mensagem = 'Salvo com Sucesso';
+            $status = 'success';
+            $rota = 'Certifica/index';
+        }catch(\Throwable $th){
+            $aid = '';
+            $mensagem = 'Erro: '.$th->getMessage();
+            $status = 'error';
+            $rota = 'Certifica/index';
+        }finally{
+            return redirect()->route($rota,$aid)->with($status,$mensagem);
+        }
     }
 
     public function getCertificados(){

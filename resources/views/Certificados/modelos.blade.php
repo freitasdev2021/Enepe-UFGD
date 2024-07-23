@@ -4,7 +4,7 @@
             <a href="{{route("Certificados/Modelos/Novo")}}" class="btn bg-fr text-white">Adicionar</a>
         </div>
         <div class="col-auto">
-            <a href="{{route('Certificados/index')}}" class="btn btn-light">Voltar</a>
+            <a href="{{route('Certifica/index')}}" class="btn btn-light">Voltar</a>
         </div>
     </div>
     <div class="row salas">

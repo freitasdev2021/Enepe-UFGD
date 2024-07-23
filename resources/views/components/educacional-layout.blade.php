@@ -17,17 +17,17 @@
                     <x-modulo nome="Palestrantes" icon="bx bxs-group" rota="Palestrantes/index" endereco="Palestrantes"/>
                     <x-modulo nome="Avaliadores" icon="bx bxs-user-check" rota="Avaliadores/index" endereco="Avaliadores"/>
                     <x-modulo nome="Submissões" icon="bx bx-task" rota="Submissoes/index" endereco="Submissoes"/>
-                    <x-modulo nome="Certificados" icon="bx bxs-certification" rota="Certificados/index" endereco="Certificados"/>
+                    <x-modulo nome="Certificados" icon="bx bxs-certification" rota="Certifica/index" endereco="Certifica"/>
                     {{-- <x-modulo nome="Inscritos" icon="bx bx-group" rota="Inscricoes/index" endereco="Inscritos"/> --}}
                     @elseif(in_array(Auth::user()->tipo,[0,2]))
                     <x-modulo nome="Submissões" icon="bx bx-task" rota="Submissoes/index" endereco="Submissoes"/> 
-                    <x-modulo nome="Certificados" icon="bx bxs-certification" rota="Certificados/index" endereco="Certificados"/>
+                    <x-modulo nome="Atividades" icon="bx bxs-pencil" rota="Atividades/index" endereco="Atividades"/>
                     @elseif(in_array(Auth::user()->tipo,[0,3]))
                     @if(!Session::has('IDEvento'))
                     <x-modulo nome="Eventos" icon="bx bxs-calendar-event" rota="Eventos/index" endereco="Eventos"/>
                     @else
                     <x-modulo nome="Submissões" icon="bx bx-task" rota="Submissoes/index" endereco="Submissoes"/> 
-                    <x-modulo nome="Certificados" icon="bx bxs-certification" rota="Certificados/index" endereco="Certificados"/>
+                    <x-modulo nome="Certificados" icon="bx bxs-certification" rota="Certifica/index" endereco="Certifica"/>
                     <x-modulo nome="Palestras" icon="bx bx-user-pin" rota="Palestras/index" endereco="Palestras"/>
                     <x-modulo nome="Atividades" icon="bx bxs-pencil" rota="Atividades/index" endereco="Atividades"/>
                     @endif

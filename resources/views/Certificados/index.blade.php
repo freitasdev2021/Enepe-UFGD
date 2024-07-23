@@ -6,6 +6,16 @@
            @endforeach
         </div>
         <div class="fr-card-body">
+            @if(session('success'))
+            <div class="col-sm-12 shadow p-2 bg-success text-white">
+                <strong>{{session('success')}}</strong>
+            </div>
+            @elseif(session('error'))
+            <div class="col-sm-12 shadow p-2 bg-danger text-white">
+                <strong>{{session('error')}}</strong>
+            </div>
+            <br>
+            @endif
             <!--CABECALHO-->
             <form class="col-sm-12 p-2 row" action="{{$_SERVER['PHP_SELF']}}" method="GET">
                 <div class="col-auto">
@@ -29,7 +39,8 @@
                 </div>
             </form>
             <!--LISTAS-->
-            <form class="col-sm-12 p-2">
+            <form class="col-sm-12 p-2" method="POST" action="{{route('Certificados/Save')}}">
+                @csrf
                 <table class="table table-sm tabela" id="escolas" data-rota="{{route('Certificados/list')}}">
                     <thead>
                       <tr>
@@ -43,7 +54,19 @@
                       
                     </tbody>
                   </table>
-                  <button class="btn bg-fr text-white" type="submit">Emitir Certificados</button>
+                  <div class="row">
+                    <div class="col-auto">
+                        <select class="form-control" name="Modelo">
+                            <option value="">Selecione o Modelo</option>
+                            @foreach($Modelos as $m)
+                            <option value="{{$m->Arquivo}}">{{$m->Nome}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn bg-fr text-white" type="submit">Emitir Certificados</button>
+                    </div>
+                  </div>
             </form>
             <!--//-->
         </div>

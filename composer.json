@@ -8,6 +8,8 @@
         "php": "^8.2",
         "firebase/php-jwt": "^6.10",
         "guzzlehttp/guzzle": "^7.8",
+        "intervention/image": "^3.7",
+        "intervention/image-laravel": "^1.3",
         "laravel/breeze": "^2.1",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
