@@ -6,6 +6,7 @@ use App\Http\Controllers\PalestrasController;
 use App\Http\Controllers\AvaliadoresController;
 use App\Http\Controllers\SubmissoesController;
 use App\Http\Controllers\CertificadosController;
+use App\Models\Certificados;
 use App\Http\Controllers\SalasController;
 use App\Http\Controllers\AtividadesController;
 use App\Http\Controllers\InscricoesController;
@@ -17,7 +18,9 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return view('dashboard',[
+        "Certificados" => Certificados::where("IDInscrito",Auth::user()->id)->get()
+    ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -52,10 +55,13 @@ Route::middleware('auth')->group(function () {
     //Palestras
     Route::get('Palestras', [PalestrasController::class, 'index'])->name('Palestras/index');
     Route::get('Palestras/list', [PalestrasController::class, 'getPalestras'])->name('Palestras/list');
+    Route::get('Palestras/Participantes/list/{IDPalestra}', [PalestrasController::class, 'getParticipantesPalestras'])->name('Palestras/Participantes/list');
+    Route::get('Palestras/Participantes/{IDPalestra}', [PalestrasController::class, 'telespectadores'])->name('Palestras/Participantes');
     Route::get('Palestras/Cadastro', [PalestrasController::class, 'cadastro'])->name('Palestras/Novo');
     Route::get('Palestras/Cadastro/{id}', [PalestrasController::class, 'cadastro'])->name('Palestras/Edit');
     Route::post('Palestras/Save', [PalestrasController::class, 'save'])->name('Palestras/Save');
     Route::post('Palestras/Delete', [PalestrasController::class, 'delete'])->name('Palestras/Delete');
+    Route::post('Palestras/Presenca', [PalestrasController::class, 'presenca'])->name('Palestras/Presenca');
     //Palestrantes
     Route::get('Palestrantes', [PalestrasController::class, 'indexPalestrantes'])->name('Palestrantes/index');
     Route::get('Palestrantes/list', [PalestrasController::class, 'getPalestrantes'])->name('Palestrantes/list');
@@ -90,6 +96,7 @@ Route::middleware('auth')->group(function () {
     Route::get('Certificados/Modelos', [CertificadosController::class, 'modelos'])->name('Certificados/Modelos');
     Route::get('Certificados/Modelos/Cadastro', [CertificadosController::class, 'cadastroModelos'])->name('Certificados/Modelos/Novo');
     Route::post('Certificados/Save', [CertificadosController::class, 'gerarCertificados'])->name('Certificados/Save');
+    Route::post('Certificados/Validar', [CertificadosController::class, 'validarCertificados'])->name('Certificados/Validar');
     Route::post('Certificados/Delete', [CertificadosController::class, 'delete'])->name('Certificados/Delete');
     Route::post('Certificados/Modelos/Save', [CertificadosController::class, 'saveModelo'])->name('Certificados/Modelos/Save');
     Route::get('Certificados/list', [CertificadosController::class, 'getCertificados'])->name('Certificados/list');

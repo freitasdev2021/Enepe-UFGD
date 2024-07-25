@@ -39,9 +39,13 @@
                     </div>
                     <hr>
                     <div class="row">
-                        <div class="col-sm-12">
+                        <div class="col-sm-6">
                             <label>Nome</label>
                             <input type="text" name="Nome" class="form-control" value="{{isset($Registro) ? $Registro->Nome : ''}}" required>
+                        </div>
+                        <div class="col-sm-6">
+                            <label>Email</label>
+                            <input type="email" name="Email" class="form-control" value="{{isset($Registro) ? $Registro->Email : ''}}" required>
                         </div>
                     </div>
                     <div class="row">

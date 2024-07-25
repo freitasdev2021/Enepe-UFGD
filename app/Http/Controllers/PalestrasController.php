@@ -6,9 +6,12 @@ use Illuminate\Http\Request;
 use App\Models\Palestra;
 use App\Models\Palestrante;
 use App\Models\Evento;
+use App\Models\User;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\Telespectador;
 use Storage;
 class PalestrasController extends Controller
 {
@@ -18,15 +21,25 @@ class PalestrasController extends Controller
         "endereco" => 'index'
     ]);
 
+    public const modulosPalestrantes = array([
+        "nome" => "Palestras",
+        "rota" => "Palestras/index",
+        "endereco" => 'index'
+    ]);
+
     public const submodulosPalestrantes = array([
         "nome" => "Palestrantes",
-        "rota" => "Palestrantes/index",
+        "rota" => "Palestras/index",
         "endereco" => 'index'
+    ],[
+        "nome" => "Telespectadores",
+        "rota" => "Palestras/Participantes",
+        "endereco" => 'Participantes'
     ]);
     public function index(){
         $view = 'Palestras.index';
         $data = [
-            'submodulos' => self::submodulosPalestrantes,
+            'submodulos' => self::submodulos,
             'id' => ''
         ];
         
@@ -41,9 +54,48 @@ class PalestrasController extends Controller
         return view($view,$data);
     }
 
+    public function getParticipantesPalestras($IDPalestra){
+        $SQL = "SELECT 
+                i.id as IDInscrito,
+                i.name as Inscrito,
+                CASE WHEN tp.IDPalestra IS NOT NULL THEN 'checked' ELSE '' END as Assistiu 
+            FROM users i
+            LEFT JOIN telespectadores tp ON(i.id = tp.IDInscrito) AND tp.IDPalestra = $IDPalestra
+			LEFT JOIN palestras p ON(p.id = tp.IDPalestra)
+        ";
+
+        $registros = DB::select($SQL);
+
+        if(count($registros) > 0){
+            foreach($registros as $r){
+                $item = [];
+                $item[] = $r->Inscrito;
+                $item[] = "<input type='checkbox' name='IDInscrito[]' $r->Assistiu value='$r->IDInscrito'>";
+                $itensJSON[] = $item;
+            }
+        }else{
+            $itensJSON = [];
+        }
+        
+        $resultados = [
+            "recordsTotal" => intval(count($registros)),
+            "recordsFiltered" => intval(count($registros)),
+            "data" => $itensJSON 
+        ];
+        
+        echo json_encode($resultados);
+    }
+
+    public function telespectadores($IDPalestra){
+        return view("Palestras.telespectadores",[
+            "IDPalestra" => $IDPalestra,
+            'submodulos' => self::submodulosPalestrantes
+        ]);
+    }
+
     public function indexPalestrantes(){
         return view('Palestrantes.index',[
-            'submodulos' => self::submodulosPalestrantes,
+            'submodulos' => self::modulosPalestrantes,
             'id' => ''
         ]);
     }
@@ -51,7 +103,7 @@ class PalestrasController extends Controller
     public function cadastro($id=null){
         $view = array(
             'id' => '',
-            'submodulos' => self::submodulos,
+            'submodulos' => self::submodulosPalestrantes,
             'palestrantes' => Palestrante::all(),
             'eventos' => Evento::all()
         );
@@ -109,6 +161,29 @@ class PalestrasController extends Controller
         }
     }
 
+    public function presenca(Request $request){
+        try{
+            Telespectador::where('IDPalestra',$request->IDPalestra)->delete();
+            foreach($request->IDInscrito as $i){
+                Telespectador::create([
+                    "IDInscrito" => $i,
+                    "IDPalestra" => $request->IDPalestra
+                ]);
+            }
+            $rota = 'Palestras/Participantes';
+            $aid = $request->IDPalestra;
+            $mensagem = "Presença Concluida";
+            $status = 'success';
+        }catch(\Throwable $th){
+            $mensagem = 'Erro '. $th->getMessage();
+            $aid = $request->IDPalestra;
+            $rota = 'Palestras/Participantes';
+            $status = 'error';
+        }finally{
+            return redirect()->route($rota, $aid)->with($status, $mensagem);
+        }
+    }
+
     public function savePalestrantes(Request $request){
         try{
             $data = $request->all();
@@ -128,7 +203,6 @@ class PalestrasController extends Controller
                     $request->file('Foto')->storeAs('palestrantes',$Foto,'public');
                     $data['Foto'] = $Foto;
                 }
-                $rota = 'Palestrantes/Edit';
                 $aid = $request->id;
                 Palestrante::find($request->id)->update($data);
             }

@@ -24,6 +24,11 @@
                         <option value="Organizadores" {{isset($_GET['Tipo']) && $_GET['Tipo'] == 'Organizadores' ? 'selected' : ''}}>Organizadores</option>
                         <option value="Apresentadores" {{isset($_GET['Tipo']) && $_GET['Tipo'] == 'Apresentadores' ? 'selected' : ''}}>Apresentadores</option>
                         <option value="Telespectadores" {{isset($_GET['Tipo']) && $_GET['Tipo'] == 'Telespectadores' ? 'selected' : ''}}>Telespectadores</option>
+                        <option value="Avaliador de Sessão" {{isset($_GET['Tipo']) && $_GET['Tipo'] == 'Avaliador de Sessão' ? 'selected' : ''}}>Avaliador de Sessão</option>
+                        <option value="Moderador de Sessão" {{isset($_GET['Tipo']) && $_GET['Tipo'] == 'Moderador de Sessão' ? 'selected' : ''}}>Moderador de Sessão</option>
+                        <option value="Telespectador de Palestra" {{isset($_GET['Tipo']) && $_GET['Tipo'] == 'Telespectador de Palestra' ? 'selected' : ''}}>Telespectador de Palestra</option>
+                        <option value="Palestrantes" {{isset($_GET['Tipo']) && $_GET['Tipo'] == 'Palestrantes' ? 'selected' : ''}}>Palestrantes</option>
+                        <option value="Avaliadores" {{isset($_GET['Tipo']) && $_GET['Tipo'] == 'Avaliadores' ? 'selected' : ''}}>Avaliadores</option>
                     </select>
                 </div>
                 <div class="col-auto">
@@ -41,6 +46,8 @@
             <!--LISTAS-->
             <form class="col-sm-12 p-2" method="POST" action="{{route('Certificados/Save')}}">
                 @csrf
+                <input type="hidden" name="Tipo" value="{{isset($_GET['Tipo']) ? $_GET['Tipo'] : ''}}">
+                <input type="hidden" name="IDEvento" value="{{isset($_GET['evento']) ? $_GET['evento'] : ''}}">
                 <table class="table table-sm tabela" id="escolas" data-rota="{{route('Certificados/list')}}">
                     <thead>
                       <tr>
@@ -71,4 +78,13 @@
             <!--//-->
         </div>
     </div>
+    <script>
+        $("select[name=evento]").on("change",function(){
+            $("input[name=IDEvento]").val($(this).val())
+        })
+
+        $("select[name=Tipo]").on("change",function(){
+            $("input[name=Tipo]").val($(this).val())
+        })
+    </script>
 </x-educacional-layout>
