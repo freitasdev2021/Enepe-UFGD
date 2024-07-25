@@ -15,6 +15,7 @@ class Certificados extends Model
         'Certificado',
         'IDEvento',
         'IDInscrito',
-        'Codigo'
+        'Codigo',
+        'IDModelo'
     ];
 }

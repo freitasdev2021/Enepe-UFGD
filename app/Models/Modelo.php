@@ -13,6 +13,8 @@ class Modelo extends Model
 
     protected $fillable = [
         'Nome',
-        'Arquivo'
+        'Arquivo',
+        'TPModelo',
+        'DSModelo'
     ];
 }

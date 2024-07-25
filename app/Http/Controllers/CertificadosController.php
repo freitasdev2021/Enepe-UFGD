@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\Modelo;
 use App\Models\User;
+use App\Models\Entrega;
 use App\Models\Palestra;
 use app\Models\Telespectador;
 use App\Models\Certificados;
@@ -67,351 +68,94 @@ class CertificadosController extends Controller
             'Modelos' => Modelo::all()
         ]);
     }
-
+    //GERAR CERTIFICADOS
     public function gerarCertificados(Request $request){
         try{
-            $studentIds = $request->IDParticipante;
-            $students = ($request->Tipo == 'Palestrantes') ? Palestrante::whereIn('id',$studentIds)->get() : User::whereIn('id', $studentIds)->get();
-            $certificatesPath = storage_path('app/public/modelos');
-            $publicCertificatesPath = public_path('certificados');
-            //dd($certificatesPath);
-            // Verificar se a pasta de certificados públicos existe, caso contrário, criar
-            if (!file_exists($publicCertificatesPath)) {
-                mkdir($publicCertificatesPath, 0755, true);
+          
+            $Modelos = [];
+            $Inscrit = [];
+            foreach($request->modelo as $m){
+                if(!is_null($m)){
+                    array_push($Modelos,$m);
+                }
             }
-            $evento = Evento::find($request->IDEvento);
-            $certificadoManager = new ImageManager(new Driver());
-            //dd(realpath(storage_path('app/public/modelos/'.$request->Modelo)));
-           //dd($request->Tipo);
-            foreach ($students as $student) {
-                // Carregar o modelo de certificado
-                $certificado = $certificadoManager->read(realpath(storage_path('app/public/modelos/'.$request->Modelo)));
-    
-                // Defina o texto com quebras de linha
+
+            foreach($request->IDInscrito as $i){
+                if(!is_null($i)){
+                    array_push($Inscrit,$i);
+                }
+            }
+            
+            $Evento = Evento::find($request->IDEvento);
+            $Certificados = [];
+            for($i=0;$i<count($Inscrit);$i++){
+                $Certificados[] = array(
+                    "Modelos" => $Modelos[$i],
+                    "Inscritos" => $Inscrit[$i]
+                );
+            }
+            //dd($Certificados);
+            foreach ($Certificados as $Certificado) {
+                $Modelo = Modelo::find($Certificado['Modelos']);
                 //CONTEUDO DO CERTIFICADO
-                switch($request->Tipo){
+                //dd($Modelo->TPModelo);
+                switch($Modelo->TPModelo){
                     case "Organizadores":
-                        $textLines = [
-                            'Confirmamos que',
-                            $student->name,
-                            'Concluiu participou da organização do evento '.$evento->Titulo
-                        ];
-                        //
-                        $CDCertificado = rand(100000,999999).$student->id;
-                        // Definir as propriedades da fonte
-                        $fontSize = 110;
-                        $lineHeight = $fontSize * 1.2; // Altura da linha
-                        $x = 1600; // Posição horizontal
-                        $initialY = 800; // Posição inicial vertical
-                        $fontPath = public_path('fonts/arial.ttf');
-                        // Desenhar cada linha de texto no certificado
-                        foreach ($textLines as $index => $line) {
-                            $y = $initialY + ($lineHeight * $index); // Ajustar a posição vertical para cada linha
-                            $certificado->text($line, $x, $y, function($font) use ($fontPath, $fontSize) {
-                                $font->file($fontPath);
-                                $font->size($fontSize);
-                                $font->color('#000000');
-                                $font->align('center');
-                                $font->valign('top');
-                            });
-                        }
-                        // Nome do arquivo do certificado
-                        $fileName = 'certificado_' . $CDCertificado . '.jpg';
-                        // Salvar o certificado na pasta de armazenamento
-                        $certificado->save($certificatesPath . '/' . $fileName);
-                        // Copiar o certificado para a pasta pública
-                        copy($certificatesPath . '/' . $fileName, $publicCertificatesPath . '/' . $fileName);
-                        //salvar no banco
-                        Certificados::create([
-                            "Certificado" => realpath(public_path('certificados')."/".$fileName),
-                            "IDInscrito" => $student->id,
-                            "IDEvento" => $request->IDEvento,
-                            "Codigo" => $CDCertificado
-                        ]);
+                        $Inscrito = User::find($Certificado['Inscritos']);
+                        $STRConteudo = str_replace(['{organizador}','{evento}'],[$Inscrito->name,$Evento->Titulo],$Modelo->DSModelo);
+                        $Conteudo = explode("|",$STRConteudo);
+                        self::setCertificado($Conteudo,$Certificado['Inscritos'],$Modelo->Arquivo,$Inscrito->name,$Evento->Titulo,$request->IDEvento,$Certificado['Modelos']);
                     break;
                     case "Apresentadores":
-                        $textLines = [
-                            'Certificamos que',
-                            $student->name,
-                            'participaram na qualidade de APRESENTADORES, do evento '.$evento->Titulo,
-                            'com a temática'.$evento->Inicio." a ".$evento->Termino
-                        ];
-                        //
-                        $CDCertificado = rand(100000,999999).$student->id;
-                        // Definir as propriedades da fonte
-                        $fontSize = 110;
-                        $lineHeight = $fontSize * 1.2; // Altura da linha
-                        $x = 1600; // Posição horizontal
-                        $initialY = 800; // Posição inicial vertical
-                        $fontPath = public_path('fonts/arial.ttf');
-                        // Desenhar cada linha de texto no certificado
-                        foreach ($textLines as $index => $line) {
-                            $y = $initialY + ($lineHeight * $index); // Ajustar a posição vertical para cada linha
-                            $certificado->text($line, $x, $y, function($font) use ($fontPath, $fontSize) {
-                                $font->file($fontPath);
-                                $font->size($fontSize);
-                                $font->color('#000000');
-                                $font->align('center');
-                                $font->valign('top');
-                            });
-                        }
-                        // Nome do arquivo do certificado
-                        $fileName = 'certificado_' . $CDCertificado . '.jpg';
-                        // Salvar o certificado na pasta de armazenamento
-                        $certificado->save($certificatesPath . '/' . $fileName);
-                        // Copiar o certificado para a pasta pública
-                        copy($certificatesPath . '/' . $fileName, $publicCertificatesPath . '/' . $fileName);
-                        //salvar no banco
-                        Certificados::create([
-                            "Certificado" => realpath(public_path('certificados')."/".$fileName),
-                            "IDInscrito" => $student->id,
-                            "IDEvento" => $request->IDEvento,
-                            "Codigo" => $CDCertificado
-                        ]);
+                        $Inscrito = User::find($Certificado['Inscritos']);
+                        $Trabalho = self::getTrabalho($Certificado['Inscritos'],$request->IDEvento);
+                        $STRConteudo = str_replace(['{apresentador}','{evento}','{submissao}','{palavraschave}','{autores}'],[$Inscrito->name,$Evento->Titulo,$Trabalho->Titulo,$Trabalho->palavrasChave,$Trabalho->Autores],$Modelo->DSModelo);
+                        $Conteudo = explode("|",$STRConteudo);
+                        self::setCertificado($Conteudo,$Certificado['Inscritos'],$Modelo->Arquivo,$Inscrito->name,$Evento->Titulo,$request->IDEvento,$Certificado['Modelos']);
                     break;
                     case "Telespectadores":
-                        $textLines = [
-                            'Confirmamos que',
-                            $student->name,
-                            'Participou com êxito do Evento'.$evento->Titulo,
-                            'Realizado de'.$evento->Inicio." a ".$evento->Termino
-                        ];
-                        //
-                        $CDCertificado = rand(100000,999999).$student->id;
-                        // Definir as propriedades da fonte
-                        $fontSize = 110;
-                        $lineHeight = $fontSize * 1.2; // Altura da linha
-                        $x = 1600; // Posição horizontal
-                        $initialY = 800; // Posição inicial vertical
-                        $fontPath = public_path('fonts/arial.ttf');
-                        // Desenhar cada linha de texto no certificado
-                        foreach ($textLines as $index => $line) {
-                            $y = $initialY + ($lineHeight * $index); // Ajustar a posição vertical para cada linha
-                            $certificado->text($line, $x, $y, function($font) use ($fontPath, $fontSize) {
-                                $font->file($fontPath);
-                                $font->size($fontSize);
-                                $font->color('#000000');
-                                $font->align('center');
-                                $font->valign('top');
-                            });
-                        }
-                        // Nome do arquivo do certificado
-                        $fileName = 'certificado_' . $CDCertificado . '.jpg';
-                        // Salvar o certificado na pasta de armazenamento
-                        $certificado->save($certificatesPath . '/' . $fileName);
-                        // Copiar o certificado para a pasta pública
-                        copy($certificatesPath . '/' . $fileName, $publicCertificatesPath . '/' . $fileName);
-                        //salvar no banco
-                        Certificados::create([
-                            "Certificado" => realpath(public_path('certificados')."/".$fileName),
-                            "IDInscrito" => $student->id,
-                            "IDEvento" => $request->IDEvento,
-                            "Codigo" => $CDCertificado
-                        ]);
+                        $Inscrito = User::find($Certificado['Inscritos']);
+                        $STRConteudo = str_replace(['{telespectador}','{evento}'],[$Inscrito->name,$Evento->Titulo],$Modelo->DSModelo);
+                        $Conteudo = explode("|",$STRConteudo);
+                        self::setCertificado($Conteudo,$Certificado['Inscritos'],$Modelo->Arquivo,$Inscrito->name,$Evento->Titulo,$request->IDEvento,$Certificado['Modelos']);
                     break;
                     case "Avaliador de Sessão":
-                        $textLines = [
-                            'Certificamos que',
-                            $student->name,
-                            'foi avaliador de sessões online de apresentação de trabalhos do evento'.$evento->Titulo,
-                            'realizado de '.$evento->Inicio." a ".$evento->Termino
-                        ];
-                        //
-                        $CDCertificado = rand(100000,999999).$student->id;
-                        // Definir as propriedades da fonte
-                        $fontSize = 110;
-                        $lineHeight = $fontSize * 1.2; // Altura da linha
-                        $x = 1600; // Posição horizontal
-                        $initialY = 800; // Posição inicial vertical
-                        $fontPath = public_path('fonts/arial.ttf');
-                        // Desenhar cada linha de texto no certificado
-                        foreach ($textLines as $index => $line) {
-                            $y = $initialY + ($lineHeight * $index); // Ajustar a posição vertical para cada linha
-                            $certificado->text($line, $x, $y, function($font) use ($fontPath, $fontSize) {
-                                $font->file($fontPath);
-                                $font->size($fontSize);
-                                $font->color('#000000');
-                                $font->align('center');
-                                $font->valign('top');
-                            });
-                        }
-                        // Nome do arquivo do certificado
-                        $fileName = 'certificado_' . $CDCertificado . '.jpg';
-                        // Salvar o certificado na pasta de armazenamento
-                        $certificado->save($certificatesPath . '/' . $fileName);
-                        // Copiar o certificado para a pasta pública
-                        copy($certificatesPath . '/' . $fileName, $publicCertificatesPath . '/' . $fileName);
-                        //salvar no banco
-                        Certificados::create([
-                            "Certificado" => realpath(public_path('certificados')."/".$fileName),
-                            "IDInscrito" => $student->id,
-                            "IDEvento" => $request->IDEvento,
-                            "Codigo" => $CDCertificado
-                        ]);
+                        $Inscrito = User::find($Certificado['Inscritos']);
+                        $STRConteudo = str_replace(['{avaliadorsessao}','{evento}'],[$Inscrito->name,$Evento->Titulo],$Modelo->DSModelo);
+                        $Conteudo = explode("|",$STRConteudo);
+                        self::setCertificado($Conteudo,$Certificado['Inscritos'],$Modelo->Arquivo,$Inscrito->name,$Evento->Titulo,$request->IDEvento,$Certificado['Modelos']);
                     break;
                     case "Moderador de Sessão":
-                        $textLines = [
-                            'Certificamos que',
-                            $student->name,
-                            'foi moderador de sessões online de apresentação de trabalhos do evento'.$evento->Titulo,
-                            'realizado de '.$evento->Inicio." a ".$evento->Termino
-                        ];
-                        //
-                        $CDCertificado = rand(100000,999999).$student->id;
-                        // Definir as propriedades da fonte
-                        $fontSize = 110;
-                        $lineHeight = $fontSize * 1.2; // Altura da linha
-                        $x = 1600; // Posição horizontal
-                        $initialY = 800; // Posição inicial vertical
-                        $fontPath = public_path('fonts/arial.ttf');
-                        // Desenhar cada linha de texto no certificado
-                        foreach ($textLines as $index => $line) {
-                            $y = $initialY + ($lineHeight * $index); // Ajustar a posição vertical para cada linha
-                            $certificado->text($line, $x, $y, function($font) use ($fontPath, $fontSize) {
-                                $font->file($fontPath);
-                                $font->size($fontSize);
-                                $font->color('#000000');
-                                $font->align('center');
-                                $font->valign('top');
-                            });
-                        }
-                        // Nome do arquivo do certificado
-                        $fileName = 'certificado_' . $CDCertificado . '.jpg';
-                        // Salvar o certificado na pasta de armazenamento
-                        $certificado->save($certificatesPath . '/' . $fileName);
-                        // Copiar o certificado para a pasta pública
-                        copy($certificatesPath . '/' . $fileName, $publicCertificatesPath . '/' . $fileName);
-                        //salvar no banco
-                        Certificados::create([
-                            "Certificado" => realpath(public_path('certificados')."/".$fileName),
-                            "IDInscrito" => $student->id,
-                            "IDEvento" => $request->IDEvento,
-                            "Codigo" => $CDCertificado
-                        ]);
+                        $Inscrito = User::find($Certificado['Inscritos']);
+                        $STRConteudo = str_replace(['{moderador}','{evento}'],[$Inscrito->name,$Evento->Titulo],$Modelo->DSModelo);
+                        $Conteudo = explode("|",$STRConteudo);
+                        self::setCertificado($Conteudo,$Certificado['Inscritos'],$Modelo->Arquivo,$Inscrito->name,$Evento->Titulo,$request->IDEvento,$Certificado['Modelos']);
                     break;
                     case "Telespectador de Palestra":
-                        foreach(DB::select("SELECT p.Titulo,MIN(p.Data) FROM telespectadores tp INNER JOIN palestras p WHERE tp.IDInscrito = $student->id GROUP BY p.Titulo") as $tel){
-                            $textLines = [
-                                'Certificamos que',
-                                $student->name,
-                                'participou da palestra de abertura do '.$evento->Titulo,
-                                'sob o tema '.$tel->Titulo
-                            ];
-                            //
-                            $CDCertificado = rand(100000,999999).$student->id.rand(1,100);
-                            // Definir as propriedades da fonte
-                            $fontSize = 110;
-                            $lineHeight = $fontSize * 1.2; // Altura da linha
-                            $x = 1600; // Posição horizontal
-                            $initialY = 800; // Posição inicial vertical
-                            $fontPath = public_path('fonts/arial.ttf');
-                            // Desenhar cada linha de texto no certificado
-                            foreach ($textLines as $index => $line) {
-                                $y = $initialY + ($lineHeight * $index); // Ajustar a posição vertical para cada linha
-                                $certificado->text($line, $x, $y, function($font) use ($fontPath, $fontSize) {
-                                    $font->file($fontPath);
-                                    $font->size($fontSize);
-                                    $font->color('#000000');
-                                    $font->align('center');
-                                    $font->valign('top');
-                                });
-                            }
-                            // Nome do arquivo do certificado
-                            $fileName = 'certificado_' . $CDCertificado . '.jpg';
-                            // Salvar o certificado na pasta de armazenamento
-                            $certificado->save($certificatesPath . '/' . $fileName);
-                            // Copiar o certificado para a pasta pública
-                            copy($certificatesPath . '/' . $fileName, $publicCertificatesPath . '/' . $fileName);
-                            //salvar no banco
-                            Certificados::create([
-                                "Certificado" => realpath(public_path('certificados')."/".$fileName),
-                                "IDInscrito" => $student->id,
-                                "IDEvento" => $request->IDEvento,
-                                "Codigo" => $CDCertificado
-                            ]);
+                        $Inscrito = User::find($Certificado['Inscritos']);
+                        $Assistiu = self::getPalestrasInscrito($Certificado['Inscritos'],$request->IDEvento);
+                        //dd($Assistiu);
+                        foreach($Assistiu as $as){
+                            $STRConteudo = str_replace(['{telespectador}','{palestra}','{evento}'],[$Inscrito->name,$as->Titulo,$Evento->Titulo],$Modelo->DSModelo);
+                            $Conteudo = explode("|",$STRConteudo);
+                            self::setCertificado($Conteudo,$Certificado['Inscritos'],$Modelo->Arquivo,$Inscrito->name,$Evento->Titulo,$request->IDEvento,$Certificado['Modelos']);
                         }
                     break;
-                    case "Palestrantes":
-                        foreach(Palestra::where('IDPalestrante',$student->id)->get() as $pal){
-                            $textLines = [
-                                'Certificamos que',
-                                $student->name,
-                                'participou, no dia'.$pal->Data.' na qualidade de palestrante,',
-                                'do '.$evento->Titulo.' ministrando o tema '.$pal->Titulo
-                            ];
-                            //
-                            $CDCertificado = rand(100000,999999).$student->id.rand(1,100);
-                            // Definir as propriedades da fonte
-                            $fontSize = 110;
-                            $lineHeight = $fontSize * 1.2; // Altura da linha
-                            $x = 1600; // Posição horizontal
-                            $initialY = 800; // Posição inicial vertical
-                            $fontPath = public_path('fonts/arial.ttf');
-                            // Desenhar cada linha de texto no certificado
-                            foreach ($textLines as $index => $line) {
-                                $y = $initialY + ($lineHeight * $index); // Ajustar a posição vertical para cada linha
-                                $certificado->text($line, $x, $y, function($font) use ($fontPath, $fontSize) {
-                                    $font->file($fontPath);
-                                    $font->size($fontSize);
-                                    $font->color('#000000');
-                                    $font->align('center');
-                                    $font->valign('top');
-                                });
-                            }
-                            // Nome do arquivo do certificado
-                            $fileName = 'certificado_' . $CDCertificado . '.jpg';
-                            // Salvar o certificado na pasta de armazenamento
-                            $certificado->save($certificatesPath . '/' . $fileName);
-                            // Copiar o certificado para a pasta pública
-                            copy($certificatesPath . '/' . $fileName, $publicCertificatesPath . '/' . $fileName);
-                            //salvar no banco
-                            Certificados::create([
-                                "Certificado" => realpath(public_path('certificados')."/".$fileName),
-                                "IDInscrito" => $student->id,
-                                "IDEvento" => $request->IDEvento,
-                                "Codigo" => $CDCertificado
-                            ]);
+                    case "Palestrante":
+                        $Inscrito = Palestrante::find($Certificado['Inscritos']);
+                        $Palestrou = self::getPalestrasPalestrante($Certificado['Inscritos'],$request->IDEvento);
+                        //dd($Inscr);
+                        foreach($Palestrou as $pa){
+                            $STRConteudo = str_replace(['{palestrante}','{palestra}','{evento}'],[$Inscrito->Nome,$pa->Titulo,$Evento->Titulo],$Modelo->DSModelo);
+                            $Conteudo = explode("|",$STRConteudo);
+                            self::setCertificado($Conteudo,$Certificado['Inscritos'],$Modelo->Arquivo,$Inscrito->Nome,$Evento->Titulo,$request->IDEvento,$Certificado['Modelos']);
                         }
                     break;
                     case "Avaliadores":
-                        $textLines = [
-                            'Certificamos que',
-                            $student->name,
-                            'foi avaliador de trabalhos escritos submetidos ao'.$evento->Titulo,
-                            'realizado de '.$evento->Inicio." a ".$evento->Termino
-                        ];
-                        //
-                        $CDCertificado = rand(100000,999999).$student->id;
-                        // Definir as propriedades da fonte
-                        $fontSize = 110;
-                        $lineHeight = $fontSize * 1.2; // Altura da linha
-                        $x = 1600; // Posição horizontal
-                        $initialY = 800; // Posição inicial vertical
-                        $fontPath = public_path('fonts/arial.ttf');
-                        // Desenhar cada linha de texto no certificado
-                        foreach ($textLines as $index => $line) {
-                            $y = $initialY + ($lineHeight * $index); // Ajustar a posição vertical para cada linha
-                            $certificado->text($line, $x, $y, function($font) use ($fontPath, $fontSize) {
-                                $font->file($fontPath);
-                                $font->size($fontSize);
-                                $font->color('#000000');
-                                $font->align('center');
-                                $font->valign('top');
-                            });
-                        }
-                        // Nome do arquivo do certificado
-                        $fileName = 'certificado_' . $CDCertificado . '.jpg';
-                        // Salvar o certificado na pasta de armazenamento
-                        $certificado->save($certificatesPath . '/' . $fileName);
-                        // Copiar o certificado para a pasta pública
-                        copy($certificatesPath . '/' . $fileName, $publicCertificatesPath . '/' . $fileName);
-                        //salvar no banco
-                        Certificados::create([
-                            "Certificado" => realpath(public_path('certificados')."/".$fileName),
-                            "IDInscrito" => $student->id,
-                            "IDEvento" => $request->IDEvento,
-                            "Codigo" => $CDCertificado
-                        ]);
+                        $Inscrito = User::find($Certificado['Inscritos']);
+                        $STRConteudo = str_replace(['{avaliador}','{evento}'],[$Inscrito->name,$Evento->Titulo],$Modelo->DSModelo);
+                        $Conteudo = explode("|",$STRConteudo);
+                        self::setCertificado($Conteudo,$Certificado['Inscritos'],$Modelo->Arquivo,$Inscrito->name,$Evento->Titulo,$request->IDEvento,$Certificado['Modelos']);
                     break;
                 }
                 //
@@ -428,6 +172,58 @@ class CertificadosController extends Controller
         }finally{
             return redirect()->route($rota,$aid)->with($status,$mensagem);
         }
+    }
+    //PEGAR TRABALHO DO APRESENTADOR
+    public function getTrabalho($IDApresentador,$IDEvento){
+        return DB::select("SELECT e.Titulo,e.Autores,e.palavrasChave FROM entergas e INNER JOIN submissoes s ON(s.id = e.IDSubmissao) WHERE s.IDEvento = $IDEvento AND e.IDInscrito = $IDApresentador")[0];
+    }
+    //PEGAR PALESTRAS
+    public function getPalestrasInscrito($IDInscrito,$IDEvento){
+        return DB::select("SELECT p.Titulo FROM palestras p INNER JOIN telespectadores t ON(t.IDPalestra = p.id) WHERE p.IDEvento = $IDEvento AND t.IDInscrito = $IDInscrito");
+    }
+
+    public function getPalestrasPalestrante($IDInscrito,$IDEvento){
+        return DB::select("SELECT p.Titulo FROM palestras p INNER JOIN palestrantes pal ON(p.IDPalestrante = pal.id) WHERE p.IDEvento = $IDEvento AND pal.id = $IDInscrito");
+    }
+    //CRIAR CERTIFICADO
+    public function setCertificado($text,$IDInscrito,$Modelo,$Inscrito,$Evento,$IDEvento,$IDModelo){
+        //
+        $certificatesPath = storage_path('app/public/modelos');
+        $publicCertificatesPath = public_path('certificados');
+        $certificadoManager = new ImageManager(new Driver());
+        $CDCertificado = rand(100000,999999).$IDInscrito;
+        // Definir as propriedades da fonte
+        $fontSize = 110;
+        $lineHeight = $fontSize * 1.2; // Altura da linha
+        $x = 1600; // Posição horizontal
+        $initialY = 800; // Posição inicial vertical
+        $fontPath = public_path('fonts/arial.ttf');
+        $certificado = $certificadoManager->read(realpath(storage_path('app/public/modelos/'.$Modelo)));
+        // Desenhar cada linha de texto no certificado
+        foreach ($text as $index => $line) {
+            $y = $initialY + ($lineHeight * $index); // Ajustar a posição vertical para cada linha
+            $certificado->text($line, $x, $y, function($font) use ($fontPath, $fontSize) {
+                $font->file($fontPath);
+                $font->size($fontSize);
+                $font->color('#000000');
+                $font->align('center');
+                $font->valign('top');
+            });
+        }
+        // Nome do arquivo do certificado
+        $fileName = 'certificado_' . $CDCertificado . '.jpg';
+        // Salvar o certificado na pasta de armazenamento
+        $certificado->save($certificatesPath . '/' . $fileName);
+        // Copiar o certificado para a pasta pública
+        copy($certificatesPath . '/' . $fileName, $publicCertificatesPath . '/' . $fileName);
+        //salvar no banco
+        Certificados::create([
+            "Certificado" => realpath(public_path('certificados')."/".$fileName),
+            "IDInscrito" => $IDInscrito,
+            "IDEvento" => $IDEvento,
+            "Codigo" => $CDCertificado,
+            "IDModelo" => $IDModelo
+        ]);
     }
 
     public function validarCertificados(Request $request){
@@ -450,69 +246,86 @@ class CertificadosController extends Controller
 
     }
 
+    public function getSelectModelos($IDInscrito,$modelo){
+        ob_start();
+        ?>
+        <select name="modelo[]" data-inscrito="<?=$IDInscrito?>" class="form-control col-auto selectModelo" onchange="setInscrito(this.getAttribute('data-inscrito'))">
+            <option value="">Selecione um Modelo</option>
+            <?php foreach(Modelo::all() as $m){?>
+            <option value="<?=$m->id?>" <?=($modelo == $m->id) ? 'selected' : ''?>><?=$m->Nome?></option>
+           <?php } ?>
+        </select>
+        <?php
+        return ob_get_clean();
+    }
+
     public function getCertificados(){
-        $WHERE = '';
-        $JOIN = '';
-        $AVJOIN = 'INNER JOIN inscricoes i ON p.id = i.IDUser';
-        $GROUPBY = '';
-        $NONAGREGATTED = 'p.id as IDInscrito,
-            CASE WHEN p.id = c.IDInscrito THEN 1 ELSE 0 END as Emitido';
-        $palestrante = false;
 
-        if (isset($_GET['Tipo'])) {
-            $evento = intval($_GET['evento']); // Certifique-se de que $evento é um inteiro seguro
-            $WHERE = ' WHERE i.IDEvento=' . $evento;
-
-            if ($_GET['Tipo'] == 'Organizadores') {
-                $WHERE .= ' AND p.tipo=1';
-            } elseif ($_GET['Tipo'] == 'Telespectadores') {
-                $WHERE .= " AND p.tipo=3 AND p.id NOT IN (SELECT IDInscrito FROM entergas INNER JOIN submissoes WHERE submissoes.IDEvento = $evento)";
-            } elseif ($_GET['Tipo'] == 'Avaliador de Sessão' || $_GET['Tipo'] == 'Moderador de Sessão') {
-                $WHERE .= " AND p.tipo IN (1,2) AND p.id NOT IN (SELECT IDInscrito FROM entergas INNER JOIN submissoes WHERE submissoes.IDEvento = $evento)";
-            } elseif ($_GET['Tipo'] == 'Telespectador de Palestra') {
-                $WHERE .= " AND p.id IN (SELECT IDInscrito FROM telespectadores INNER JOIN palestras WHERE palestras.IDEvento = $evento GROUP BY p.Titulo)";
-            } elseif ($_GET['Tipo'] == 'Palestrantes') {
-                $palestrante = true;
-                $ev = $evento;
-                $WHERE = " AND p.id IN (SELECT IDInscrito FROM telespectadores INNER JOIN palestras WHERE palestras.IDEvento = $evento)";
-            } elseif ($_GET['Tipo'] == 'Avaliadores') {
-                $AVJOIN = '';
-                $WHERE = "WHERE p.tipo =2 AND p.id IN (SELECT IDAvaliador FROM entergas INNER JOIN submissoes WHERE submissoes.IDEvento = $evento)";
-            }elseif ($_GET['Tipo'] == 'Apresentadores') {
-                $GROUPBY = ' GROUP BY p.name, p.email';
-                $NONAGREGATTED = 'MAX(c.Codigo) as Codigo, 
-                    MIN(p.id) as IDInscrito, 
-                    MAX(CASE WHEN p.id = c.IDInscrito THEN 1 ELSE 0 END) as Emitido';
-                $WHERE .= " AND p.tipo=3 AND (r.Status = 'Aprovado' OR r.Status = 'Aprovado com Ressalvas')";
-                $JOIN = "INNER JOIN entergas e ON p.id = e.IDInscrito ";
-                $JOIN .= "INNER JOIN reprovacoes r ON e.id = r.IDEntrega ";
-            }
+        if(isset($_GET['evento'])){
+            $evento = $_GET['evento'];
+        }else{
+            $evento = 0;
         }
 
-        if (!$palestrante) {
-            $SQL = "SELECT 
-                        p.name as Nome, 
-                        p.email as Email, 
-                        $NONAGREGATTED
-                    FROM users p 
-                    $AVJOIN
-                    LEFT JOIN certificados c ON p.id = c.IDInscrito
-                    $JOIN
-                    $WHERE
-                    $GROUPBY";
-        } else {
-            $SQL = "SELECT 
-                        p.id as IDInscrito, 
-                        p.Nome as Nome, 
-                        p.Email as Email, 
-                        c.Codigo, 
-                        CASE WHEN p.id = c.IDInscrito THEN 1 ELSE 0 END as Emitido 
-                    FROM palestrantes p 
-                    LEFT JOIN certificados c ON c.IDInscrito = p.id AND p.id = $ev
-                    ";
+        if(isset($_GET['Tipo']) && $_GET['Tipo'] == 'Palestrantes'){
+            $SQL = <<<SQL
+                SELECT 
+                    p.Nome,
+                    p.Email,
+                    p.id as IDInscrito,
+                    c.IDModelo
+                FROM palestrantes p
+                INNER JOIN palestras pal ON(p.id = pal.IDPalestrante)
+                LEFT JOIN certificados c ON(p.id = c.IDInscrito)
+                LEFT JOIN modelos m ON(m.id = c.IDModelo)
+                WHERE pal.IDEvento = $evento
+            SQL;
+        }elseif(isset($_GET['Tipo']) && $_GET['Tipo'] == 'Inscritos'){
+            $SQL = <<<SQL
+                SELECT 
+                    u.name as Nome,
+                    u.Email as Email,
+                    u.id as IDInscrito,
+                    MAX(c.IDModelo) as IDModelo
+                FROM 
+                    users u
+                INNER JOIN 
+                    inscricoes i ON i.IDUser = u.id
+                LEFT JOIN 
+                    certificados c ON u.id = c.IDInscrito
+                LEFT JOIN 
+                    modelos m ON m.id = c.IDModelo
+                WHERE 
+                    i.IDEvento = $evento
+                GROUP BY 
+                    u.name, u.Email, u.id;
+            SQL;
+        }elseif(isset($_GET['Tipo']) && $_GET['Tipo'] == 'Organizadores e Avaliadores'){
+            $SQL = <<<SQL
+                SELECT 
+                    u.name as Nome,
+                    u.Email as Email,
+                    u.id as IDInscrito,
+                    c.IDModelo
+                FROM users u
+                LEFT JOIN certificados c ON(u.id = c.IDInscrito)
+                LEFT JOIN modelos m ON(m.id = c.IDModelo)
+                WHERE u.tipo IN(1,2)
+            SQL;
+        }else{
+            $SQL = <<<SQL
+                SELECT 
+                    u.name as Nome,
+                    u.Email as Email,
+                    u.id as IDInscrito,
+                    c.IDModelo
+                FROM users u
+                INNER JOIN inscricoes i ON(i.IDUser = u.id)
+                LEFT JOIN certificados c ON(u.id = c.IDInscrito)
+                LEFT JOIN modelos m ON(m.id = c.IDModelo)
+                WHERE i.IDEvento = $evento
+            SQL;
         }
-
-        //dd($SQL);
 
         $registros = DB::select($SQL);
 
@@ -522,8 +335,7 @@ class CertificadosController extends Controller
                 $item = [];
                 $item[] = $r->Nome;
                 $item[] = $r->Email;
-                $item[] = ($r->Emitido) ? 'Emitido' : "<input type='checkbox' name='IDParticipante[]' value='$r->IDInscrito'>";
-                $item[] = ($r->Emitido) ? "<a href=" . route('Palestras/Edit', $r->IDInscrito) . ">Abrir</a>" : 'Certificado Não Emitido';
+                $item[] = self::getSelectModelos($r->IDInscrito,$r->IDModelo)."<input type='hidden' id='inscrito_$r->IDInscrito' name='IDInscrito[]'>";
                 $itensJSON[] = $item;
             }
         }

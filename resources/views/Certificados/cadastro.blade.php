@@ -1,41 +1,157 @@
 <x-educacional-layout>
-    <div class="card">
-       <div class="card-header bg-fr text-white">
-        Enviar Modelo JPG/JPEG
-       </div>
-       <div class="card-body">
-          <form action="{{route('Certificados/Modelos/Save')}}" method="POST" enctype="multipart/form-data">
-            @csrf
-            @if(session('success'))
-            <div class="col-sm-12 shadow p-2 bg-success text-white">
-                <strong>{{session('success')}}</strong>
+    <div class="row">
+        <div class="col-sm-9">
+            <div class="card">
+                <div class="card-header bg-fr text-white">
+                 Enviar Modelo JPG/JPEG
+                </div>
+                <div class="card-body" style="height: calc(100vh - 150px); overflow-y:scroll">
+                   <form action="{{route('Certificados/Modelos/Save')}}" method="POST" enctype="multipart/form-data">
+                     @csrf
+                     @if(session('success'))
+                     <div class="col-sm-12 shadow p-2 bg-success text-white">
+                         <strong>{{session('success')}}</strong>
+                     </div>
+                     @elseif(session('error'))
+                     <div class="col-sm-12 shadow p-2 bg-danger text-white">
+                         <strong>{{session('error')}}</strong>
+                     </div>
+                     <br>
+                     @endif
+                     <div class="row">
+                        <div class="col-sm-6">
+                            <label>Nome do Modelo</label>
+                            <input type="name" class="form-control" name="Nome">
+                        </div>
+                        <div class="col-sm-6">
+                            <label>Tipo do Modelo</label>
+                            <select name="TPModelo" class="form-control">
+                                <option value="">Selecione</option>
+                                <option value="Organizadores">Organizadores</option>
+                                <option value="Apresentadores">Apresentadores</option>
+                                <option value="Telespectadores">Telespectadores</option>
+                                <option value="Avaliador de Sessão">Avaliador de Sessão</option>
+                                <option value="Moderador de Sessão">Moderador de Sessão</option>
+                                <option value="Telespectador de Palestra">Telespectador de Palestra</option>     
+                                <option value="Palestrante">Palestrante</option>    
+                            </select>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col-sm-12">
+                            <label>Modelo</label>
+                            <textarea name="DSModelo" class="form-control"></textarea>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col-sm-12">
+                            <label>Arquivo</label>
+                            <input type="file" class="form-control" onchange="displaySelectedImage(event, 'selectedModelo')" name="Arquivo" accept="image/*">
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col-sm-12">
+                            <br>
+                            <img src="" width="100%" height="500px" id="selectedModelo">
+                        </div>
+                     </div>
+                     <br>
+                     <div class="col-sm-12">
+                         <button class="btn col-auto bg-fr text-white">Salvar modelo</button>
+                         &nbsp;
+                         <a href="{{route('Certificados/Modelos')}}" class="btn btn-default">Voltar</a>
+                     </div>
+                   </form>
+                </div>
+             </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="card">
+                <div class="card-header bg-fr text-white">
+                    Regras
+                </div>
+                <div class="card-body" style="height: calc(100vh - 150px); overflow-y:scroll">
+                    <dl>
+                        <dt>Organizadores</dt>
+                        <dd>
+                            <ul>
+                                <li>
+                                    Coloque {organizador} onde quiser ao criar o modelo, o sistema irá substituir pelo nome do organizador,
+                                    lembrando que em todos os modelos, coloque {evento} onde for citar o evento, o sistema irá substituir pelo nome do evento
+                                </li>
+                            </ul>
+                        </dd>
+                        <dt>Apresentadores</dt>
+                        <dd>
+                            <ul>
+                                <li>
+                                    Coloque {apresentador} onde quiser ao criar o modelo, o sistema irá substituir pelo nome do apresentador.
+                                </li>
+                                <li>lembrando que em todos os modelos, coloque {evento} onde for citar o evento, o sistema irá substituir pelo nome do evento</li>
+                                <li>Coloque {submissao} para que o sistema substitua pelo titulo da submissão</li>
+                                <li>Coloque {autores} e {palavraschave} onde o sistema substituirá os respectivos itens</li>
+                            </ul>
+                        </dd>
+                        <dt>Telespectadores</dt>
+                        <dd>
+                            <ul>
+                                <li>
+                                    Coloque {telespectador} onde quiser ao criar o modelo, o sistema irá substituir pelo nome do telespectador.
+                                </li>
+                                <li>lembrando que em todos os modelos, coloque {evento} onde for citar o evento, o sistema irá substituir pelo nome do evento</li>
+                            </ul>
+                        </dd>
+                        <dt>Avaliador de Sessão</dt>
+                        <dd>
+                            <ul>
+                                <li>
+                                    Coloque <strong>{avaliadorsessao}</strong> onde quiser ao criar o modelo, o sistema irá substituir pelo nome do avaliador.
+                                </li>
+                                <li>lembrando que em todos os modelos, coloque {evento} onde for citar o evento, o sistema irá substituir pelo nome do evento</li>
+                            </ul>
+                        </dd>
+                        <dt>Moderador de Sessão</dt>
+                        <dd>
+                            <ul>
+                                <li>
+                                    Coloque <strong>{moderador}</strong> onde quiser ao criar o modelo, o sistema irá substituir pelo nome do moderador.
+                                </li>
+                                <li>lembrando que em todos os modelos, coloque {evento} onde for citar o evento, o sistema irá substituir pelo nome do evento</li>
+                            </ul>
+                        </dd>
+                        <dt>Telespectador de Palestra</dt>
+                        <dd>
+                            <ul>
+                                <li>
+                                    Coloque <strong>{telespectadorpalestra}</strong> onde quiser ao criar o modelo, o sistema irá substituir pelo nome do telespectador.
+                                </li>
+                                <li>Coloque {palestra} onde quiser, para que o sistema substitua pelo nome da palestra, ou das palestras que o aluno assistiu, irá emitr de todas as palestras automaticamente</li>
+                                <li>lembrando que em todos os modelos, coloque {evento} onde for citar o evento, o sistema irá substituir pelo nome do evento</li>
+                            </ul>
+                        </dd>
+                        <dt>Palestrantes</dt>
+                        <dd>
+                            <ul>
+                                <li>
+                                    Coloque <strong>{palestrante}</strong> onde quiser ao criar o modelo, o sistema irá substituir pelo nome do palestrante.
+                                </li>
+                                <li>Coloque {palestra} onde quiser, para que o sistema substitua pelo nome da palestra, ou das palestras que o palestrante ministrou, irá emitr de todas as palestras automaticamente</li>
+                                <li>lembrando que em todos os modelos, coloque {evento} onde for citar o evento, o sistema irá substituir pelo nome do evento</li>
+                            </ul>
+                        </dd>
+                        <dt>Avaliador de Trabalhos</dt>
+                        <dd>
+                            <ul>
+                                <li>
+                                    Coloque <strong>{avaliador}</strong> onde quiser ao criar o modelo, o sistema irá substituir pelo nome do Avaliador.
+                                </li>
+                                <li>lembrando que em todos os modelos, coloque {evento} onde for citar o evento, o sistema irá substituir pelo nome do evento</li>
+                            </ul>
+                        </dd>
+                    </dl>
+                </div>
             </div>
-            @elseif(session('error'))
-            <div class="col-sm-12 shadow p-2 bg-danger text-white">
-                <strong>{{session('error')}}</strong>
-            </div>
-            <br>
-            @endif
-            <div class="col-sm-12">
-                <label>Nome do Modelo</label>
-                <input type="name" class="form-control" name="Nome">
-            </div>
-            <div class="col-sm-12">
-                <label>Modelo</label>
-                <input type="file" class="form-control" onchange="displaySelectedImage(event, 'selectedModelo')" name="Arquivo" accept="image/*">
-            </div>
-            <div class="col-sm-12">
-                <br>
-                <img src="" width="100%" height="500px" id="selectedModelo">
-            </div>
-            <br>
-            <div class="col-sm-12">
-                <button class="btn col-auto bg-fr text-white">Salvar modelo</button>
-                &nbsp;
-                <a href="{{route('Certificados/Modelos')}}" class="btn btn-default">Voltar</a>
-            </div>
-          </form>
-       </div>
+        </div>
     </div>
     <script>
         function displaySelectedImage(event, elementId) {
