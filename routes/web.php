@@ -6,6 +6,7 @@ use App\Http\Controllers\PalestrasController;
 use App\Http\Controllers\AvaliadoresController;
 use App\Http\Controllers\SubmissoesController;
 use App\Http\Controllers\CertificadosController;
+use App\Http\Controllers\SiteController;
 use App\Models\Certificados;
 use App\Http\Controllers\SalasController;
 use App\Http\Controllers\AtividadesController;
@@ -76,6 +77,8 @@ Route::middleware('auth')->group(function () {
     Route::get('Avaliadores/Cadastro/{id}', [AvaliadoresController::class, 'cadastro'])->name('Avaliadores/Edit');
     Route::post('Avaliadores/Save', [AvaliadoresController::class, 'save'])->name('Avaliadores/Save');
     Route::post('Avaliadores/Delete', [AvaliadoresController::class, 'delete'])->name('Avaliadores/Delete');
+    //Site
+    Route::get('Site',[SiteController::class,'index'])->name('Site/index');
     //Submissões
     Route::get('Submissoes', [SubmissoesController::class, 'index'])->name('Submissoes/index');
     Route::get('Submissoes/Cadastro', [SubmissoesController::class, 'cadastro'])->name('Submissoes/Novo');
