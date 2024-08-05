@@ -11,7 +11,7 @@
 }
 
 body{
-	overflow:hidden;
+	overflow-y:scroll;
 }
 
 .meet{
@@ -127,9 +127,9 @@ body{
 	margin-right:20px;
 }
 
-.bari{
-	height:800px;
-}
+/* .bari{
+	overflow-y:scroll;
+} */
 
 .fr-card-body{
     padding:10px;

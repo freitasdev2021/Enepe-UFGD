@@ -27,7 +27,6 @@
                     <x-modulo nome="Eventos" icon="bx bxs-calendar-event" rota="Eventos/index" endereco="Eventos"/>
                     @else
                     <x-modulo nome="Submissões" icon="bx bx-task" rota="Submissoes/index" endereco="Submissoes"/> 
-                    <x-modulo nome="Certificados" icon="bx bxs-certification" rota="Certifica/index" endereco="Certifica"/>
                     <x-modulo nome="Palestras" icon="bx bx-user-pin" rota="Palestras/index" endereco="Palestras"/>
                     <x-modulo nome="Atividades" icon="bx bxs-pencil" rota="Atividades/index" endereco="Atividades"/>
                     @endif
@@ -46,8 +45,8 @@
        </div>
        <!--Container Main end-->
        <script>
-         windowHeight = $(window).height()
-         $(".bari").css("height",windowHeight)
+         // windowHeight = $(window).height()
+         // $(".bari").css("height",windowHeight)
        </script>
  </body>
 @endsection

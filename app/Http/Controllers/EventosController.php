@@ -193,6 +193,7 @@ class EventosController extends Controller
             $rota = 'Eventos/index';
             $status = 'success';
             $Evento = Evento::find($request->IDEvento)->Titulo;
+            //dd($data);
             MailController::send(Auth::user()->email,'Confirmação de Inscrição','Mail.confirmacao',array('Senha'=> $Evento));
             Inscricao::create($data);
         }catch(\Throwable $th){

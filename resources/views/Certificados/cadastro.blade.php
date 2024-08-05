@@ -40,12 +40,12 @@
                      <div class="row">
                         <div class="col-sm-12">
                             <label>Modelo</label>
-                            <textarea name="DSModelo" class="form-control"></textarea>
+                            <textarea name="DSModelo" class="form-control" placeholder="Exemplo: o {organizador} assistiu o {evento} | com carga horaria de | 40 Horas"></textarea>
                         </div>
                      </div>
                      <div class="row">
                         <div class="col-sm-12">
-                            <label>Arquivo</label>
+                            <label>Arquivo do Modelo</label>
                             <input type="file" class="form-control" onchange="displaySelectedImage(event, 'selectedModelo')" name="Arquivo" accept="image/*">
                         </div>
                      </div>
@@ -72,12 +72,20 @@
                 </div>
                 <div class="card-body" style="height: calc(100vh - 150px); overflow-y:scroll">
                     <dl>
+                        <dt>Regras Gerais</dt>
+                        <dd>
+                            <ul>
+                                <li>
+                                    AO QUEBRAR UMA LINHA COLOQUE "|" SEM ASPAS, E COM ESPAÇAMENTO 
+                                </li>
+                            </ul>
+                        </dd>
                         <dt>Organizadores</dt>
                         <dd>
                             <ul>
                                 <li>
-                                    Coloque {organizador} onde quiser ao criar o modelo, o sistema irá substituir pelo nome do organizador,
-                                    lembrando que em todos os modelos, coloque {evento} onde for citar o evento, o sistema irá substituir pelo nome do evento
+                                    Coloque <strong>{organizador}</strong> onde quiser ao criar o modelo, o sistema irá substituir pelo nome do organizador,
+                                    lembrando que em todos os modelos, coloque <strong>{evento}</strong> onde for citar o evento, o sistema irá substituir pelo nome do evento
                                 </li>
                             </ul>
                         </dd>
@@ -85,20 +93,20 @@
                         <dd>
                             <ul>
                                 <li>
-                                    Coloque {apresentador} onde quiser ao criar o modelo, o sistema irá substituir pelo nome do apresentador.
+                                    Coloque <strong>{apresentador}</strong> onde quiser ao criar o modelo, o sistema irá substituir pelo nome do apresentador.
                                 </li>
-                                <li>lembrando que em todos os modelos, coloque {evento} onde for citar o evento, o sistema irá substituir pelo nome do evento</li>
-                                <li>Coloque {submissao} para que o sistema substitua pelo titulo da submissão</li>
-                                <li>Coloque {autores} e {palavraschave} onde o sistema substituirá os respectivos itens</li>
+                                <li>lembrando que em todos os modelos, coloque <strong>{evento}</strong> onde for citar o evento, o sistema irá substituir pelo nome do evento</li>
+                                <li>Coloque <strong>{submissao}</strong> para que o sistema substitua pelo titulo da submissão</li>
+                                <li>Coloque <strong>{autores}</strong> e <strong>{palavraschave}</strong> onde o sistema substituirá os respectivos itens</li>
                             </ul>
                         </dd>
                         <dt>Telespectadores</dt>
                         <dd>
                             <ul>
                                 <li>
-                                    Coloque {telespectador} onde quiser ao criar o modelo, o sistema irá substituir pelo nome do telespectador.
+                                    Coloque <strong>{telespectador}</strong> onde quiser ao criar o modelo, o sistema irá substituir pelo nome do telespectador.
                                 </li>
-                                <li>lembrando que em todos os modelos, coloque {evento} onde for citar o evento, o sistema irá substituir pelo nome do evento</li>
+                                <li>lembrando que em todos os modelos, coloque <strong>{evento}</strong> onde for citar o evento, o sistema irá substituir pelo nome do evento</li>
                             </ul>
                         </dd>
                         <dt>Avaliador de Sessão</dt>
@@ -107,7 +115,7 @@
                                 <li>
                                     Coloque <strong>{avaliadorsessao}</strong> onde quiser ao criar o modelo, o sistema irá substituir pelo nome do avaliador.
                                 </li>
-                                <li>lembrando que em todos os modelos, coloque {evento} onde for citar o evento, o sistema irá substituir pelo nome do evento</li>
+                                <li>lembrando que em todos os modelos, coloque <strong>{evento}</strong> onde for citar o evento, o sistema irá substituir pelo nome do evento</li>
                             </ul>
                         </dd>
                         <dt>Moderador de Sessão</dt>
@@ -116,7 +124,7 @@
                                 <li>
                                     Coloque <strong>{moderador}</strong> onde quiser ao criar o modelo, o sistema irá substituir pelo nome do moderador.
                                 </li>
-                                <li>lembrando que em todos os modelos, coloque {evento} onde for citar o evento, o sistema irá substituir pelo nome do evento</li>
+                                <li>lembrando que em todos os modelos, coloque <strong>{evento}</strong> onde for citar o evento, o sistema irá substituir pelo nome do evento</li>
                             </ul>
                         </dd>
                         <dt>Telespectador de Palestra</dt>
@@ -125,8 +133,8 @@
                                 <li>
                                     Coloque <strong>{telespectadorpalestra}</strong> onde quiser ao criar o modelo, o sistema irá substituir pelo nome do telespectador.
                                 </li>
-                                <li>Coloque {palestra} onde quiser, para que o sistema substitua pelo nome da palestra, ou das palestras que o aluno assistiu, irá emitr de todas as palestras automaticamente</li>
-                                <li>lembrando que em todos os modelos, coloque {evento} onde for citar o evento, o sistema irá substituir pelo nome do evento</li>
+                                <li>Coloque <strong>{palestra}</strong> onde quiser, para que o sistema substitua pelo nome da palestra, ou das palestras que o aluno assistiu, irá emitr de todas as palestras automaticamente</li>
+                                <li>lembrando que em todos os modelos, coloque <strong>{evento}</strong> onde for citar o evento, o sistema irá substituir pelo nome do evento</li>
                             </ul>
                         </dd>
                         <dt>Palestrantes</dt>
@@ -135,8 +143,8 @@
                                 <li>
                                     Coloque <strong>{palestrante}</strong> onde quiser ao criar o modelo, o sistema irá substituir pelo nome do palestrante.
                                 </li>
-                                <li>Coloque {palestra} onde quiser, para que o sistema substitua pelo nome da palestra, ou das palestras que o palestrante ministrou, irá emitr de todas as palestras automaticamente</li>
-                                <li>lembrando que em todos os modelos, coloque {evento} onde for citar o evento, o sistema irá substituir pelo nome do evento</li>
+                                <li>Coloque <strong>{palestra}</strong> onde quiser, para que o sistema substitua pelo nome da palestra, ou das palestras que o palestrante ministrou, irá emitr de todas as palestras automaticamente</li>
+                                <li>lembrando que em todos os modelos, coloque <strong>{evento}</strong> onde for citar o evento, o sistema irá substituir pelo nome do evento</li>
                             </ul>
                         </dd>
                         <dt>Avaliador de Trabalhos</dt>
@@ -145,7 +153,7 @@
                                 <li>
                                     Coloque <strong>{avaliador}</strong> onde quiser ao criar o modelo, o sistema irá substituir pelo nome do Avaliador.
                                 </li>
-                                <li>lembrando que em todos os modelos, coloque {evento} onde for citar o evento, o sistema irá substituir pelo nome do evento</li>
+                                <li>lembrando que em todos os modelos, coloque <strong>{evento}</strong> onde for citar o evento, o sistema irá substituir pelo nome do evento</li>
                             </ul>
                         </dd>
                     </dl>
@@ -154,8 +162,9 @@
         </div>
     </div>
     <script>
+        alert("Atenção, Ler todas as Regras Antes de Criar um Modelo, de acordo com o publico, no campo 'Tipo de Modelo' ")
         function displaySelectedImage(event, elementId) {
-            const selectedImage = document.getElementById(elementId);
+             const selectedImage = document.getElementById(elementId);
             const fileInput = event.target;
 
             if (fileInput.files && fileInput.files[0]) {

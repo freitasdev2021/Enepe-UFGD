@@ -192,6 +192,7 @@ class CertificadosController extends Controller
         $publicCertificatesPath = public_path('certificados');
         $certificadoManager = new ImageManager(new Driver());
         $CDCertificado = rand(100000,999999).$IDInscrito;
+        array_push($text,"Codigo: ".$CDCertificado);
         // Definir as propriedades da fonte
         $fontSize = 110;
         $lineHeight = $fontSize * 1.2; // Altura da linha

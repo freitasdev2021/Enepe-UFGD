@@ -166,8 +166,10 @@ class AtividadesController extends Controller
                 $item[] = $r->Titulo;
                 $item[] = $r->Sala;
                 $item[] = $r->Descricao;
-                $item[] = $r->Inicio;
-                $item[] = "<a href=".route('Eventos/Atividades/Edit',['id'=>$r->id,'IDEvento'=>$r->IDEvento])." class='btn bg-fr text-white btn-xs'>Abrir</a>";
+                $item[] = Controller::data($r->Inicio,'d/m/Y H:i');
+                $item[] = "<a href=".route('Eventos/Atividades/Edit',['id'=>$r->id,'IDEvento'=>$r->IDEvento])." class='btn bg-fr text-white btn-xs'>Abrir</a>
+                <a href=".route('Atividades/Atividade',$r->id)." class='btn bg-fr text-white btn-xs'>Entrar</a>
+                ";
                 $itensJSON[] = $item;
             }
         }else{
