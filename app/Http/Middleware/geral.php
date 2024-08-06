@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Auth;
 
 class geral
 {
@@ -15,6 +16,9 @@ class geral
      */
     public function handle(Request $request, Closure $next): Response
     {
+        if(!in_array(Auth::user()->tipo,[1,2,3])){
+            return redirect()->route('dashboard');
+        }
         return $next($request);
     }
 }

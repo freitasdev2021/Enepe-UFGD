@@ -5,7 +5,8 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 class organizador
 {
     /**
@@ -15,6 +16,9 @@ class organizador
      */
     public function handle(Request $request, Closure $next): Response
     {
+        if(Auth::user()->tipo != 1){
+            return redirect()->route('dashboard');
+        }
         return $next($request);
     }
 }

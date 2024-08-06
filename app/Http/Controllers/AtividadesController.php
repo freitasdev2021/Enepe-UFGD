@@ -64,38 +64,6 @@ class AtividadesController extends Controller
         return view('Atividades.cadastro', $view);
     }
 
-    public function generateZoomSignature(Request $request)
-    {
-        $zoomService = new ZoomController();
-        $meetingNumber = $request->input('meetingNumber');
-        $role = $request->input('role'); // 0 para participantes, 1 para anfitriões
-
-        // Obtenha um token de acesso válido usando OAuth Server-to-Server
-        $accessToken = $zoomService->getStoredOrRenewZoomAccessToken();
-
-        // Gere a assinatura para ingresso na reunião
-        $signature = $this->generateZoomMeetingSignature($meetingNumber, $role, $accessToken);
-
-        return response()->json([
-            'signature' => $signature,
-        ]);
-    }
-
-    public function generateZoomMeetingSignature($meetingNumber, $role, $accessToken)
-    {
-        $apiKey = env('ZOOM_CLIENT_ID');
-        $apiSecret = env('ZOOM_CLIENT_SECRET');
-
-        $payload = array(
-            'iss' => $apiKey,
-            'exp' => strtotime('+1 hour'),
-        );
-
-        $token = JWT::encode($payload, $apiSecret,'HS256');
-
-        return $token;
-    }
-
     public function atividade($IDAtividade){
         return view('Salas.sala',[
             'Sala' => Atividade::find($IDAtividade),

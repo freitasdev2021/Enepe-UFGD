@@ -20,8 +20,7 @@
                     <thead>
                       <tr>
                         <th style="text-align:center;" scope="col">Evento</th>
-                        <th style="text-align:center;" scope="col">Categoria</th>
-                        <th style="text-align:center;" scope="col">Titulo</th>
+                        <th style="text-align:center;" scope="col">Modalidade</th>
                         <th style="text-align:center;" scope="col">Regras</th>
                         <th style="text-align:center;" scope="col">Opções</th>
                       </tr>
@@ -40,7 +39,7 @@
                       <tr>
                         <th style="text-align:center;" scope="col">Evento</th>
                         <th style="text-align:center;" scope="col">Inscrito</th>
-                        <th style="text-align:center;" scope="col">Titulo do Trabalho</th>
+                        <th style="text-align:center;" scope="col">Regras</th>
                         <th style="text-align:center;" scope="col">Categoria</th>
                         <th style="text-align:center;" scope="col">Opções</th>
                       </tr>

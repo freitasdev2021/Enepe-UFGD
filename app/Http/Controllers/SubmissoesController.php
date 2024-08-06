@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\Evento;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Storage;
 
 class SubmissoesController extends Controller
 {
@@ -44,7 +45,7 @@ class SubmissoesController extends Controller
                 $AND = ' WHERE s.IDEvento='.Session::get('IDEvento');
             }
             $data['Submissoes'] = DB::select("SELECT 
-                s.Titulo,
+                s.Categoria,
                 s.id,
                 s.Regras
             FROM submissoes s
@@ -77,14 +78,26 @@ class SubmissoesController extends Controller
 
     public function save(Request $request){
         try{
+            $data = $request->all();
             if(!$request->id){
                 $rota = 'Submissoes/Novo';
                 $aid = '';
-                Submissao::create($request->all());
+                if($request->file('Regras')){
+                    $Regras = $request->file('Regras')->getClientOriginalName();
+                    $request->file('Regras')->storeAs('regras_submissao',$Regras,'public');
+                    $data['Regras'] = $Regras;
+                }
+                Submissao::create($data);
             }else{
+                if($request->file('Regras')){
+                    $Regras = $request->file('Regras')->getClientOriginalName();
+                    Storage::disk('public')->delete('regras_submissao/'.$request->oldRegras);
+                    $request->file('Regras')->storeAs('regras_submissao',$Regras,'public');
+                    $data['Regras'] = $Regras;
+                }
                 $rota = 'Submissoes/Edit';
                 $aid = $request->id;
-                Submissao::find($request->id)->update($request->all());
+                Submissao::find($request->id)->update($data);
             }
             $mensagem = "Salvo";
             $status = 'success';
@@ -196,7 +209,6 @@ class SubmissoesController extends Controller
             $registros = DB::select("SELECT 
                 e.Titulo as Evento,
                 s.Categoria,
-                s.Titulo,
                 s.id,
                 s.Regras
                 FROM submissoes s
@@ -207,8 +219,7 @@ class SubmissoesController extends Controller
                     $item = [];
                     $item[] = $r->Evento;
                     $item[] = $r->Categoria;
-                    $item[] = $r->Titulo;
-                    $item[] = $r->Regras;
+                    $item[] = "<a href='" . url('storage/regras_submissao/' . $r->Regras) . "' target='_blank'>".$r->Regras."</a>";
                     $item[] = "<a href=".route('Submissoes/Edit',$r->id).">Abrir</a>";
                     $itensJSON[] = $item;
                 }
@@ -218,9 +229,9 @@ class SubmissoesController extends Controller
         }else{
             $IDAvaliador = Auth::user()->id;
             $registros = DB::select("SELECT ev.Titulo as Evento,
-                    e.Titulo as Trabalho,
                     i.name as Inscrito,
                     s.Categoria,
+                    s.Regras
                     e.id as IDEntrega
                 FROM submissoes as s
                 INNER JOIN entergas e ON(s.id = e.IDSubmissao)
@@ -233,7 +244,7 @@ class SubmissoesController extends Controller
                     $item = [];
                     $item[] = $r->Evento;
                     $item[] = $r->Inscrito;
-                    $item[] = $r->Trabalho;
+                    $item[] = "<a href=".url('storage/regras_submissao/'.$r->Regras).">$r->Regras</a>";
                     $item[] = $r->Categoria;
                     $item[] = "<a href=".route('Submissoes/Correcao',$r->IDEntrega).">Abrir</a>";
                     $itensJSON[] = $item;

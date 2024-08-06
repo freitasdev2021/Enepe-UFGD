@@ -8,7 +8,7 @@
         <div class="fr-card-body">
             <!--LISTAS-->
             <div class="col-sm-12 p-2 center-form">
-                <form action="{{route('Submissoes/Save')}}" method="POST">
+                <form action="{{route('Submissoes/Save')}}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method("POST")
                     @if(session('success'))
@@ -25,9 +25,13 @@
                     <input type="hidden" name="id" value="{{$Registro->id}}">
                     @endif
                     <div class="row">
-                        <div class="col-sm-4">
-                            <label>Titulo</label>
-                            <input type="text" name="Titulo" class="form-control" value="{{isset($Registro) ? $Registro->Titulo : ''}}" required>
+                        <div class="col-sm-2">
+                            <label>Min. Caracteres</label>
+                            <input type="number" name="MinLength" class="form-control" value="{{isset($Registro) ? $Registro->MinLength : ''}}" required>
+                        </div>
+                        <div class="col-sm-2">
+                            <label>Max. Caracteres</label>
+                            <input type="number" name="MaxLength" class="form-control" value="{{isset($Registro) ? $Registro->MaxLength : ''}}" required>
                         </div>
                         <div class="col-sm-4">
                             <label>Evento</label>
@@ -39,7 +43,7 @@
                             </select>
                         </div>
                         <div class="col-sm-4">
-                            <label>Categoria</label>
+                            <label>Modalidade</label>
                             <select name="Categoria" class="form-control">
                                 <option value="Ensino">Ensino</option>
                                 <option value="Pesquisa">Pesquisa</option>
@@ -50,8 +54,9 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-12">
-                            <label>Descrição</label>
-                            <textarea name="Regras" class="form-control">{{isset($Registro) ? $Registro->Regras : ''}}</textarea>
+                            <label>Regras</label>
+                            <input type="file" class="form-control" name="Regras">
+                            <input type="hidden" name="oldRegras" value="{{isset($Registro) && $Registro->Regras}}" accept="application/pdf">
                         </div>
                     </div>
                     <br>

@@ -5,6 +5,8 @@ namespace App\View\Components;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
+use Illuminate\Support\Facades\Session;
+use App\Models\Evento;
 
 class educacionalLayout extends Component
 {

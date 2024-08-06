@@ -28,7 +28,7 @@
                     @else
                     <x-modulo nome="Submissões" icon="bx bx-task" rota="Submissoes/index" endereco="Submissoes"/> 
                     <x-modulo nome="Palestras" icon="bx bx-user-pin" rota="Palestras/index" endereco="Palestras"/>
-                    <x-modulo nome="Atividades" icon="bx bxs-pencil" rota="Atividades/index" endereco="Atividades"/>
+                    <x-modulo nome="Apresentações" icon="bx bxs-pencil" rota="Atividades/index" endereco="Atividades"/>
                     @endif
                     @endif 
                 </div>

@@ -14,7 +14,8 @@ class Submissao extends Model
     protected $fillable = [
         'IDEvento',
         'Categoria',
-        'Titulo',
+        'MaxLength',
+        'MinLength',
         'Regras'
     ];
 }

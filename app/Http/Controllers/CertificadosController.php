@@ -89,10 +89,12 @@ class CertificadosController extends Controller
             $Evento = Evento::find($request->IDEvento);
             $Certificados = [];
             for($i=0;$i<count($Inscrit);$i++){
-                $Certificados[] = array(
-                    "Modelos" => $Modelos[$i],
-                    "Inscritos" => $Inscrit[$i]
-                );
+                if(!Certificados::where('IDEvento',$request->IDEvento)->where('IDModelo',$Modelos[$i])->where('IDInscrito',$Inscrit[$i])){
+                    $Certificados[] = array(
+                        "Modelos" => $Modelos[$i],
+                        "Inscritos" => $Inscrit[$i]
+                    );
+                }
             }
             //dd($Certificados);
             foreach ($Certificados as $Certificado) {
@@ -101,12 +103,32 @@ class CertificadosController extends Controller
                 //dd($Modelo->TPModelo);
                 switch($Modelo->TPModelo){
                     case "Organizadores":
+                        if(!str_contains($Modelo->DSModelo,' {organizador} ') || !str_contains($Modelo->DSModelo,' {evento} ') || !User::find($Certificado['Inscritos'])){
+                            $aid = '';
+                            $mensagem = "Atenção! Modelo de Organizadores Feito de Maneira Incorreta! ou o Certificado não atende os requisitos de Organizador, favor refaze-lo na aba 'Modelos' ";
+                            $status = 'error';
+                            $rota = 'Certifica/index';
+                            return false;
+                        }
                         $Inscrito = User::find($Certificado['Inscritos']);
                         $STRConteudo = str_replace(['{organizador}','{evento}'],[$Inscrito->name,$Evento->Titulo],$Modelo->DSModelo);
                         $Conteudo = explode("|",$STRConteudo);
                         self::setCertificado($Conteudo,$Certificado['Inscritos'],$Modelo->Arquivo,$Inscrito->name,$Evento->Titulo,$request->IDEvento,$Certificado['Modelos']);
                     break;
                     case "Apresentadores":
+                        if(!str_contains($Modelo->DSModelo,' {apresentador} ') || 
+                        !str_contains($Modelo->DSModelo,' {evento} ') || 
+                        !str_contains($Modelo->DSModelo,' {submissao} ') || 
+                        !str_contains($Modelo->DSModelo,' {palavraschave} ') || 
+                        !str_contains($Modelo->DSModelo,' {autores} ') ||
+                        !User::find($Certificado['Inscritos'])
+                        ){
+                            $aid = '';
+                            $mensagem = "Atenção! Modelo de Organizadores Feito de Maneira Incorreta! ou o Certificado não atende os requisitos de Organizador, favor refaze-lo na aba 'Modelos' ";
+                            $status = 'error';
+                            $rota = 'Certifica/index';
+                            return false;
+                        }
                         $Inscrito = User::find($Certificado['Inscritos']);
                         $Trabalho = self::getTrabalho($Certificado['Inscritos'],$request->IDEvento);
                         $STRConteudo = str_replace(['{apresentador}','{evento}','{submissao}','{palavraschave}','{autores}'],[$Inscrito->name,$Evento->Titulo,$Trabalho->Titulo,$Trabalho->palavrasChave,$Trabalho->Autores],$Modelo->DSModelo);
@@ -219,7 +241,7 @@ class CertificadosController extends Controller
         copy($certificatesPath . '/' . $fileName, $publicCertificatesPath . '/' . $fileName);
         //salvar no banco
         Certificados::create([
-            "Certificado" => realpath(public_path('certificados')."/".$fileName),
+            "Certificado" => $fileName,
             "IDInscrito" => $IDInscrito,
             "IDEvento" => $IDEvento,
             "Codigo" => $CDCertificado,

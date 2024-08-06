@@ -130,7 +130,7 @@ Route::middleware('auth')->group(function () {
     //Route::post('Eventos/inscreverAluno',[EventosController::class,'inscreverAluno'])->name('Eventos/inscreverAluno');
     //
     // Rota para gerar a assinatura para ingressar na reunião
-    Route::get('/zoom/signature', [AtividadesController::class, 'generateZoomSignature'])->name('zoom.signature');
+    //Route::get('/zoom/signature', [AtividadesController::class, 'generateZoomSignature'])->name('zoom.signature');
     //
 });
 
