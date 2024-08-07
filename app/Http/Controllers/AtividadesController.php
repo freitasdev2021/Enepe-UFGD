@@ -10,6 +10,7 @@ use Firebase\JWT\JWT;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\DyteController;
 class AtividadesController extends Controller
 {
     public const submodulos = array([
@@ -67,8 +68,7 @@ class AtividadesController extends Controller
     public function atividade($IDAtividade){
         return view('Salas.sala',[
             'Sala' => Atividade::find($IDAtividade),
-            'Nome' => Auth::user()->name,
-            'Email' => Auth::user()->email
+            'Nome' => Auth::user()->name
         ]);
     }
 
@@ -85,27 +85,19 @@ class AtividadesController extends Controller
                 ////
                 $rota = 'Eventos/Atividades/Novo';
                 $aid = $request->IDEvento;
-                $zoomService = new ZoomController();
-                $accessToken = $zoomService->getAccessToken();
                 $meetingData = [
-                    'topic' => $request->Titulo,
-                    'type' => 2,
-                    'start_time' => $request->Inicio,
-                    // 'duration' => 30,
-                    'timezone'=> "America/Campo_Grande",
-                    'password' => '123',
-                    'settings' => [
-                        'join_before_host' => true, // Permitir ingresso antes do host
-                        'host_video' => true,
-                        'participant_video' => true,
-                        'mute_upon_entry' => true,
-                        'waiting_room' => false,
-                    ]
+                    "title" => $request->Titulo,
+                    "preferred_region" => "ap-south-1",
+                    "record_on_start" => false,
+                    "live_stream_on_start" => false
                 ];
-                $meeting = $zoomService->createMeeting($accessToken, $meetingData);
+
+                $meeting = DyteController::createMeeting($meetingData);
+                //$met = json_decode($meeting,true);
+                //dd($meeting);
                 $data['PWMeeting'] = 123;
-                $data['IDMeeting'] = $meeting['id'];
-                $data['URLMeeting'] = $meeting['join_url'];
+                $data['IDMeeting'] = $meeting['data']['id'];
+                $data['URLMeeting'] = 'urltest';
                 
                 Atividade::create($data);
             }else{

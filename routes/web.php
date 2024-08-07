@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DyteController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EventosController;
 use App\Http\Controllers\PalestrasController;
@@ -31,6 +32,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+        //ATIVIDADES
+        Route::get('/Atividades/Abrir',[DyteController::class,'abrirSala']);
         //EVENTOS
         Route::get('Eventos/Cadastro/{id}',[EventosController::class,'cadastro'])->name('Eventos/Edit');
         Route::get('Eventos',[EventosController::class,'index'])->name('Eventos/index');
