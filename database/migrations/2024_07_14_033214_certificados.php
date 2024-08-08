@@ -15,7 +15,11 @@ return new class extends Migration
             $table->id();
             $table->longText('Certificado');
             $table->integer('IDInscrito');
+            $table->integer('IDModelo');
+            $table->integer('IDEvento');
             $table->string('Codigo',30);
+            $table->date('created_at');
+            $table->date('updated_at');
         });
     }
 

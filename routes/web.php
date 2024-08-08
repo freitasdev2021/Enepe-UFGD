@@ -34,6 +34,8 @@ Route::middleware('auth')->group(function () {
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
         //ATIVIDADES
         Route::get('/Atividades/Abrir',[DyteController::class,'abrirSala']);
+        //SUBMISSOES
+        Route::post('Submissoes/Entregas/Save', [SubmissoesController::class, 'saveEntrega'])->name('Submissoes/Entregas/Save');
         //EVENTOS
         Route::get('Eventos/Cadastro/{id}',[EventosController::class,'cadastro'])->name('Eventos/Edit');
         Route::get('Eventos',[EventosController::class,'index'])->name('Eventos/index');
@@ -90,6 +92,8 @@ Route::middleware('auth')->group(function () {
         Route::post('Avaliadores/Save', [AvaliadoresController::class, 'save'])->name('Avaliadores/Save');
         Route::post('Avaliadores/Delete', [AvaliadoresController::class, 'delete'])->name('Avaliadores/Delete');
         //SUBMISSOES
+        Route::get('Submissoes/Entrega/{IDSubmissao}', [SubmissoesController::class, 'entrega'])->name('Submissoes/Entrega');
+        Route::get('Submissoes/RemoveAtr/{id}', [SubmissoesController::class, 'RemoveAtr'])->name('Submissoes/RemoveAtr');
         Route::get('Submissoes/Cadastro', [SubmissoesController::class, 'cadastro'])->name('Submissoes/Novo');
         Route::get('Submissoes/Cadastro/{id}', [SubmissoesController::class, 'cadastro'])->name('Submissoes/Edit');
         Route::get('Submissoes/Entregues/{IDSubmissao}', [SubmissoesController::class, 'entregues'])->name('Submissoes/Entregues');
@@ -119,8 +123,6 @@ Route::middleware('auth')->group(function () {
     });
     //CAMADA DE PROTEÇÃO INSCRITOS
     Route::middleware('participante')->group(function(){
-        Route::get('Submissoes/Entrega/{IDSubmissao}', [SubmissoesController::class, 'entrega'])->name('Submissoes/Entrega');
-        Route::post('Submissoes/Entregas/Save', [SubmissoesController::class, 'saveEntrega'])->name('Submissoes/Entregas/Save');
         Route::post('Eventos/Entrar',[EventosController::class,'entrar'])->name('Eventos/Entrar');
         Route::post('Eventos/Inscrever',[EventosController::class,'inscrever'])->name('Eventos/Inscrever');
         Route::get('Eventos/Inscricao/{IDEvento}', [EventosController::class, 'inscricao'])->name('Eventos/Inscricao');

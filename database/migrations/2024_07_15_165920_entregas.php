@@ -15,9 +15,15 @@ return new class extends Migration
             $table->id();
             $table->integer('IDInscrito');
             $table->integer('IDSubmissao');
+            $table->integer('IDAvaliador');
+            $table->string('Tematica',45);
+            $table->integer('IDApresentador');
             $table->string('Titulo',50);
-            $table->string('Descricao',100);
-            $table->string('Trabalho',100);
+            $table->mediumText('Descricao');
+            $table->string('Autores',100);
+            $table->string('palavrasChave',100);
+            $table->date('created_at');
+            $table->date('updated_at');
         });
     }
 

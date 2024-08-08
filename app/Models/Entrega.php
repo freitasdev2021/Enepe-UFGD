@@ -16,6 +16,8 @@ class Entrega extends Model
         'IDSubmissao',
         'IDAvaliador',
         'Titulo',
+        'Tematica',
+        'IDApresentador',
         'Descricao',
         'Autores',
         'palavrasChave'

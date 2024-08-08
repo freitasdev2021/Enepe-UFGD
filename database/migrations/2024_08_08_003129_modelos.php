@@ -11,10 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('conversas',function(Blueprint $table){
+        Schema::create('modelos',function(Blueprint $table){
             $table->id();
-            $table->integer('IDRemetente')->nullable(false);
-            $table->integer('IDDestinatario')->nullable(false);
+            $table->string('Nome',45);
+            $table->string('Arquivo',250);
+            $table->string('TPModelo',45);
+            $table->text('DSModelo');
+            $table->date('created_at');
+            $table->date('updated_at');
         });
     }
 

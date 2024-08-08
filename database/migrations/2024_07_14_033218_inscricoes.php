@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->integer('IDEvento');
             $table->integer('IDUser');
+            $table->string('Categoria',45);
+            $table->date('created_at');
+            $table->date('updated_at');
         });
     }
 

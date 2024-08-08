@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('Feedback',100);
             $table->integer('IDEntrega');
+            $table->integer('Status');
+            $table->date('created_at');
+            $table->date('updated_at');
         });
     }
 

@@ -14,12 +14,14 @@ return new class extends Migration
         Schema::create('atividades',function(Blueprint $table){
             $table->id();
             $table->integer('IDSala');
+            $table->text('IDMeeting');
+            $table->string('URLMeeting',100);
             $table->string('Titulo',30);
             $table->string('Descricao',100);
-            $table->date('Data');
             $table->time('Inicio');
-            $table->time('Termino');
-            $table->json('Chat');
+            $table->string('PWMeeting',45);
+            $table->date('created_at');
+            $table->date('updated_at');
         });
     }
 

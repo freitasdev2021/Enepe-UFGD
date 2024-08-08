@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('mensagens',function(Blueprint $table){
+        Schema::create('telespectadores',function(Blueprint $table){
             $table->id();
-            $table->integer('IDConversa')->nullable(false);
-            $table->string('Mensagem',100);
+            $table->integer('IDInscrito');
+            $table->integer('IDPalestra');
+            $table->date('created_at');
+            $table->date('updated_at');
         });
     }
 

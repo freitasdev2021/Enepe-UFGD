@@ -103,32 +103,32 @@ class CertificadosController extends Controller
                 //dd($Modelo->TPModelo);
                 switch($Modelo->TPModelo){
                     case "Organizadores":
-                        if(!str_contains($Modelo->DSModelo,' {organizador} ') || !str_contains($Modelo->DSModelo,' {evento} ') || !User::find($Certificado['Inscritos'])){
-                            $aid = '';
-                            $mensagem = "Atenção! Modelo de Organizadores Feito de Maneira Incorreta! ou o Certificado não atende os requisitos de Organizador, favor refaze-lo na aba 'Modelos' ";
-                            $status = 'error';
-                            $rota = 'Certifica/index';
-                            return false;
-                        }
+                        // if(!str_contains($Modelo->DSModelo,' {organizador} ') || !str_contains($Modelo->DSModelo,' {evento} ') || !User::find($Certificado['Inscritos'])){
+                        //     $aid = '';
+                        //     $mensagem = "Atenção! Modelo de Organizadores Feito de Maneira Incorreta! ou o Certificado não atende os requisitos de Organizador, favor refaze-lo na aba 'Modelos' ";
+                        //     $status = 'error';
+                        //     $rota = 'Certifica/index';
+                        //     return false;
+                        // }
                         $Inscrito = User::find($Certificado['Inscritos']);
                         $STRConteudo = str_replace(['{organizador}','{evento}'],[$Inscrito->name,$Evento->Titulo],$Modelo->DSModelo);
                         $Conteudo = explode("|",$STRConteudo);
                         self::setCertificado($Conteudo,$Certificado['Inscritos'],$Modelo->Arquivo,$Inscrito->name,$Evento->Titulo,$request->IDEvento,$Certificado['Modelos']);
                     break;
                     case "Apresentadores":
-                        if(!str_contains($Modelo->DSModelo,' {apresentador} ') || 
-                        !str_contains($Modelo->DSModelo,' {evento} ') || 
-                        !str_contains($Modelo->DSModelo,' {submissao} ') || 
-                        !str_contains($Modelo->DSModelo,' {palavraschave} ') || 
-                        !str_contains($Modelo->DSModelo,' {autores} ') ||
-                        !User::find($Certificado['Inscritos'])
-                        ){
-                            $aid = '';
-                            $mensagem = "Atenção! Modelo de Organizadores Feito de Maneira Incorreta! ou o Certificado não atende os requisitos de Organizador, favor refaze-lo na aba 'Modelos' ";
-                            $status = 'error';
-                            $rota = 'Certifica/index';
-                            return false;
-                        }
+                        // if(!str_contains($Modelo->DSModelo,' {apresentador} ') || 
+                        // !str_contains($Modelo->DSModelo,' {evento} ') || 
+                        // !str_contains($Modelo->DSModelo,' {submissao} ') || 
+                        // !str_contains($Modelo->DSModelo,' {palavraschave} ') || 
+                        // !str_contains($Modelo->DSModelo,' {autores} ') ||
+                        // !User::find($Certificado['Inscritos'])
+                        // ){
+                        //     $aid = '';
+                        //     $mensagem = "Atenção! Modelo de Organizadores Feito de Maneira Incorreta! ou o Certificado não atende os requisitos de Organizador, favor refaze-lo na aba 'Modelos' ";
+                        //     $status = 'error';
+                        //     $rota = 'Certifica/index';
+                        //     return false;
+                        // }
                         $Inscrito = User::find($Certificado['Inscritos']);
                         $Trabalho = self::getTrabalho($Certificado['Inscritos'],$request->IDEvento);
                         $STRConteudo = str_replace(['{apresentador}','{evento}','{submissao}','{palavraschave}','{autores}'],[$Inscrito->name,$Evento->Titulo,$Trabalho->Titulo,$Trabalho->palavrasChave,$Trabalho->Autores],$Modelo->DSModelo);

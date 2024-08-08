@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Middleware;
+use Illuminate\Support\Facades\Auth;
 
 use Closure;
 use Illuminate\Http\Request;
@@ -15,6 +16,9 @@ class banca
      */
     public function handle(Request $request, Closure $next): Response
     {
+        if(!in_array(Auth::user()->tipo,[1,2])){
+            return redirect()->route('dashboard');
+        }
         return $next($request);
     }
 }

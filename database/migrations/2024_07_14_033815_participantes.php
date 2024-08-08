@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->integer('IDInscrito');
             $table->integer('IDSala');
+            $table->date('created_at');
+            $table->date('updated_at');
         });
     }
 

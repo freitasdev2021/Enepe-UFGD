@@ -15,6 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('Nome',50)->nullable(false);
             $table->string('Curriculo',100);
+            $table->string('Foto',100);
+            $table->string('Email',50);
+            $table->date('created_at');
+            $table->date('updated_at');
         });
     }
 

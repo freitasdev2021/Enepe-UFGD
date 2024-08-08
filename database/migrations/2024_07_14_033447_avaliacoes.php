@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('avaliacoes',function(Blueprint $table){
             $table->id();
             $table->json('Avaliacao');
+            $table->date('created_at');
+            $table->date('updated_at');
         });
     }
 

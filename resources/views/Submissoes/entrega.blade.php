@@ -15,6 +15,7 @@
                 <br>
                 @endif
                 <input type="hidden" name="IDSubmissao" value="{{$IDSubmissao}}">
+                @if(count($Entregas) == 0 && Auth::user()->tipo == 3)
                 <input type="hidden" name="IDEntrega" value="">
                 <div class="row">
                     <div class="col-sm-12">
@@ -33,11 +34,45 @@
                     </div>
                 </div>
                 <div class="row">
+                    <div class="col-sm-6">
+                        <label>Apresentador</label>
+                        <select name="IDApresentador" class="form-control">
+                            <option>Selecione</option>
+                            @foreach($Apresentadores as $a)
+                            <option value="{{$a->id}}">{{$a->name}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-sm-6">
+                        <label>Área Temática</label>
+                        <select name="Tematica" class="form-control">
+                            <option>Selecione</option>
+                            @foreach($Tematica as $t)
+                            <option value="{{$t}}">{{$t}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
                     <div class="col-sm-12">
                         <label>Descrição do Trabalho</label>
                         <textarea name="Descricao" class="form-control"></textarea>
                     </div>
                 </div>
+                @elseif(Auth::user()->tipo == 1)
+                <input type="hidden" name="IDEntrega" value="{{$Entregas[0]->id}}">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <label>Apresentador</label>
+                        <select name="IDApresentador" class="form-control">
+                            <option>Selecione</option>
+                            @foreach($Apresentadores as $a)
+                            <option value="{{$a->id}}">{{$a->name}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                @endif
                 <br>
                 <div class="col-sm-12 text-left row">
                     <button class="btn bg-fr text-white col-auto">Salvar</button>

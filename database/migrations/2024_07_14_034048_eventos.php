@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('Descricao',250)->nullable(false);
             $table->dateTime('Inicio');
             $table->dateTime('Termino');
+            $table->date('created_at');
+            $table->date('updated_at');
         });
     }
 

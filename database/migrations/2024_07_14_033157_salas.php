@@ -13,8 +13,11 @@ return new class extends Migration
     {
         Schema::create('salas',function(Blueprint $table){
             $table->id();
+            $table->integer('IDEvento');
             $table->string('Sala',50);
             $table->bigInteger('Capacidade');
+            $table->date('created_at');
+            $table->date('updated_at');
         });
     }
 

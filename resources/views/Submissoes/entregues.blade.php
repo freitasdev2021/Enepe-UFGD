@@ -28,7 +28,10 @@
                         <th style="text-align:center;" scope="col">Título</th>
                         <th style="text-align:center;" scope="col">Categoria</th>
                         <th style="text-align:center;" scope="col">Inscrito</th>
+                        <th style="text-align:center;" scope="col">Apresentador</th>
                         <th style="text-align:center;" scope="col">Avaliador</th>
+                        <th style="text-align:center;" scope="col">Situação</th>
+                        <th style="text-align:center;" scope="col">Opções</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -43,4 +46,16 @@
             <!--//-->
         </div>
     </div>
+    <script>
+      function removerAtribuicao(IDEntrega){
+        if(confirm("Deseja Remover a Atribuição de Avaliador desse Avaliador para essa Entrega?")){
+          $.ajax({
+              method : "GET",
+              url : IDEntrega,
+          }).done(function(response){
+              window.location.reload()
+          })
+        }
+      }
+    </script>
 </x-educacional-layout>

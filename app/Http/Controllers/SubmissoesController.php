@@ -114,9 +114,14 @@ class SubmissoesController extends Controller
     public function entrega($IDSubmissao){
         $Submissao = Submissao::find($IDSubmissao);
         $IDUser = Auth::user()->id;
+        $AND = '';
+        if(Auth::user()->tipo == 3){
+            $AND =  "e.IDInscrito = $IDUser";
+        }
         $Entregas = DB::select("SELECT 
                 MIN(e.created_at) as created_at,  -- Assume the earliest created_at for each group
                 e.Titulo,
+                MIN(e.IDApresentador) as IDApresentador,
                 MIN(e.id) as id,  -- Assume the minimum id for each group
                 COALESCE(MAX(r.Status), 'Desconhecido') as Situacao,  -- Use MAX to get a representative status
                 COALESCE(MAX(CASE WHEN e.id = r.IDEntrega THEN r.Feedback ELSE 'Aguardando Correção' END), 'Aguardando Correção') as Feedback
@@ -126,14 +131,29 @@ class SubmissoesController extends Controller
                 reprovacoes r ON(e.id = r.IDEntrega)
             WHERE 
                 e.IDSubmissao = $IDSubmissao 
-                AND e.IDInscrito = $IDUser 
+                $AND
             GROUP BY 
                 e.Titulo,r.Status;
         ");
         return view('Submissoes.entrega',[
             'Submissao' => $Submissao,
             'Entregas' => $Entregas,
-            'IDSubmissao' => $IDSubmissao
+            'IDSubmissao' => $IDSubmissao,
+            'Tematica' => [
+                'FACALE',
+                'FACE',
+                'FACET',
+                'FADIR',
+                'FAED',
+                'FAEN',
+                'FAIND',
+                'FCA',
+                'FCBA',
+                'FCH',
+                'FCS',
+                'Outro'
+            ],
+            'Apresentadores' => User::all()
         ]);
     }
 
@@ -182,22 +202,37 @@ class SubmissoesController extends Controller
     public function saveEntrega(Request $request){
         try{
             $aid = $request->IDSubmissao;
-            $rota = 'Submissoes/Entrega';
-            $mensagem = 'Trabalho Enviado com Sucesso!';
+            
             $status = 'success';
             $data = $request->all();
             $data['IDInscrito'] = Auth::user()->id;
-            if(!$request->IDEntrega){
-                Entrega::create($data);
+            if(Auth::user()->tipo == 3){
+                $rota = 'Submissoes/Entrega';
+                $mensagem = 'Trabalho Enviado com Sucesso!';
+                if(!$request->IDEntrega){
+                    Entrega::create($data);
+                }else{
+                    unset($data['_token']);
+                    unset($data['_method']);
+                    Entrega::find($request->IDEntrega)->update($data);
+                }
             }else{
+                $rota = 'Submissoes/index';
+                $mensagem = 'Apresentador Trocado com Sucesso!';
                 unset($data['_token']);
                 unset($data['_method']);
-                Entrega::find($request->IDEntrega)->update($data);
+                Entrega::find($request->IDEntrega)->update(['IDApresentador'=>$request->IDApresentador]);
             }
         }catch(\Throwable $th){
             $mensagem = 'Erro '. $th->getMessage();
-            $rota = 'Submissoes/Entrega';
-            $aid = $request->IDSubmissao;
+            if(Auth::user()->tipo == 3){
+                $rota = 'Submissoes/Entrega';
+                $aid = $request->IDSubmissao;
+            }else{
+                $rota = 'Submissoes/index';
+                $aid = '';
+            }
+            
             $status = 'error';
         }finally{
             return redirect()->route($rota, $aid)->with($status, $mensagem);
@@ -231,7 +266,7 @@ class SubmissoesController extends Controller
             $registros = DB::select("SELECT ev.Titulo as Evento,
                     i.name as Inscrito,
                     s.Categoria,
-                    s.Regras
+                    s.Regras,
                     e.id as IDEntrega
                 FROM submissoes as s
                 INNER JOIN entergas e ON(s.id = e.IDSubmissao)
@@ -300,6 +335,10 @@ class SubmissoesController extends Controller
         }
     }
 
+    public function removeAtr($IDEntrega){
+        Entrega::find($IDEntrega)->update(["IDAvaliador"=>0]);
+    }
+
     public function getEntregues($IDSubmissao){
         
         $selectAvaliador = "<select name='IDAvaliador[]'>";
@@ -314,12 +353,15 @@ class SubmissoesController extends Controller
                 s.Categoria,
                 a.id as IDAvaliador,
                 u.name as Inscrito,
+                ap.name as Apresentador,
                 a.name as Avaliador,
-                r.Status as Situacao,
-                e.IDInscrito
+                CASE WHEN e.id = r.IDEntrega THEN r.Status ELSE 'Aguardando Correção' END as Status,
+                e.IDInscrito,
+                e.id as IDEntrega
             FROM entergas e
             INNER JOIN submissoes s ON(s.id = e.IDSubmissao)
             INNER JOIN users u ON(u.id = e.IDInscrito)
+            INNER JOIN users ap ON(ap.id = e.IDApresentador)
             LEFT JOIN users a ON(a.id = e.IDAvaliador)
             LEFT JOIN reprovacoes r ON(e.id = r.IDEntrega) WHERE s.id = $IDSubmissao";
         
@@ -327,12 +369,15 @@ class SubmissoesController extends Controller
 
         if(count($registros) > 0){
             foreach($registros as $r){
+                $RemoveATR = '"'. strval(route('Submissoes/RemoveAtr',$r->IDEntrega)). '"';
                 $item = [];
                 $item[] = $r->Titulo;
                 $item[] = $r->Categoria;
                 $item[] = $r->Inscrito;
-                $item[] = ($r->IDAvaliador == 0) ? $selectAvaliador."<input type='hidden' value='$r->IDInscrito' name='Inscrito[]'>" : $r->Avaliador;
-                $item[] = $r->Situacao;
+                $item[] = $r->Apresentador;
+                $item[] = ($r->IDAvaliador == 0) ? $selectAvaliador."<input type='hidden' value='$r->IDInscrito' name='Inscrito[]'>" : $r->Avaliador." <button class='btn btn-xs btn-danger' type='button' onclick='removerAtribuicao($RemoveATR)'>Remover Atribuição</button>";
+                $item[] = $r->Status;
+                $item[] = "<a href=".route('Submissoes/Entrega',$r->IDEntrega).">Abrir</a>";
                 $itensJSON[] = $item;
             }
         }else{

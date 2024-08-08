@@ -14,9 +14,12 @@ return new class extends Migration
         Schema::create('submissoes',function(Blueprint $table){
             $table->id();
             $table->integer('IDEvento');
-            $table->integer('IDAvaliador');
-            $table->string('Titulo',50);
-            $table->json('Regras');
+            $table->string('Categoria',45);
+            $table->string('Regras',100);
+            $table->bigInteger('MaxLength');
+            $table->bigInteger('MinLength');
+            $table->date('created_at');
+            $table->date('updated_at');
         });
     }
 
