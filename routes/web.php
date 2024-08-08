@@ -14,17 +14,19 @@ use App\Http\Controllers\AtividadesController;
 use App\Http\Controllers\InscricoesController;
 use App\Http\Controllers\ZoomController;
 use Illuminate\Support\Facades\Route;
-
+//ROTAS PRINCIPAIS
 Route::get('/', function () {
     return view('auth.register');
 });
-
 Route::get('/dashboard', function () {
     return view('dashboard',[
         "Certificados" => Certificados::where("IDInscrito",Auth::user()->id)->get()
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
+//ROTA DO SITE
+Route::get('Enepe-2024-UFGD',[SiteController::class,'site'])->name("Enepe");
 Route::post('Certificados/Validar', [CertificadosController::class, 'validarCertificados'])->name('Certificados/Validar');
+//ROTA DO USUARIO LOGADO
 Route::middleware('auth')->group(function () {
     //CAMADA DE PROTEÇÃO GERAL
     Route::middleware('geral')->group(function(){
@@ -35,6 +37,7 @@ Route::middleware('auth')->group(function () {
         //ATIVIDADES
         Route::get('/Atividades/Abrir',[DyteController::class,'abrirSala']);
         //SUBMISSOES
+        Route::get('Submissoes/Entrega/{IDSubmissao}', [SubmissoesController::class, 'entrega'])->name('Submissoes/Entrega');
         Route::post('Submissoes/Entregas/Save', [SubmissoesController::class, 'saveEntrega'])->name('Submissoes/Entregas/Save');
         //EVENTOS
         Route::get('Eventos/Cadastro/{id}',[EventosController::class,'cadastro'])->name('Eventos/Edit');
@@ -92,7 +95,6 @@ Route::middleware('auth')->group(function () {
         Route::post('Avaliadores/Save', [AvaliadoresController::class, 'save'])->name('Avaliadores/Save');
         Route::post('Avaliadores/Delete', [AvaliadoresController::class, 'delete'])->name('Avaliadores/Delete');
         //SUBMISSOES
-        Route::get('Submissoes/Entrega/{IDSubmissao}', [SubmissoesController::class, 'entrega'])->name('Submissoes/Entrega');
         Route::get('Submissoes/RemoveAtr/{id}', [SubmissoesController::class, 'RemoveAtr'])->name('Submissoes/RemoveAtr');
         Route::get('Submissoes/Cadastro', [SubmissoesController::class, 'cadastro'])->name('Submissoes/Novo');
         Route::get('Submissoes/Cadastro/{id}', [SubmissoesController::class, 'cadastro'])->name('Submissoes/Edit');

@@ -1,0 +1,116 @@
+*{
+    text-decoration:none;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+
+.poppins-thin {
+    font-family: "Poppins", sans-serif;
+    font-weight: 100;
+    font-style: normal;
+}
+
+.capa img{
+    width:100%;
+}
+
+.capa img{
+    height:500px;
+}
+
+.salas{
+    margin:10px;
+}
+
+.botao{
+    margin:40px;
+}
+
+.botao a{
+    background:green;
+    color:white;
+    border-radius:5px;
+}
+
+.evento{
+    width:50%;
+    background-color: white;
+    height:auto;
+    display:flex;
+    justify-content:space-between;
+}
+
+.sobre{
+    width:50%;
+    background-color: white;
+    height:auto;
+    padding:50px;
+}
+
+.sobre h1,p{
+    margin:20px;
+}
+
+.evento h1,i{
+    margin:20px;
+}
+
+.evento i{
+    margin-top:0px;
+}
+
+body{
+    background: url('../img/background.jpg');
+    background-repeat: no-repeat;
+}
+
+main{
+    display:flex;
+    margin-top:80px;
+    flex-direction:column;
+    align-items:center;
+}
+
+#logo{
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    color:black;
+    font-size:1.5em;
+}
+
+#login{
+    font-size:1.5em;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    color:black;
+}
+
+.nav-top{
+    display:flex;
+    width:50%;
+    height:30px;
+    padding:10px;
+    flex-direction:row;
+    justify-content:space-between;
+    background:transparent;
+    align-items:center;
+}
+
+.nav-top h1,a{
+    padding:10px;
+}
+
+header{
+    width:50%;
+    margin-top:60px;
+    background:white;
+}
+
+.subs{
+    display:flex;
+    justify-content:center;
+    flex-direction:row;
+    flex-wrap:wrap;
+}
+
+.subs button{
+    margin:5px;
+}

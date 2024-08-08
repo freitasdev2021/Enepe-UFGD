@@ -115,13 +115,15 @@ class SubmissoesController extends Controller
         $Submissao = Submissao::find($IDSubmissao);
         $IDUser = Auth::user()->id;
         $AND = '';
+        $SEL = 'MIN(e.IDApresentador) as IDApresentador,';
         if(Auth::user()->tipo == 3){
-            $AND =  "e.IDInscrito = $IDUser";
+            $AND =  "AND e.IDInscrito = $IDUser";
+            $SEL = '';
         }
         $Entregas = DB::select("SELECT 
                 MIN(e.created_at) as created_at,  -- Assume the earliest created_at for each group
                 e.Titulo,
-                MIN(e.IDApresentador) as IDApresentador,
+                $SEL
                 MIN(e.id) as id,  -- Assume the minimum id for each group
                 COALESCE(MAX(r.Status), 'Desconhecido') as Situacao,  -- Use MAX to get a representative status
                 COALESCE(MAX(CASE WHEN e.id = r.IDEntrega THEN r.Feedback ELSE 'Aguardando Correção' END), 'Aguardando Correção') as Feedback
@@ -341,6 +343,11 @@ class SubmissoesController extends Controller
 
     public function getEntregues($IDSubmissao){
         
+        $WHERE = "";
+        if(isset($_GET['Modalidade']) && !empty($_GET['Modalidade'])){
+            $WHERE = " AND s.Categoria='".$_GET['Modalidade']."'";
+        }
+
         $selectAvaliador = "<select name='IDAvaliador[]'>";
         $selectAvaliador .= "<option value=''>Selecione</option>";
         foreach(User::select('id','name')->where('tipo',2)->get() as $a){
@@ -363,8 +370,8 @@ class SubmissoesController extends Controller
             INNER JOIN users u ON(u.id = e.IDInscrito)
             INNER JOIN users ap ON(ap.id = e.IDApresentador)
             LEFT JOIN users a ON(a.id = e.IDAvaliador)
-            LEFT JOIN reprovacoes r ON(e.id = r.IDEntrega) WHERE s.id = $IDSubmissao";
-        
+            LEFT JOIN reprovacoes r ON(e.id = r.IDEntrega) WHERE s.id = $IDSubmissao $WHERE";;
+            //dd($SQL);
         $registros = DB::select($SQL);
 
         if(count($registros) > 0){

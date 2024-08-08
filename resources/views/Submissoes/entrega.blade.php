@@ -15,7 +15,7 @@
                 <br>
                 @endif
                 <input type="hidden" name="IDSubmissao" value="{{$IDSubmissao}}">
-                @if(count($Entregas) == 0 && Auth::user()->tipo == 3)
+                @if(count($Entregas) == 0 || Auth::user()->tipo == 3)
                 <input type="hidden" name="IDEntrega" value="">
                 <div class="row">
                     <div class="col-sm-12">
@@ -36,7 +36,7 @@
                 <div class="row">
                     <div class="col-sm-6">
                         <label>Apresentador</label>
-                        <select name="IDApresentador" class="form-control">
+                        <select name="IDApresentador" class="form-control" required>
                             <option>Selecione</option>
                             @foreach($Apresentadores as $a)
                             <option value="{{$a->id}}">{{$a->name}}</option>
@@ -45,7 +45,7 @@
                     </div>
                     <div class="col-sm-6">
                         <label>Área Temática</label>
-                        <select name="Tematica" class="form-control">
+                        <select name="Tematica" class="form-control" required>
                             <option>Selecione</option>
                             @foreach($Tematica as $t)
                             <option value="{{$t}}">{{$t}}</option>
@@ -56,7 +56,7 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <label>Descrição do Trabalho</label>
-                        <textarea name="Descricao" class="form-control"></textarea>
+                        <textarea name="Descricao" class="form-control" required minlength="{{$Submissao->MinLength}}" maxlength="{{$Submissao->MaxLength}}"></textarea>
                     </div>
                 </div>
                 @elseif(Auth::user()->tipo == 1)
