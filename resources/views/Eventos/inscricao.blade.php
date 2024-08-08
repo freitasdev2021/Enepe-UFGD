@@ -6,6 +6,16 @@
        <div class="card-body">
           <form action="{{route('Eventos/Inscrever')}}" method="POST">
             @csrf
+            @if(session('success'))
+            <div class="col-sm-12 shadow p-2 bg-success text-white">
+                <strong>{{session('success')}}</strong>
+            </div>
+            @elseif(session('error'))
+            <div class="col-sm-12 shadow p-2 bg-danger text-white">
+                <strong>{{session('error')}}</strong>
+            </div>
+            <br>
+            @endif
             <input type="hidden" name="IDEvento" value="{{$Evento->id}}">
             <div class="col-sm-12">
                 <label>Categoria</label>

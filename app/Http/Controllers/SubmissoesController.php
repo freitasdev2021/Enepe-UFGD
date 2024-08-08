@@ -41,9 +41,16 @@ class SubmissoesController extends Controller
         if(Auth::user()->tipo == 3){
             $view = 'Submissoes.indexInscrito';
             $AND = '';
+            $currentId = Auth::user()->id;
             if(Session::has('IDEvento')){
                 $AND = ' WHERE s.IDEvento='.Session::get('IDEvento');
+                
             }
+            //dd($currentId);
+            if(Entrega::where('IDInscrito',$currentId)->first()){
+                $AND .= " AND s.id IN(SELECT IDSubmissao FROM entergas WHERE entergas.IDInscrito = $currentId)";
+            }
+
             $data['Submissoes'] = DB::select("SELECT 
                 s.Categoria,
                 s.id,

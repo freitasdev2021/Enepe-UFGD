@@ -34,7 +34,7 @@ class submodulo extends Component
         $original_string = Route::currentRouteName();
         $partes = explode('/', $original_string);
         $modulo = isset($partes[1]) ? $partes[1] : '';
-
+        //dd($modulo);
         $active = "";
         if($modulo == $this->endereco){
             $active = "active-submodulo";

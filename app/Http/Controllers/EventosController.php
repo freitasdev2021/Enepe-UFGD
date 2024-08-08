@@ -45,18 +45,20 @@ class EventosController extends Controller
         $view = 'Eventos.index';
         if(Auth::user()->tipo == 3){
             $view = 'Eventos.indexInscrito';
+            $currentId = Auth::user()->id;
             $data['Eventos'] = DB::select("SELECT 
-                    e.Titulo as Evento,
-                    MIN(e.id) as IDEvento,  -- Usa MIN para obter o menor id do grupo
-                    e.Descricao as Descricao,
-                    MAX(CASE WHEN e.id = i.IDEvento THEN 1 ELSE 0 END) AS Inscrito  -- Usa MAX para obter um valor representativo
+                    e.Titulo AS Evento,
+                    MIN(e.id) AS IDEvento,  -- Usa MIN para obter o menor id do grupo
+                    MAX(e.Descricao) AS Descricao,  -- Usa MAX para evitar problemas de agregação
+                    MAX(CASE WHEN i.IDUser = $currentId THEN 1 ELSE 0 END) AS Inscrito  -- Usa MAX para obter um valor representativo
                 FROM 
                     eventos e
                 LEFT JOIN 
-                    inscricoes i ON(i.IDEvento = e.id)
-                WHERE e.Termino > NOW()
+                    inscricoes i ON i.IDEvento = e.id
+                WHERE 
+                    e.Termino > NOW()
                 GROUP BY 
-                    e.Titulo, e.Descricao
+                    e.Titulo                
             ");
         }
         return view($view,$data);
@@ -194,7 +196,7 @@ class EventosController extends Controller
             $status = 'success';
             $Evento = Evento::find($request->IDEvento)->Titulo;
             //dd($data);
-            MailController::send(Auth::user()->email,'Confirmação de Inscrição','Mail.confirmacao',array('Senha'=> $Evento));
+            MailController::send(Auth::user()->email,'Confirmação de Inscrição','Mail.confirmacao',array('Evento'=> $Evento));
             Inscricao::create($data);
         }catch(\Throwable $th){
             $mensagem = 'Erro '. $th->getMessage();
