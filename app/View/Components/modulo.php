@@ -41,7 +41,7 @@ class modulo extends Component
             $active = "active";
         }
 
-        return view('components.modulo',[
+        return view('components.Modulo',[
             "active" => $active
         ]);
     }
