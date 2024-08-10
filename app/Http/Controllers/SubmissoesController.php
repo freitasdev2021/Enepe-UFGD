@@ -120,9 +120,10 @@ class SubmissoesController extends Controller
 
     public function entrega($IDSubmissao){
         $Submissao = Submissao::find($IDSubmissao);
+        $Evento = Evento::find($Submissao->IDEvento);
         $IDUser = Auth::user()->id;
         $AND = '';
-        $SEL = 'MIN(e.IDApresentador) as IDApresentador,';
+        $SEL = 'MAX(e.Apresentador) as Apresentador,';
         if(Auth::user()->tipo == 3){
             $AND =  "AND e.IDInscrito = $IDUser";
             $SEL = '';
@@ -130,6 +131,10 @@ class SubmissoesController extends Controller
         $Entregas = DB::select("SELECT 
                 MIN(e.created_at) as created_at,  -- Assume the earliest created_at for each group
                 e.Titulo,
+                MIN(e.Autores) as Autores,
+                MIN(e.palavrasChave) as palavrasChave,
+                MIN(e.Tematica) as Tematica,
+                MIN(e.Descricao) as Descricao,
                 $SEL
                 MIN(e.id) as id,  -- Assume the minimum id for each group
                 COALESCE(MAX(r.Status), 'Desconhecido') as Situacao,  -- Use MAX to get a representative status
@@ -144,8 +149,10 @@ class SubmissoesController extends Controller
             GROUP BY 
                 e.Titulo,r.Status;
         ");
+        //dd($Entregas);
         return view('Submissoes.entrega',[
             'Submissao' => $Submissao,
+            'Evento' => $Evento,
             'Entregas' => $Entregas,
             'IDSubmissao' => $IDSubmissao,
             'Tematica' => [
@@ -161,8 +168,7 @@ class SubmissoesController extends Controller
                 'FCH',
                 'FCS',
                 'Outro'
-            ],
-            'Apresentadores' => User::all()
+            ]
         ]);
     }
 
@@ -227,10 +233,10 @@ class SubmissoesController extends Controller
                 }
             }else{
                 $rota = 'Submissoes/index';
-                $mensagem = 'Apresentador Trocado com Sucesso!';
+                $mensagem = 'Trabalho Atualizado com Sucesso!';
                 unset($data['_token']);
                 unset($data['_method']);
-                Entrega::find($request->IDEntrega)->update(['IDApresentador'=>$request->IDApresentador]);
+                Entrega::find($request->IDEntrega)->update($data);
             }
         }catch(\Throwable $th){
             $mensagem = 'Erro '. $th->getMessage();
@@ -367,7 +373,7 @@ class SubmissoesController extends Controller
                 s.Categoria,
                 a.id as IDAvaliador,
                 u.name as Inscrito,
-                ap.name as Apresentador,
+                e.Apresentador as Apresentador,
                 a.name as Avaliador,
                 CASE WHEN e.id = r.IDEntrega THEN r.Status ELSE 'Aguardando Correção' END as Status,
                 e.IDInscrito,
@@ -375,7 +381,6 @@ class SubmissoesController extends Controller
             FROM entergas e
             INNER JOIN submissoes s ON(s.id = e.IDSubmissao)
             INNER JOIN users u ON(u.id = e.IDInscrito)
-            INNER JOIN users ap ON(ap.id = e.IDApresentador)
             LEFT JOIN users a ON(a.id = e.IDAvaliador)
             LEFT JOIN reprovacoes r ON(e.id = r.IDEntrega) WHERE s.id = $IDSubmissao $WHERE";;
             //dd($SQL);
@@ -391,7 +396,7 @@ class SubmissoesController extends Controller
                 $item[] = $r->Apresentador;
                 $item[] = ($r->IDAvaliador == 0) ? $selectAvaliador."<input type='hidden' value='$r->IDInscrito' name='Inscrito[]'>" : $r->Avaliador." <button class='btn btn-xs btn-danger' type='button' onclick='removerAtribuicao($RemoveATR)'>Remover Atribuição</button>";
                 $item[] = $r->Status;
-                $item[] = "<a href=".route('Submissoes/Entrega',$r->IDEntrega).">Abrir</a>";
+                $item[] = "<a href=".route('Submissoes/Entrega',$r->IDEntrega).">Abrir</a> <a href=".route('Submissoes/Correcao',$r->IDEntrega).">Corrigir</a>";
                 $itensJSON[] = $item;
             }
         }else{

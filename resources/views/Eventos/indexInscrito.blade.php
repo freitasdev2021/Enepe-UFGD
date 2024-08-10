@@ -13,12 +13,16 @@
         @foreach($Eventos as $e)
         <form action="{{route('Eventos/Entrar')}}" method="POST" class="card sala" style="width: 18rem;">
             @csrf
-            <img src="{{asset('img/event.jpg')}}" class="card-img-top" alt="...">
+            <img src="{{url('storage/Site/'.$e->Capa)}}" class="card-img-top" alt="...">
             <div class="card-body">
               <h5 class="card-title">{{$e->Evento}}</h5>
               <p class="card-text">{{$e->Descricao}}</p>
               @if(!$e->Inscrito)
-              <a href="{{route('Eventos/Inscricao',$e->IDEvento)}}" class="btn bg-fr text-white">Inscreva-se</a>
+                @if($e->Inscricao != 'O prazo para a inscrição do evento está encerrado')
+                    <button class="btn bg-fr text-white disabled">Inscrições Encerradas</button>
+                @else
+                    <a href="{{route('Eventos/Inscricao',$e->IDEvento)}}" class="btn bg-fr text-white">Inscreva-se</a>
+                @endif
               @else
               <input type="hidden" name="IDEvento" value="{{$e->IDEvento}}">
               <button class="btn bg-fr text-white" type="submit">Entrar</button>

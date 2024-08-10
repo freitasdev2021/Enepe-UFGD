@@ -15,6 +15,14 @@ class Evento extends Model
         'Titulo',
         'Descricao',
         'Inicio',
-        'Termino'
+        'Termino',
+        'Categoria',
+        'INISubmissao',
+        'TERSubmissao',
+        'INIInscricao',
+        'TERInscricoes',
+        'Normas',
+        'Contatos',
+        'Capa'
     ];
 }

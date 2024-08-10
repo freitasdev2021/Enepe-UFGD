@@ -21,6 +21,7 @@
                         <th style="text-align:center;" scope="col">Nome</th>
                         <th style="text-align:center;" scope="col">Categoria</th>
                         <th style="text-align:center;" scope="col">Email</th>
+                        <th style="text-align:center;" scope="col">Opções</th>
                       </tr>
                     </thead>
                     <tbody>

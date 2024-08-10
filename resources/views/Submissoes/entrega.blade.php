@@ -14,68 +14,65 @@
                 </div>
                 <br>
                 @endif
+                <label style="visibility: hidden">a</label>
+                @if($Evento->TERSubmissao < NOW())
+                <div class="row d-flex justify-content-center">
+                    <div class="p-2 col-sm-10 bg-warning d-flex justify-content-center">
+                        <strong>O prazo para a submissão de resumos está encerrado</strong>
+                    </div>
+                </div>
+                @endif
+                <br>
                 <input type="hidden" name="IDSubmissao" value="{{$IDSubmissao}}">
-                @if(count($Entregas) == 0 || Auth::user()->tipo == 3)
-                <input type="hidden" name="IDEntrega" value="">
+                <input type="hidden" name="IDEntrega" value="{{in_array(Auth::user()->tipo,[1,2]) ? $Entregas[0]->id : '' }}">
                 <div class="row">
                     <div class="col-sm-12">
-                        <label>Titulo</label>
-                        <input type="text" name="Titulo" class="form-control" required>
+                        <label>Título</label>
+                        <input type="text" name="Titulo" class="form-control" value="{{in_array(Auth::user()->tipo,[1,2]) ? $Entregas[0]->Titulo : '' }}" required>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-6">
                         <label>Autores (Separe por ',')</label>
-                        <input type="text" name="Autores" class="form-control">
+                        <input type="text" name="Autores" class="form-control" value="{{in_array(Auth::user()->tipo,[1,2]) ? $Entregas[0]->Autores : '' }}">
                     </div>
                     <div class="col-sm-6">
-                        <label>Palavras Chave (Separe por ',')</label>
-                        <input type="text" name="palavrasChave" class="form-control">
+                        <label>palavras-chaves (Separe por ',')</label>
+                        <input type="text" name="palavrasChave" class="form-control" value="{{in_array(Auth::user()->tipo,[1,2]) ? $Entregas[0]->palavrasChave : '' }}">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-6">
                         <label>Apresentador</label>
-                        <select name="IDApresentador" class="form-control" required>
-                            <option>Selecione</option>
-                            @foreach($Apresentadores as $a)
-                            <option value="{{$a->id}}">{{$a->name}}</option>
-                            @endforeach
-                        </select>
+                        <input name="Apresentador" type="text" class="form-control" value="{{in_array(Auth::user()->tipo,[1,2]) ? $Entregas[0]->Apresentador : '' }}">
                     </div>
-                    <div class="col-sm-6">
+                    @if(Auth::user()->tipo == 1)
+                    <div class="col-auto">
+                        <label style="visibility: hidden">a</label>
+                        <input name="Apresentador" type="button" class="form-control btn-fr" value="Trocar">
+                    </div>
+                    @endif
+                    <div class="col-sm-4">
                         <label>Área Temática</label>
                         <select name="Tematica" class="form-control" required>
                             <option>Selecione</option>
                             @foreach($Tematica as $t)
-                            <option value="{{$t}}">{{$t}}</option>
+                            <option value="{{$t}}" {{in_array(Auth::user()->tipo,[1,2]) && $Entregas[0]->Tematica == $t ? 'selected' : '' }}>{{$t}}</option>
                             @endforeach
                         </select>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
-                        <label>Descrição do Trabalho</label>
-                        <textarea name="Descricao" class="form-control" required minlength="{{$Submissao->MinLength}}" maxlength="{{$Submissao->MaxLength}}"></textarea>
+                        <label>Resumo</label>
+                        <textarea name="Descricao" class="form-control" required minlength="{{isset($Submissao->MinLength) ? $Submissao->MinLength : ''}}" maxlength="{{isset($Submissao->MaxLength) ? $Submissao->MaxLength : ''}}">{{in_array(Auth::user()->tipo,[1,2]) ? $Entregas[0]->Descricao : '' }}</textarea>
                     </div>
                 </div>
-                @elseif(Auth::user()->tipo == 1)
-                <input type="hidden" name="IDEntrega" value="{{$Entregas[0]->id}}">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <label>Apresentador</label>
-                        <select name="IDApresentador" class="form-control">
-                            <option>Selecione</option>
-                            @foreach($Apresentadores as $a)
-                            <option value="{{$a->id}}">{{$a->name}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-                @endif
                 <br>
                 <div class="col-sm-12 text-left row">
+                    @if($Evento->TERSubmissao > NOW())
                     <button class="btn bg-fr text-white col-auto">Salvar</button>
+                    @endif
                     &nbsp;
                     <a class="btn btn-light col-auto" href="{{route('Submissoes/index')}}">Voltar</a>
                 </div>

@@ -25,6 +25,13 @@
                     <option value="Pesquisa">Pesquisa</option>
                     <option value="Extensão">Extensão</option>
                     <option value="Pós-Graduação">Pós-Graduação</option>
+                    <option value="Aluno de Iniciação Científica da UFGD">Aluno de Iniciação Científica da UFGD</option>
+                    <option value="Aluno da Graduação da UFGD">Aluno da Graduação da UFGD</option>
+                    <option value="Aluno da Pós-Graduação da UFGD">Aluno da Pós-Graduação da UFGD</option>
+                    <option value="Docente da UFGD">Docente da UFGD</option>
+                    <option value="Técnico Administrativo da UFGD">Técnico Administrativo da UFGD</option>
+                    <option value="Outro">Outro</option>
+                    <option value="Avaliador(a) externo(a)">Avaliador(a) externo(a)</option>
                 </select>
             </div>
             <br>

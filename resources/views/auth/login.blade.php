@@ -18,7 +18,7 @@
                 class="img-fluid" alt="Sample image">
             </div>
             <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
-                <h3 align="center">Bem Vindo!</h3>
+                <h3 align="center">Bem Vindo(a)!</h3>
                 <hr>
                 <form id="form_acesso" action="{{route('login')}}" method="POST">
                 @csrf

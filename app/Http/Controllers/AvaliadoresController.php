@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Evento;
 use Illuminate\Support\Facades\Hash;
 class AvaliadoresController extends Controller
 {
@@ -22,7 +23,8 @@ class AvaliadoresController extends Controller
     public function cadastro($id = null){
         $view = array(
             'id' => '',
-            'submodulos' => self::submodulos
+            'submodulos' => self::submodulos,
+            'Eventos'=> Evento::all()
         );
 
         if($id){
@@ -46,7 +48,8 @@ class AvaliadoresController extends Controller
                 $rota = 'Avaliadores/Novo';
                 $aid = '';
                 $data['password'] = Hash::make($RandPW);
-                MailController::send($request->email,'Confirmação - Avaliador','Mail.cadastroavaliador',array('Senha'=> $RandPW,'Email'=> $request->email));
+                $Evento = Evento::find($request->IDEvento);
+                MailController::send($request->email,'Confirmação - Avaliador','Mail.cadastroavaliador',array('Evento'=> $Evento->Titulo,'Senha'=> $RandPW,'Email'=> $request->email));
                 User::create($data);
             }else{
                 $rota = 'Avaliadores/Edit';

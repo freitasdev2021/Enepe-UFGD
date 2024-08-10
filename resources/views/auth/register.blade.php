@@ -18,8 +18,12 @@
                 class="img-fluid" alt="Sample image">
             </div>
             <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
-                <h3 align="center">Bem Vindo, Aluno! Inscreva-se na Plataforma</h3>
+                <h3 align="center">Bem-vindo(a)! Inscreva-se na plataforma</h3>
                 <hr>
+                <div class="col-md-12 p-2 text-white bg-success d-flex justify-content-center">
+                    <strong>crie uma senha com ao menos 8 caracteres.</strong>
+                </div>
+                <br>
                 <form id="form_acesso" action="{{ route('register') }}" method="POST">
                 @csrf
                 @method("POST")

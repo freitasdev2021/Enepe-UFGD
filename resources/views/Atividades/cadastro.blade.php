@@ -26,22 +26,13 @@
                     @endif
                     <input type="hidden" name="IDEvento" value="{{$IDEvento}}">
                     <div class="row">
-                        <div class="col-sm-5">
+                        <div class="col-sm-8">
                             <label>Titulo</label>
                             <input type="text" name="Titulo" class="form-control" value="{{isset($Registro) ? $Registro->Titulo : ''}}" required>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-4">
                             <label>Inicio</label>
                             <input type="datetime-local" name="Inicio" class="form-control" value="{{isset($Registro) ? $Registro->Inicio : ''}}" required>
-                        </div>
-                        <div class="col-sm-4">
-                            <label>Sala</label>
-                            <select name="IDSala" class="form-control">
-                                <option value="">Selecione</option>
-                                @foreach($Salas as $s)
-                                <option value="{{$s->id}}" {{isset($Registro) && $Registro->IDSala == $s->id ? 'selected' : ''}}>{{$s->Sala}}</option>
-                                @endforeach
-                            </select>
                         </div>
                     </div>
                     <div class="row">

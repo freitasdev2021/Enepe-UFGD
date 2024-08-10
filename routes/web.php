@@ -24,7 +24,7 @@ Route::get('/dashboard', function () {
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 //ROTA DO SITE
-Route::get('Enepe-2024-UFGD',[SiteController::class,'site'])->name("Enepe");
+Route::get('Evento/{Nome}/{id}',[SiteController::class,'site'])->name("Site");
 Route::post('Certificados/Validar', [CertificadosController::class, 'validarCertificados'])->name('Certificados/Validar');
 //ROTA DO USUARIO LOGADO
 Route::middleware('auth')->group(function () {
@@ -39,6 +39,7 @@ Route::middleware('auth')->group(function () {
         //SUBMISSOES
         Route::get('Submissoes/Entrega/{IDSubmissao}', [SubmissoesController::class, 'entrega'])->name('Submissoes/Entrega');
         Route::post('Submissoes/Entregas/Save', [SubmissoesController::class, 'saveEntrega'])->name('Submissoes/Entregas/Save');
+        Route::get('Submissoes/getTrabalho/{IDEntrega}', [SubmissoesController::class, 'getTrabalho'])->name('Submissoes/getTrabalho');
         //EVENTOS
         Route::get('Eventos/Cadastro/{id}',[EventosController::class,'cadastro'])->name('Eventos/Edit');
         Route::get('Eventos',[EventosController::class,'index'])->name('Eventos/index');
@@ -113,15 +114,15 @@ Route::middleware('auth')->group(function () {
         Route::get('Certificados/Modelos/Cadastro', [CertificadosController::class, 'cadastroModelos'])->name('Certificados/Modelos/Novo');
         Route::post('Certificados/Save', [CertificadosController::class, 'gerarCertificados'])->name('Certificados/Save');
         Route::post('Eventos/saveInscricaoAluno',[EventosController::class,'saveInscricaoAluno'])->name('Eventos/saveInscricaoAluno');
+        //INSCRIÇÕES
+        Route::get('Eventos/Inscricoes/inscreverAluno/{IDEvento}/{IDAluno}',[EventosController::class,'inscreverAluno'])->name('Eventos/Inscricoes/editarAluno');
         Route::get('Eventos/Inscricoes/inscreverAluno/{IDEvento}',[EventosController::class,'inscreverAluno'])->name('Eventos/Inscricoes/inscreverAluno');
         Route::get('Eventos/Inscricoes/{IDEvento}',[EventosController::class,'inscricoes'])->name('Eventos/Inscricoes');
         Route::get('Eventos/Inscricoes/list/{IDEvento}',[EventosController::class,'getInscricoes'])->name('Eventos/Inscricoes/list');
     });
     //CAMADA DE PROTEÇÃO AVALIADORES
     Route::middleware('avaliador')->group(function(){
-        Route::get('Submissoes/Correcao/{IDEntrega}', [SubmissoesController::class, 'correcao'])->name('Submissoes/Correcao');
-        Route::get('Submissoes/getTrabalho/{IDEntrega}', [SubmissoesController::class, 'getTrabalho'])->name('Submissoes/getTrabalho');
-        Route::post('Submissoes/Corrigir', [SubmissoesController::class, 'corrigir'])->name('Submissoes/Corrigir');
+        
     });
     //CAMADA DE PROTEÇÃO INSCRITOS
     Route::middleware('participante')->group(function(){
@@ -131,7 +132,8 @@ Route::middleware('auth')->group(function () {
     });
     //CAMADA DE PROTEÇÃO BANCA
     Route::middleware('banca')->group(function(){
-        
+        Route::get('Submissoes/Correcao/{IDEntrega}', [SubmissoesController::class, 'correcao'])->name('Submissoes/Correcao');
+        Route::post('Submissoes/Corrigir', [SubmissoesController::class, 'corrigir'])->name('Submissoes/Corrigir');
     });
     //Submissões
     //Route::post('Eventos/inscreverAluno',[EventosController::class,'inscreverAluno'])->name('Eventos/inscreverAluno');
