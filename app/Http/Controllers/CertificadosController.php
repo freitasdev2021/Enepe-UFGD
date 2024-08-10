@@ -89,12 +89,12 @@ class CertificadosController extends Controller
             $Evento = Evento::find($request->IDEvento);
             $Certificados = [];
             for($i=0;$i<count($Inscrit);$i++){
-                if(!Certificados::where('IDEvento',$request->IDEvento)->where('IDModelo',$Modelos[$i])->where('IDInscrito',$Inscrit[$i])){
+                //if(!Certificados::where('IDEvento',$request->IDEvento)->where('IDModelo',$Modelos[$i])->where('IDInscrito',$Inscrit[$i])){
                     $Certificados[] = array(
                         "Modelos" => $Modelos[$i],
                         "Inscritos" => $Inscrit[$i]
                     );
-                }
+                //}
             }
             //dd($Certificados);
             foreach ($Certificados as $Certificado) {
@@ -296,7 +296,8 @@ class CertificadosController extends Controller
                     p.Nome,
                     p.Email,
                     p.id as IDInscrito,
-                    c.IDModelo
+                    c.IDModelo,
+                    c.Certificado
                 FROM palestrantes p
                 INNER JOIN palestras pal ON(p.id = pal.IDPalestrante)
                 LEFT JOIN certificados c ON(p.id = c.IDInscrito)
@@ -308,7 +309,8 @@ class CertificadosController extends Controller
                 SELECT 
                     u.name as Nome,
                     u.Email as Email,
-                    u.id as IDInscrito,
+                    u.id as IDInscrito,,
+                    c.Certificado
                     MAX(c.IDModelo) as IDModelo
                 FROM 
                     users u
@@ -329,7 +331,8 @@ class CertificadosController extends Controller
                     u.name as Nome,
                     u.Email as Email,
                     u.id as IDInscrito,
-                    c.IDModelo
+                    c.IDModelo,
+                    c.Certificado
                 FROM users u
                 LEFT JOIN certificados c ON(u.id = c.IDInscrito)
                 LEFT JOIN modelos m ON(m.id = c.IDModelo)
@@ -341,7 +344,8 @@ class CertificadosController extends Controller
                     u.name as Nome,
                     u.Email as Email,
                     u.id as IDInscrito,
-                    c.IDModelo
+                    c.IDModelo,
+                    c.Certificado
                 FROM users u
                 INNER JOIN inscricoes i ON(i.IDUser = u.id)
                 LEFT JOIN certificados c ON(u.id = c.IDInscrito)
@@ -359,6 +363,7 @@ class CertificadosController extends Controller
                 $item[] = $r->Nome;
                 $item[] = $r->Email;
                 $item[] = self::getSelectModelos($r->IDInscrito,$r->IDModelo)."<input type='hidden' id='inscrito_$r->IDInscrito' name='IDInscrito[]'>";
+                $item[] = !empty($r->Certificado) ? "<a href=".url('storage/modelos/'.$r->Certificado)." class='btn btn-fr btn-xs text-white' download>Baixar</a> <a href=".url('storage/modelos/'.$r->Certificado)." class='btn btn-fr btn-xs text-white' target='_blank'>Abrir</a>" : 'Ainda Não Emitido';
                 $itensJSON[] = $item;
             }
         }

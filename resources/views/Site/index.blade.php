@@ -4,6 +4,7 @@
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+      <link rel="icon" type="image/x-icon" href="{{asset('img/fricon.ico')}}" />
       <link rel="preconnect" href="https://fonts.googleapis.com">
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
       <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
@@ -19,14 +20,14 @@
          padding:0;
          }
       </style>
-      <title>Inscrições: Enepe 2024</title>
+      <title>{{$Evento->Titulo}}</title>
    </head>
    <body>
       <main>
          <!--MAIN-->
          <nav class="navbar navbar-expand-lg navbar-success bg-success">
             <div class="container-fluid">
-               <a class="navbar-brand" href="#">Enepe UFGD 2024</a>
+               <a class="navbar-brand" href="#">{{$Evento->Titulo}}</a>
                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                <span class="navbar-toggler-icon"></span>
                </button>
@@ -40,10 +41,10 @@
             </div>
          </nav>
          <!--CAROUSEL--->
-         <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
+         <div id="carouselExampleSlidesOnly" class="carousel slide p-2" data-bs-ride="carousel">
             <div class="carousel-inner">
                <div class="carousel-item active">
-                  <img src="{{asset('img/event.jpg')}}" class="d-block w-100" alt="...">
+                  <img src="{{url('storage/Site/'.$Evento->Capa)}}" class="d-block w-100" alt="...">
                </div>
             </div>
          </div>

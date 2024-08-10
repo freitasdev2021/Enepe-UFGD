@@ -6,6 +6,7 @@ use App\Http\Controllers\EventosController;
 use App\Http\Controllers\PalestrasController;
 use App\Http\Controllers\AvaliadoresController;
 use App\Http\Controllers\SubmissoesController;
+use App\Http\Controllers\OrganizadoresController;
 use App\Http\Controllers\CertificadosController;
 use App\Http\Controllers\SiteController;
 use App\Models\Certificados;
@@ -24,7 +25,7 @@ Route::get('/dashboard', function () {
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 //ROTA DO SITE
-Route::get('Evento/{Nome}/{id}',[SiteController::class,'site'])->name("Site");
+Route::get('Evento/{id}',[SiteController::class,'site'])->name("Site");
 Route::post('Certificados/Validar', [CertificadosController::class, 'validarCertificados'])->name('Certificados/Validar');
 //ROTA DO USUARIO LOGADO
 Route::middleware('auth')->group(function () {
@@ -54,6 +55,12 @@ Route::middleware('auth')->group(function () {
     });
     //CAMADA DE PROTEÇÃO ORGANIZADORES
     Route::middleware('organizador')->group(function(){
+        //ORGANIZADORES
+        Route::post('Organizadores/Save',[OrganizadoresController::class,'save'])->name('Organizadores/Save');
+        Route::get('Organizadores',[OrganizadoresController::class,'index'])->name('Organizadores/index');
+        Route::get('Organizadores/list',[OrganizadoresController::class,'getOrganizadores'])->name('Organizadores/list');
+        Route::get('Organizadores/Cadastro',[OrganizadoresController::class,'cadastro'])->name('Organizadores/Novo');
+        Route::get('Organizadores/Cadastro/{id}',[OrganizadoresController::class,'cadastro'])->name('Organizadores/Edit');
         //EVENTOS
         Route::post('Eventos/Save',[EventosController::class,'save'])->name('Eventos/Save');
         Route::post('Eventos/Delete',[EventosController::class,'delete'])->name('Eventos/Delete');

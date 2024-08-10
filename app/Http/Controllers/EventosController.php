@@ -310,7 +310,7 @@ class EventosController extends Controller
                 $item[] = $r->Descricao;
                 $item[] = Controller::data($r->Inicio,'d/m/Y');
                 $item[] = Controller::data($r->Termino,'d/m/Y');
-                $item[] = "<a href=".route('Eventos/Edit',$r->id)." class='btn bg-fr text-white btn-xs'>Abrir</a> <a href=".route('Site',['id'=>$r->id,'Nome'=>$r->Titulo])." class='btn bg-fr text-white btn-xs' target='_blank'>Site</a>";
+                $item[] = "<a href=".route('Eventos/Edit',$r->id)." class='btn bg-fr text-white btn-xs'>Abrir</a> <a href=".route('Site',$r->id)." class='btn bg-fr text-white btn-xs' target='_blank'>Site</a>";
                 $itensJSON[] = $item;
             }
         }else{

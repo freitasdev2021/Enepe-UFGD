@@ -17,7 +17,7 @@
             <br>
             @endif
             <!--CABECALHO-->
-            <form class="col-sm-12 p-2 row" action="{{$_SERVER['PHP_SELF']}}" method="GET">
+            <form class="col-sm-12 p-2 row" action="{{route(Route::currentRouteName())}}" method="GET">
                 <div class="col-auto">
                     <select name="Tipo" class="form-control" required>
                         <option value="">Selecione o Tipo de Participante</option>
@@ -48,6 +48,7 @@
                         <th style="text-align:center;" scope="col">Nome</th>
                         <th style="text-align:center;" scope="col">Email</th>
                         <th style="text-align:center;" scope="col">Certificado</th>
+                        <th style="text-align:center;" scope="col">Ver</th>
                       </tr>
                     </thead>
                     <tbody>
