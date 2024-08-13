@@ -39,7 +39,7 @@
                       <tr>
                         <th style="text-align:center;" scope="col">Evento</th>
                         <th style="text-align:center;" scope="col">Inscrito</th>
-                        <th style="text-align:center;" scope="col">Regras</th>
+                        <th style="text-align:center;" scope="col">Título</th>
                         <th style="text-align:center;" scope="col">Categoria</th>
                         <th style="text-align:center;" scope="col">Opções</th>
                       </tr>

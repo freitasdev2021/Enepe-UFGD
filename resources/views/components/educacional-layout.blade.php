@@ -30,7 +30,11 @@
                     <x-Modulo nome="Palestras" icon="bx bx-user-pin" rota="Palestras/index" endereco="Palestras"/>
                     <x-Modulo nome="Apresentações" icon="bx bxs-pencil" rota="Atividades/index" endereco="Atividades"/>
                     @endif
-                    @endif 
+                    @endif
+                    <a href="https://wa.me/5531983086235" class="nav_link" target="_blank">
+                     <i class='bx bx-support nav_icon'></i>
+                     <span class="nav_name">Suporte</span>
+                    </a> 
                 </div>
              </div>
              <form action="{{route('logout')}}" method="POST">

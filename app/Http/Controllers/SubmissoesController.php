@@ -51,14 +51,17 @@ class SubmissoesController extends Controller
                 $AND .= " AND s.id IN(SELECT IDSubmissao FROM entergas WHERE entergas.IDInscrito = $currentId)";
             }
 
-            $data['Submissoes'] = DB::select("SELECT 
+            $data['Submissoes'] = DB::select("
+            SELECT 
                 s.Categoria,
                 s.id,
                 s.Regras,
-                CASE WHEN s.id = en.IDSubmissao THEN en.id ELSE 0 END as IDEntrega
+                MAX(CASE WHEN s.id = en.IDSubmissao THEN en.id ELSE 0 END) as IDEntrega
             FROM submissoes s
             LEFT JOIN entergas en ON(s.id = en.IDSubmissao)
-            INNER JOIN eventos e ON(s.IDEvento = e.id) $AND
+            INNER JOIN eventos e ON(s.IDEvento = e.id) 
+            $AND
+            GROUP BY s.Categoria, s.id, s.Regras
         ");
         }
         return view($view,$data);
@@ -323,6 +326,7 @@ class SubmissoesController extends Controller
                     i.name as Inscrito,
                     s.Categoria,
                     s.Regras,
+                    e.Titulo,
                     e.id as IDEntrega
                 FROM submissoes as s
                 INNER JOIN entergas e ON(s.id = e.IDSubmissao)
@@ -335,7 +339,7 @@ class SubmissoesController extends Controller
                     $item = [];
                     $item[] = $r->Evento;
                     $item[] = $r->Inscrito;
-                    $item[] = "<a href=".url('storage/regras_submissao/'.$r->Regras).">$r->Regras</a>";
+                    $item[] = $r->Titulo;
                     $item[] = $r->Categoria;
                     $item[] = "<a href=".route('Submissoes/Correcao',$r->IDEntrega).">Abrir</a>";
                     $itensJSON[] = $item;

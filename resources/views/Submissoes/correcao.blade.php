@@ -5,6 +5,14 @@
             <x-Submodulo nome="{{$s['nome']}}" endereco="{{$s['endereco']}}" rota="{{route($s['rota'],$Trabalho->IDSubmissao)}}" icon="bx bx-list-ul"/>
            @endforeach
         </div>
+        <style>
+            .resumo{
+                display:flex;
+                flex-wrap:wrap;
+                width:100%;
+                word-break: break-all;
+            }
+        </style>
         <div class="fr-card-body">
             <!--LISTAS-->
             <div class="col-sm-12 p-2 center-form">
@@ -24,22 +32,17 @@
                     @endif
                     <div class="row">
                         <div class="col-sm-12">
-                            <h1>{{$Trabalho->Titulo}}</h1>
+                            <h1>Título: {{$Trabalho->Titulo}}</h1>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-6">
-                            <h5>Autores: {{$Trabalho->Autores}}</h5>
-                        </div>
                         <div class="col-sm-6">
                             <h5>Palavras Chave: {{$Trabalho->palavrasChave}}</h5>
                         </div>
                     </div>
                     <hr>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <p>{{$Trabalho->Descricao}}</p>
-                        </div>
+                    <div class="row resumo">
+                        {{$Trabalho->Descricao."ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss"}}
                     </div>
                     <hr>
                     <div class="row">
