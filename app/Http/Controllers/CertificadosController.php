@@ -335,10 +335,10 @@ class CertificadosController extends Controller
         $CDCertificado = rand(100000,999999).$IDInscrito;
         array_push($text,"Codigo: ".$CDCertificado);
         // Definir as propriedades da fonte
-        $fontSize = 110;
+        $fontSize = 50;
         $lineHeight = $fontSize * 1.2; // Altura da linha
-        $x = 1600; // Posição horizontal
-        $initialY = 800; // Posição inicial vertical
+        $x = 900; // Posição horizontal
+        $initialY = 450; // Posição inicial vertical
         $fontPath = public_path('fonts/arial.ttf');
         $certificado = $certificadoManager->read(realpath(storage_path('app/public/modelos/'.$Modelo)));
         // Desenhar cada linha de texto no certificado
