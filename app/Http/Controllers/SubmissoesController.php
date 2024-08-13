@@ -322,23 +322,44 @@ class SubmissoesController extends Controller
             }
         }else{
             $IDAvaliador = Auth::user()->id;
-            $registros = DB::select("SELECT ev.Titulo as Evento,
+            $registros = DB::select("SELECT 
+                    ev.Titulo as Evento,
                     i.name as Inscrito,
                     s.Categoria,
                     s.Regras,
                     e.Titulo,
-                    e.id as IDEntrega
-                FROM submissoes as s
-                INNER JOIN entergas e ON(s.id = e.IDSubmissao)
-                INNER JOIN users i ON(i.id = e.IDInscrito)
-                INNER JOIN eventos ev ON(ev.id = s.IDEvento)
-                WHERE e.IDAvaliador = $IDAvaliador
+                    e.id as IDEntrega,
+                    r.Status
+                FROM 
+                    submissoes as s
+                INNER JOIN 
+                    entergas e ON s.id = e.IDSubmissao
+                INNER JOIN 
+                    users i ON i.id = e.IDInscrito
+                INNER JOIN 
+                    eventos ev ON ev.id = s.IDEvento
+                LEFT JOIN 
+                    reprovacoes r ON r.id = (
+                        SELECT 
+                            r2.id 
+                        FROM 
+                            reprovacoes r2 
+                        WHERE 
+                            r2.IDEntrega = e.id 
+                        ORDER BY 
+                            r2.id DESC 
+                        LIMIT 1
+                    )
+                WHERE 
+                    e.IDAvaliador = $IDAvaliador
+                ORDER BY 
+                    e.id;
             ");
             if(count($registros) > 0){
                 foreach($registros as $r){
                     $item = [];
                     $item[] = $r->Evento;
-                    $item[] = $r->Inscrito;
+                    $item[] = $r->Status;
                     $item[] = $r->Titulo;
                     $item[] = $r->Categoria;
                     $item[] = "<a href=".route('Submissoes/Correcao',$r->IDEntrega).">Abrir</a>";
