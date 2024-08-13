@@ -104,7 +104,7 @@
                 </div>
                 <br>
                 <div class="col-sm-12 text-left row">
-                    @if($Evento->TERSubmissao > NOW())
+                    @if($Evento->TERSubmissao > NOW() && isset($Entregas[0]) && in_array($Entregas[0]->Situacao,['Aprovado com Ressalvas']) || count($Entregas) == 0)
                     <button class="btn bg-fr text-white col-auto">Salvar</button>
                     @endif
                     &nbsp;
@@ -134,7 +134,7 @@
                         <td>{{date('d/m/Y',strtotime($e->created_at))}}</td>
                         <td>{{$e->Situacao}}</td>
                         <td>{{$e->Feedback}}</td>
-                        @if(in_array($e->Situacao,['Aprovado com Ressalvas','Reprovado']))
+                        @if(in_array($e->Situacao,['Aprovado com Ressalvas']))
                         <td>
                             <button class="btn btn-light revisar" data-trabalho="{{route('Submissoes/getTrabalho',$e->id)}}">Revisar</button>
                         </td>

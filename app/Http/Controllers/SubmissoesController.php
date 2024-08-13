@@ -153,25 +153,29 @@ class SubmissoesController extends Controller
         }
 
         $SQL = "SELECT 
-                MIN(e.created_at) as created_at,  -- Assume the earliest created_at for each group
-                e.Titulo,
-                MIN(e.Autores) as Autores,
-                MIN(e.IDSubmissao) as IDSubmissao,
-                MIN(e.palavrasChave) as palavrasChave,
-                MIN(e.Tematica) as Tematica,
-                MIN(e.Descricao) as Descricao,
-                $SEL
-                MIN(e.id) as id,  -- Assume the minimum id for each group
-                COALESCE(MAX(r.Status), 'Desconhecido') as Situacao,  -- Use MAX to get a representative status
-                COALESCE(MAX(CASE WHEN e.id = r.IDEntrega THEN r.Feedback ELSE 'Aguardando Correção' END), 'Aguardando Correção') as Feedback
-            FROM 
-                entergas e
-            LEFT JOIN 
-                reprovacoes r ON(e.id = r.IDEntrega)
-            WHERE  
-                $AND
-            GROUP BY 
-                e.Titulo,r.Status
+            MIN(e.created_at) as created_at,  -- Assume the earliest created_at for each group
+            e.Titulo,
+            MIN(e.Autores) as Autores,
+            MIN(e.IDSubmissao) as IDSubmissao,
+            MIN(e.palavrasChave) as palavrasChave,
+            MIN(e.Tematica) as Tematica,
+            MIN(e.Descricao) as Descricao,
+            $SEL
+            MIN(e.id) as id,  -- Assume the minimum id for each group
+            COALESCE(MAX(r.Status), 'Desconhecido') as Situacao,  -- Use MAX to get a representative status
+            COALESCE(MAX(CASE WHEN e.id = r.IDEntrega THEN r.Feedback ELSE 'Aguardando Correção' END), 'Aguardando Correção') as Feedback,
+            MAX(r.id) as last_repro_id  -- Captura o maior ID de reprovação
+        FROM 
+            entergas e
+        LEFT JOIN 
+            reprovacoes r ON(e.id = r.IDEntrega)
+        WHERE  
+            $AND
+        GROUP BY 
+            e.Titulo, r.Status
+        ORDER BY 
+            last_repro_id DESC;  -- Ordena pelo maior ID de reprovação
+
         ";
         $Entregas = DB::select($SQL);
         //dd($Entregas);
