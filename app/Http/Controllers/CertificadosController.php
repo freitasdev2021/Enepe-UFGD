@@ -357,7 +357,7 @@ class CertificadosController extends Controller
         // Salvar o certificado na pasta de armazenamento
         $certificado->save($certificatesPath . '/' . $fileName);
         // Copiar o certificado para a pasta pública
-        copy($certificatesPath . '/' . $fileName, $publicCertificatesPath . '/' . $fileName);
+        //copy($certificatesPath . '/' . $fileName, $publicCertificatesPath . '/' . $fileName);
         //salvar no banco
         Certificados::create([
             "Certificado" => $fileName,
