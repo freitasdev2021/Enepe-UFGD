@@ -155,7 +155,7 @@ class CertificadosController extends Controller
                     case "Telespectadores":
                         $Inscrito = User::find($Certificado['Inscritos']);
                         //
-                        if(!str_contains($Modelo->DSModelo,'{telespectador}') || !str_contains($Modelo->DSModelo,'{palestra}') || !$Inscrito){
+                        if(!str_contains($Modelo->DSModelo,'{telespectador}') || !str_contains($Modelo->DSModelo,'{evento}') || !$Inscrito){
                             array_push($erros,"Atenção! Modelo de Telespectadores Feito de Maneira Incorreta! ou o Certificado não atende os requisitos de Telespectador, favor refaze-lo na aba 'Modelos' ");
                         }else{
                             $STRConteudo = str_replace(['{telespectador}','{evento}'],[$Inscrito->name,$Evento->Titulo],$Modelo->DSModelo);
@@ -429,7 +429,7 @@ class CertificadosController extends Controller
                     u.name as Nome,
                     u.Email as Email,
                     u.id as IDInscrito,
-                    MAX(c.Certificado),
+                    MAX(c.Certificado) as Certificado,
                     MAX(c.IDModelo) as IDModelo
                 FROM 
                     users u
