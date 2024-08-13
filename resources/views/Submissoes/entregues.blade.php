@@ -12,10 +12,13 @@
               <div class="col-sm-6">
                 <select name="Modalidade" class="form-control">
                   <option value="">Selecione a Modalidade</option>
-                  <option value="Ensino" {{(isset($_GET['Modalidade']) && $_GET['Modalidade'] == "Ensino") ? 'selected' : ''}}>Ensino</option>
-                  <option value="Pesquisa" {{(isset($_GET['Modalidade']) && $_GET['Modalidade'] == "Pesquisa") ? 'selected' : ''}}>Pesquisa</option>
-                  <option value="Extensão" {{(isset($_GET['Modalidade']) && $_GET['Modalidade'] == "Extensão") ? 'selected' : ''}}>Extensão</option>
-                  <option value="Pós-Graduação" {{(isset($_GET['Modalidade']) && $_GET['Modalidade'] == "Pós-Graduação") ? 'selected' : ''}}>Pós-Graduação</option>
+                  <option value="Aluno de Iniciação Científica da UFGD" {{isset($_GET['Modalidade']) && $_GET['Modalidade'] == 'Aluno de Iniciação Científica da UFGD' ? 'selected' : ''}}>Aluno de Iniciação Científica da UFGD</option>
+                  <option value="Aluno da Graduação da UFGD" {{isset($_GET['Modalidade']) && $_GET['Modalidade'] == 'Aluno da Graduação da UFGD' ? 'selected' : ''}}>Aluno da Graduação da UFGD</option>
+                  <option value="Aluno da Pós-Graduação da UFGD" {{isset($_GET['Modalidade']) && $_GET['Modalidade'] == 'Aluno da Pós-Graduação da UFGD' ? 'selected' : ''}}>Aluno da Pós-Graduação da UFGD</option>
+                  <option value="Docente da UFGD" {{isset($_GET['Modalidade']) && $_GET['Modalidade'] == 'Docente da UFGD' ? 'selected' : ''}}>Docente da UFGD</option>
+                  <option value="Técnico Administrativo da UFGD" {{isset($Registro) && $_GET['Modalidade'] == 'Técnico Administrativo da UFGD' ? 'selected' : ''}}>Técnico Administrativo da UFGD</option>
+                  <option value="Outro" {{isset($_GET['Modalidade']) && $_GET['Modalidade'] == 'Outro' ? 'selected' : ''}}>Outro</option>
+                  <option value="Avaliador(a) externo(a)" {{isset($_GET['Modalidade']) && $_GET['Modalidade'] == 'Avaliador(a) Externo(a)' ? 'selected' : ''}}>Avaliador(a) externo(a)</option>
                 </select>
               </div>
               <div class="col-sm-2">

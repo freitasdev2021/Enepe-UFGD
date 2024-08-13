@@ -38,7 +38,7 @@ Route::middleware('auth')->group(function () {
         //ATIVIDADES
         Route::get('/Atividades/Abrir',[DyteController::class,'abrirSala']);
         //SUBMISSOES
-        Route::get('Submissoes/Entrega/{IDSubmissao}', [SubmissoesController::class, 'entrega'])->name('Submissoes/Entrega');
+        Route::get('Submissoes/Entrega/{IDSubmissao}/{IDEntrega}', [SubmissoesController::class, 'entrega'])->name('Submissoes/Entrega');
         Route::post('Submissoes/Entregas/Save', [SubmissoesController::class, 'saveEntrega'])->name('Submissoes/Entregas/Save');
         Route::get('Submissoes/getTrabalho/{IDEntrega}', [SubmissoesController::class, 'getTrabalho'])->name('Submissoes/getTrabalho');
         //EVENTOS
@@ -110,10 +110,9 @@ Route::middleware('auth')->group(function () {
         Route::get('Submissoes/Entregues/list/{IDSubmissao}', [SubmissoesController::class, 'getEntregues'])->name('Submissoes/Entregues/list');
         Route::post('Submissoes/Save', [SubmissoesController::class, 'save'])->name('Submissoes/Save');
         Route::post('Submissoes/Delete', [SubmissoesController::class, 'delete'])->name('Submissoes/Delete');
-        Route::get('Submissoes/list', [SubmissoesController::class, 'getSubmissoes'])->name('Submissoes/list');
         Route::post('Submissoes/Entregues/setAvaliador', [SubmissoesController::class, 'setAvaliador'])->name('Submissoes/Entregues/setAvaliador');
         //CERTIFICADOS
-        Route::post('Certificados/Delete', [CertificadosController::class, 'delete'])->name('Certificados/Delete');
+        Route::get('Modelos/Excluir/{id}', [CertificadosController::class, 'delete'])->name('Modelos/Excluir');
         Route::post('Certificados/Modelos/Save', [CertificadosController::class, 'saveModelo'])->name('Certificados/Modelos/Save');
         Route::get('Certificados/list', [CertificadosController::class, 'getCertificados'])->name('Certificados/list');
         Route::get('Certifica', [CertificadosController::class, 'index'])->name('Certifica/index');
@@ -141,6 +140,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('banca')->group(function(){
         Route::get('Submissoes/Correcao/{IDEntrega}', [SubmissoesController::class, 'correcao'])->name('Submissoes/Correcao');
         Route::post('Submissoes/Corrigir', [SubmissoesController::class, 'corrigir'])->name('Submissoes/Corrigir');
+        Route::get('Submissoes/list', [SubmissoesController::class, 'getSubmissoes'])->name('Submissoes/list');
     });
     //Submissões
     //Route::post('Eventos/inscreverAluno',[EventosController::class,'inscreverAluno'])->name('Eventos/inscreverAluno');

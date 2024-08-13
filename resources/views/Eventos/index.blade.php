@@ -19,9 +19,9 @@
                     <thead>
                       <tr>
                         <th style="text-align:center;" scope="col">Evento</th>
-                        <th style="text-align:center;" scope="col">Descricao</th>
-                        <th style="text-align:center;" scope="col">Inicio</th>
-                        <th style="text-align:center;" scope="col">Termino</th>
+                        <th style="text-align:center;" scope="col">Descrição</th>
+                        <th style="text-align:center;" scope="col">Início</th>
+                        <th style="text-align:center;" scope="col">Término</th>
                         <th style="text-align:center;" scope="col">Opções</th>
                       </tr>
                     </thead>

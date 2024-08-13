@@ -23,7 +23,7 @@ class SubmissoesController extends Controller
 
     public const cadastroSubmodulos = array([
         'nome' => 'Submissoes',
-        'rota' => 'Submissoes/index',
+        'rota' => 'Submissoes/Edit',
         'endereco' => 'index'
     ],[
         'nome' => 'Entregues',
@@ -54,8 +54,10 @@ class SubmissoesController extends Controller
             $data['Submissoes'] = DB::select("SELECT 
                 s.Categoria,
                 s.id,
-                s.Regras
+                s.Regras,
+                CASE WHEN s.id = en.IDSubmissao THEN en.id ELSE 0 END as IDEntrega
             FROM submissoes s
+            LEFT JOIN entergas en ON(s.id = en.IDSubmissao)
             INNER JOIN eventos e ON(s.IDEvento = e.id) $AND
         ");
         }
@@ -118,20 +120,26 @@ class SubmissoesController extends Controller
         }
     }
 
-    public function entrega($IDSubmissao){
+    public function entrega($IDSubmissao,$IDEntrega){
         $Submissao = Submissao::find($IDSubmissao);
         $Evento = Evento::find($Submissao->IDEvento);
         $IDUser = Auth::user()->id;
-        $AND = '';
+        $AND = ' e.IDSubmissao='.$IDSubmissao;
         $SEL = 'MAX(e.Apresentador) as Apresentador,';
         if(Auth::user()->tipo == 3){
-            $AND =  "AND e.IDInscrito = $IDUser";
+            $AND .=  " AND e.IDInscrito = $IDUser";
             $SEL = '';
         }
-        $Entregas = DB::select("SELECT 
+
+        if($IDEntrega > 0){
+            $AND .= " AND e.id =".$IDEntrega;
+        }
+
+        $SQL = "SELECT 
                 MIN(e.created_at) as created_at,  -- Assume the earliest created_at for each group
                 e.Titulo,
                 MIN(e.Autores) as Autores,
+                MIN(e.IDSubmissao) as IDSubmissao,
                 MIN(e.palavrasChave) as palavrasChave,
                 MIN(e.Tematica) as Tematica,
                 MIN(e.Descricao) as Descricao,
@@ -143,18 +151,21 @@ class SubmissoesController extends Controller
                 entergas e
             LEFT JOIN 
                 reprovacoes r ON(e.id = r.IDEntrega)
-            WHERE 
-                e.IDSubmissao = $IDSubmissao 
+            WHERE  
                 $AND
             GROUP BY 
-                e.Titulo,r.Status;
-        ");
+                e.Titulo,r.Status
+        ";
+        $Entregas = DB::select($SQL);
         //dd($Entregas);
         return view('Submissoes.entrega',[
             'Submissao' => $Submissao,
+            'Entrega' => (session('Submissao')) ? session('Submissao') : '',
             'Evento' => $Evento,
             'Entregas' => $Entregas,
             'IDSubmissao' => $IDSubmissao,
+            'IDEntrega' => ($IDEntrega > 0) ? $IDEntrega : 0,
+            'debug' => $SQL,
             'Tematica' => [
                 'FACALE',
                 'FACE',
@@ -216,14 +227,43 @@ class SubmissoesController extends Controller
 
     public function saveEntrega(Request $request){
         try{
-            $aid = $request->IDSubmissao;
             
-            $status = 'success';
+            $submissao = Submissao::find($request->IDSubmissao);
+
             $data = $request->all();
-            $data['IDInscrito'] = Auth::user()->id;
+            $texto = explode(" ",$request->Descricao);
+            $palavras = [];
+            $conjuncoes = [
+                // Conjunções coordenativas
+                "e", "mas", "ou", "porém", "contudo", "todavia", "no entanto", "portanto", "pois", "logo", "porque", "nem", "tampouco", "quer", "sequer", "assim", "então",
+                "que", "se", "como", "quando", "enquanto", "conquanto", "embora", "para que", "a fim de que", "desde que", "contanto que", "caso", "se bem que", "por mais que", "apesar de que",
+                "a", "ante", "após", "até", "com", "contra", "de", "desde", "em", "entre", "para", "perante", "por", "sem", "sob", "sobre", "trás","o", "a", "os", "as", "um", "uma", "uns", "umas","ele",
+                "ela", "eles", "elas", "me", "te", "lhe", "nos", "vos", "se", "este", "esse", "aquele", "esta", "essa", "aquela", "isto", "isso", "aquilo", "que", "quem", "qual", "cujo",
+                "não", "sim", "nunca", "sempre", "talvez", "aqui", "ali", "lá", "hoje", "ontem", "amanhã", "já", "depois", "mais", "menos", "muito", "pouco", "bem", "mal",
+                "de", "que", "se", "me", "te", "nos", "vos", "lhe", "já", "ainda", "mesmo", "também", "além", "tal", "cá", "lá", "tão", "quanto", "quer", "nem", "mesmo", "assim",
+            ];
+
+            foreach($texto as $t){
+                if(!in_array($t,$conjuncoes)){
+                    array_push($palavras,$t);
+                }
+            }
+
+            if(count($palavras) > $submissao->MaxLength || count($palavras) < $submissao->MinLength){
+                $rota = 'Submissoes/Entrega';
+                $aid = ["IDSubmissao"=>$request->IDSubmissao,"IDEntrega" => 0];
+                session()->flash('Submissao',$request->all());
+                $mensagem = "O Trabalho Submetido não atende as Exigências Estabelecida na Norma!";
+                $status = 'error';
+                return false;
+            }
+
+            $status = 'success';
             if(Auth::user()->tipo == 3){
+                $data['IDInscrito'] = Auth::user()->id;
                 $rota = 'Submissoes/Entrega';
                 $mensagem = 'Trabalho Enviado com Sucesso!';
+                $aid = ["IDSubmissao"=>$request->IDSubmissao,"IDEntrega" => 0];
                 if(!$request->IDEntrega){
                     Entrega::create($data);
                 }else{
@@ -234,6 +274,7 @@ class SubmissoesController extends Controller
             }else{
                 $rota = 'Submissoes/index';
                 $mensagem = 'Trabalho Atualizado com Sucesso!';
+                $aid = ["IDSubmissao"=>$request->IDSubmissao,"IDEntrega" => $request->IDEntrega];
                 unset($data['_token']);
                 unset($data['_method']);
                 Entrega::find($request->IDEntrega)->update($data);
@@ -242,10 +283,10 @@ class SubmissoesController extends Controller
             $mensagem = 'Erro '. $th->getMessage();
             if(Auth::user()->tipo == 3){
                 $rota = 'Submissoes/Entrega';
-                $aid = $request->IDSubmissao;
+                $aid = ["IDSubmissao"=>$request->IDSubmissao,"IDEntrega" => $request->IDEntrega];
             }else{
                 $rota = 'Submissoes/index';
-                $aid = '';
+                $aid = ["IDSubmissao"=>$request->IDSubmissao,"IDEntrega" => $request->IDEntrega];
             }
             
             $status = 'error';
@@ -319,9 +360,9 @@ class SubmissoesController extends Controller
             $Correcoes = [];
             //
             foreach($request->IDAvaliador as $av){
-                if(!is_null($av)){
+                //if(!is_null($av)){
                     array_push($Avaliadores,$av);
-                }
+                //}
             }
             //
             for($i=0;$i<count($Avaliadores);$i++){
@@ -330,9 +371,12 @@ class SubmissoesController extends Controller
                     "IDInscrito" => $request->Inscrito[$i]
                 );
             }
+            //dd($Correcoes);
             //
             foreach($Correcoes as $c){
-                Entrega::where('IDInscrito',$c['IDInscrito'])->update(["IDAvaliador"=>$c['IDAvaliador']]);
+                if(!is_null($c['IDAvaliador'])){
+                    Entrega::where('IDInscrito',$c['IDInscrito'])->update(["IDAvaliador"=>$c['IDAvaliador']]);
+                }
             }
             //
             $aid = $request->IDSubmissao;
@@ -355,11 +399,7 @@ class SubmissoesController extends Controller
     }
 
     public function getEntregues($IDSubmissao){
-        
-        $WHERE = "";
-        if(isset($_GET['Modalidade']) && !empty($_GET['Modalidade'])){
-            $WHERE = " AND s.Categoria='".$_GET['Modalidade']."'";
-        }
+    
 
         $selectAvaliador = "<select name='IDAvaliador[]'>";
         $selectAvaliador .= "<option value=''>Selecione</option>";
@@ -368,21 +408,42 @@ class SubmissoesController extends Controller
         }
         $selectAvaliador .= "</select>";
 
+        $WHERE = "";
+        if(isset($_GET['Modalidade']) && !empty($_GET['Modalidade'])){
+            $WHERE = " AND s.Categoria='".$_GET['Modalidade']."'";
+        }
+
+        $WHERE = "";
+if (isset($_GET['Modalidade']) && !empty($_GET['Modalidade'])) {
+    $WHERE = " AND s.Categoria='" . $_GET['Modalidade'] . "'";
+}
+
         $SQL = "SELECT
-                e.Titulo,
-                s.Categoria,
-                a.id as IDAvaliador,
-                u.name as Inscrito,
-                e.Apresentador as Apresentador,
-                a.name as Avaliador,
-                CASE WHEN e.id = r.IDEntrega THEN r.Status ELSE 'Aguardando Correção' END as Status,
-                e.IDInscrito,
-                e.id as IDEntrega
-            FROM entergas e
-            INNER JOIN submissoes s ON(s.id = e.IDSubmissao)
-            INNER JOIN users u ON(u.id = e.IDInscrito)
-            LEFT JOIN users a ON(a.id = e.IDAvaliador)
-            LEFT JOIN reprovacoes r ON(e.id = r.IDEntrega) WHERE s.id = $IDSubmissao $WHERE";;
+            e.Titulo,
+            s.Categoria,
+            a.id as IDAvaliador,
+            u.name as Inscrito,
+            e.Apresentador as Apresentador,
+            a.name as Avaliador,
+            COALESCE(r.Status, 'Aguardando Correção') as Status,
+            e.IDInscrito,
+            e.id as IDEntrega,
+            s.id as IDSubmissao
+        FROM entergas e
+        INNER JOIN submissoes s ON (s.id = e.IDSubmissao)
+        INNER JOIN users u ON (u.id = e.IDInscrito)
+        LEFT JOIN users a ON (a.id = e.IDAvaliador)
+        LEFT JOIN (
+            SELECT r1.IDEntrega, r1.Status
+            FROM reprovacoes r1
+            INNER JOIN (
+                SELECT IDEntrega, MAX(id) as MaxID
+                FROM reprovacoes
+                GROUP BY IDEntrega
+            ) r2 ON r1.id = r2.MaxID
+        ) r ON (e.id = r.IDEntrega)
+        WHERE s.id = $IDSubmissao $WHERE";
+
             //dd($SQL);
         $registros = DB::select($SQL);
 
@@ -396,7 +457,7 @@ class SubmissoesController extends Controller
                 $item[] = $r->Apresentador;
                 $item[] = ($r->IDAvaliador == 0) ? $selectAvaliador."<input type='hidden' value='$r->IDInscrito' name='Inscrito[]'>" : $r->Avaliador." <button class='btn btn-xs btn-danger' type='button' onclick='removerAtribuicao($RemoveATR)'>Remover Atribuição</button>";
                 $item[] = $r->Status;
-                $item[] = "<a href=".route('Submissoes/Entrega',$r->IDEntrega).">Abrir</a> <a href=".route('Submissoes/Correcao',$r->IDEntrega).">Corrigir</a>";
+                $item[] = "<a href=".route('Submissoes/Entrega',["IDEntrega"=>$r->IDEntrega,"IDSubmissao"=>$r->IDSubmissao]).">Abrir</a> <a href=".route('Submissoes/Correcao',$r->IDEntrega).">Corrigir</a>";
                 $itensJSON[] = $item;
             }
         }else{

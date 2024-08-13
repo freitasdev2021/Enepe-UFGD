@@ -63,7 +63,7 @@
                     <div class="col-sm-12 text-left row">
                         <button class="btn bg-fr text-white col-auto">Corrigir</button>
                         &nbsp;
-                        <a class="btn btn-light col-auto" href="{{route('Submissoes/index')}}">Voltar</a>
+                        <a class="btn btn-light col-auto" href="{{(Auth::user()->tipo == 3) ? route('Submissoes/index') : route('Submissoes/Entregues',$Trabalho->IDSubmissao)}}">Voltar</a>
                     </div>
                 </form>
             </div>

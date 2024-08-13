@@ -19,12 +19,12 @@
                     <thead>
                       <tr>
                         <th style="text-align:center;" scope="col">Evento</th>
-                        <th style="text-align:center;" scope="col">Titulo</th>
+                        <th style="text-align:center;" scope="col">Título</th>
                         <th style="text-align:center;" scope="col">Palestrante</th>
                         <th style="text-align:center;" scope="col">Palestra</th>
                         <th style="text-align:center;" scope="col">Data</th>
-                        <th style="text-align:center;" scope="col">Inicio</th>
-                        <th style="text-align:center;" scope="col">Termino</th>
+                        <th style="text-align:center;" scope="col">Início</th>
+                        <th style="text-align:center;" scope="col">Término</th>
                         <th style="text-align:center;" scope="col">Opções</th>
                       </tr>
                     </thead>

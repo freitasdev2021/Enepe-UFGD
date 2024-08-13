@@ -4,7 +4,7 @@
         <div class="card-header bg-fr text-white">
          Certificados
         </div>
-        <div class="card-body">
+        <div class="card-body row">
             @if(Count($Certificados))
                 @foreach($Certificados as $c)
                 <div class="card sala p-1" style="width: 18rem;">

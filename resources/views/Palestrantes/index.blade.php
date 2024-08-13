@@ -20,7 +20,7 @@
                       <tr>
                         <th style="text-align:center; width:150px;" scope="col">Foto</th>
                         <th style="text-align:center;" scope="col">Nome</th>
-                        <th style="text-align:center;" scope="col">Curriculo</th>
+                        <th style="text-align:center;" scope="col">Currículo</th>
                         <th style="text-align:center;" scope="col">Opções</th>
                       </tr>
                     </thead>

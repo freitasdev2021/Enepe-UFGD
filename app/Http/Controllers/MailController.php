@@ -38,12 +38,7 @@ class MailController extends Controller
         $mail->Subject = $assunto;
         $mail->Body = view($view, $contentView);
 
-        try {
-            $mail->send();
-            return 'Email enviado com sucesso';
-        } catch (Exception $e) {
-            return "Erro ao enviar email: {$mail->ErrorInfo}";
-        }
+        $mail->send();
         //
     }
 }

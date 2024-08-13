@@ -26,7 +26,7 @@
                     @endif
                     <div class="row">
                         <div class="col-sm-4">
-                            <label>Titulo</label>
+                            <label>Título</label>
                             <input type="text" name="Titulo" class="form-control" value="{{isset($Registro) ? $Registro->Titulo : ''}}" required>
                         </div>
                         <div class="col-sm-4">
@@ -54,11 +54,11 @@
                             <input type="date" name="Data" class="form-control" value="{{(isset($Registro)) ? $Registro->Data : ''}}" >
                         </div>
                         <div class="col-sm-4">
-                            <label>Inicio</label>
+                            <label>Início</label>
                             <input type="time" name="Inicio" class="form-control" value="{{(isset($Registro)) ? $Registro->Inicio : ''}}" >
                         </div>
                         <div class="col-sm-4">
-                            <label>Termino</label>
+                            <label>Término</label>
                             <input type="time" name="Termino" class="form-control" value="{{(isset($Registro)) ? $Registro->Termino : ''}}">
                         </div>
                     </div>

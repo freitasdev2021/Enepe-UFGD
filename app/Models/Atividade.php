@@ -18,6 +18,7 @@ class Atividade extends Model
         'Chat',
         'URLMeeting',
         'IDMeeting',
-        'PWMeeting'
+        'PWMeeting',
+        'IDEvento'
     ];
 }

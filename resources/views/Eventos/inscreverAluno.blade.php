@@ -39,10 +39,6 @@
                             <label>Categoria</label>
                             <select name="Categoria" class="form-control">
                                 <option value="">Selecione</option>
-                                <option value="Ensino" {{isset($Registro) && $Registro->Categoria == 'Ensino' ? 'selected' : ''}}>Ensino</option>
-                                <option value="Pesquisa" {{isset($Registro) && $Registro->Categoria == 'Pesquisa' ? 'selected' : ''}}>Pesquisa</option>
-                                <option value="Extensão" {{isset($Registro) && $Registro->Categoria == 'Extensão' ? 'selected' : ''}}>Extensão</option>
-                                <option value="Pós-Graduação" {{isset($Registro) && $Registro->Categoria == 'Pós-Graduação' ? 'selected' : ''}}>Pós-Graduação</option>
                                 <option value="Aluno de Iniciação Científica da UFGD" {{isset($Registro) && $Registro->Categoria == 'Aluno de Iniciação Científica da UFGD' ? 'selected' : ''}}>Aluno de Iniciação Científica da UFGD</option>
                                 <option value="Aluno da Graduação da UFGD" {{isset($Registro) && $Registro->Categoria == 'Aluno da Graduação da UFGD' ? 'selected' : ''}}>Aluno da Graduação da UFGD</option>
                                 <option value="Aluno da Pós-Graduação da UFGD" {{isset($Registro) && $Registro->Categoria == 'Aluno da Pós-Graduação da UFGD' ? 'selected' : ''}}>Aluno da Pós-Graduação da UFGD</option>

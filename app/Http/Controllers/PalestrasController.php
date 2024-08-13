@@ -203,6 +203,7 @@ class PalestrasController extends Controller
                     $request->file('Foto')->storeAs('palestrantes',$Foto,'public');
                     $data['Foto'] = $Foto;
                 }
+                $rota = 'Palestrantes/Edit';
                 $aid = $request->id;
                 Palestrante::find($request->id)->update($data);
             }

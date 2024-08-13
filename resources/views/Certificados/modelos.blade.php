@@ -14,9 +14,21 @@
             <div class="card-body">
               <h5 class="card-title">{{$m->Nome}}</h5>
               <br>
-              <a href="{{route('Atividades/Atividade',$m->id)}}" class="btn btn-danger">Excluir</a>
+              <button data-excluir="{{route('Modelos/Excluir',$m->id)}}" type="button" class="btn delete btn-danger">Excluir</button>
             </div>
         </div>
         @endforeach
     </div>
+    <script>
+        $(".delete").on("click",function(){
+            if(confirm("Deseja Excluir esse Modelo?")){
+                $.ajax({
+                    url : $(this).attr("data-excluir")
+                }).done(function(response){
+                    console.log(response)
+                    window.location.reload()
+                })
+            }
+        })
+    </script>
 </x-educacional-layout>

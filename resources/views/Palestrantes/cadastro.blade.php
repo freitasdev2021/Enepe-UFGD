@@ -50,7 +50,7 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-12">
-                            <label>Curriculo</label>
+                            <label>Currículo</label>
                             <textarea name="Curriculo" class="form-control">{{isset($Registro) ? $Registro->Curriculo : ''}}</textarea>
                         </div>
                     </div>

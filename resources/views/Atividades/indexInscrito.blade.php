@@ -7,7 +7,6 @@
               <h5 class="card-title">{{$a->Titulo}}</h5>
               <br>
               <p class="card-text">{{date('d/m/Y H:i:s',strtotime($a->Inicio))}}</p>
-              <h6>{{$a->Sala}}</h6>
               <p class="card-text">{{$a->Descricao}}</p>
               <a href="{{route('Atividades/Atividade',$a->id)}}" class="btn bg-fr text-white">Entrar</a>
             </div>

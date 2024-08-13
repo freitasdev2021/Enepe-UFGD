@@ -19,7 +19,6 @@
                     <thead>
                       <tr>
                         <th style="text-align:center;" scope="col">Titulo</th>
-                        <th style="text-align:center;" scope="col">Sala</th>
                         <th style="text-align:center;" scope="col">Descrição</th>
                         <th style="text-align:center;" scope="col">Data e Hora</th>
                         <th style="text-align:center;" scope="col">Opções</th>

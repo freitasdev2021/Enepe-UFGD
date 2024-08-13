@@ -13,7 +13,6 @@ class Sala extends Model
 
     protected $fillable = [
         'Sala',
-        'Capacidade',
-        'IDEvento'
+        'Capacidade'
     ];
 }

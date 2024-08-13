@@ -34,17 +34,17 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-12">
-                            <label>Titulo</label>
+                            <label>Título</label>
                             <input type="text" name="Titulo" class="form-control" value="{{isset($Registro) ? $Registro->Titulo : ''}}" required>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-6">
-                            <label>Inicio</label>
+                            <label>Início</label>
                             <input type="datetime-local" name="Inicio" class="form-control" value="{{(isset($Registro)) ? $Registro->Inicio : ''}}" >
                         </div>
                         <div class="col-sm-6">
-                            <label>Termino</label>
+                            <label>Término</label>
                             <input type="datetime-local" name="Termino" class="form-control" value="{{(isset($Registro)) ? $Registro->Termino : ''}}">
                         </div>
                     </div>
@@ -54,7 +54,7 @@
                             <input type="date" name="INIInscricao" class="form-control" value="{{(isset($Registro)) ? $Registro->INIInscricao : ''}}" >
                         </div>
                         <div class="col-sm-6">
-                            <label>Termino das Inscrições</label>
+                            <label>Término das Inscrições</label>
                             <input type="date" name="TERInscricoes" class="form-control" value="{{(isset($Registro)) ? $Registro->TERInscricoes : ''}}">
                         </div>
                     </div>
@@ -64,7 +64,7 @@
                             <input type="datetime-local" name="INISubmissao" class="form-control" value="{{(isset($Registro)) ? $Registro->INISubmissao : ''}}" >
                         </div>
                         <div class="col-sm-6">
-                            <label>Termino das Submissões</label>
+                            <label>Término das Submissões</label>
                             <input type="datetime-local" name="TERSubmissao" class="form-control" value="{{(isset($Registro)) ? $Registro->TERSubmissao : ''}}">
                         </div>
                     </div>

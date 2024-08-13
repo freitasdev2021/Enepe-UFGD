@@ -20,11 +20,7 @@
             <div class="col-sm-12">
                 <label>Categoria</label>
                 <select name="Categoria" class="form-control">
-                    <option value="">Selecione</option>
-                    <option value="Ensino">Ensino</option>
-                    <option value="Pesquisa">Pesquisa</option>
-                    <option value="Extensão">Extensão</option>
-                    <option value="Pós-Graduação">Pós-Graduação</option>
+                    <option value="">Selecione</option>>
                     <option value="Aluno de Iniciação Científica da UFGD">Aluno de Iniciação Científica da UFGD</option>
                     <option value="Aluno da Graduação da UFGD">Aluno da Graduação da UFGD</option>
                     <option value="Aluno da Pós-Graduação da UFGD">Aluno da Pós-Graduação da UFGD</option>

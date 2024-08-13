@@ -18,10 +18,6 @@ class AtividadesController extends Controller
         'rota' => 'Eventos/Edit',
         'endereco' => 'Cadastro'
     ],[
-        'nome' => 'Salas',
-        'rota' => 'Eventos/Salas/index',
-        'endereco' => 'Salas'
-    ],[
         'nome' => 'Atividades',
         'rota' => 'Eventos/Atividades/index',
         'endereco' => 'Atividades'
@@ -41,10 +37,10 @@ class AtividadesController extends Controller
     public function indexInscrito(){
         $AND = '';
         if(Session::has('IDEvento')){
-            $AND = ' WHERE s.IDEvento='.Session::get('IDEvento');
+            $AND = ' WHERE a.IDEvento='.Session::get('IDEvento');
         }
         return view('Atividades.indexInscrito',[
-            'Atividades' => DB::select("SELECT a.id,a.Titulo,s.Sala,a.Descricao,a.Inicio FROM atividades a INNER JOIN salas s ON(a.IDSala = s.id) $AND")
+            'Atividades' => DB::select("SELECT a.id,a.Titulo,a.Descricao,a.Inicio FROM atividades a $AND")
         ]);
     }
 
@@ -119,12 +115,11 @@ class AtividadesController extends Controller
     }
 
     public function getAtividades($IDEvento){
-        $registros = DB::select("SELECT s.IDEvento,a.id,a.Titulo,s.Sala,a.Descricao,a.Inicio FROM atividades a INNER JOIN salas s ON(a.IDSala = s.id)");
+        $registros = DB::select("SELECT a.IDEvento,a.id,a.Titulo,a.Descricao,a.Inicio FROM atividades a");
         if(count($registros) > 0){
             foreach($registros as $r){
                 $item = [];
                 $item[] = $r->Titulo;
-                $item[] = $r->Sala;
                 $item[] = $r->Descricao;
                 $item[] = Controller::data($r->Inicio,'d/m/Y H:i');
                 $item[] = "<a href=".route('Eventos/Atividades/Edit',['id'=>$r->id,'IDEvento'=>$r->IDEvento])." class='btn bg-fr text-white btn-xs'>Abrir</a>

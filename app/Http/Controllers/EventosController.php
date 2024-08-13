@@ -25,10 +25,6 @@ class EventosController extends Controller
         'rota' => 'Eventos/Edit',
         'endereco' => 'Cadastro'
     ],[
-        'nome' => 'Salas',
-        'rota' => 'Eventos/Salas/index',
-        'endereco' => 'Salas'
-    ],[
         'nome' => 'Atividades',
         'rota' => 'Eventos/Atividades/index',
         'endereco' => 'Atividades'

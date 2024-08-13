@@ -8,7 +8,7 @@
               <p class="card-text">
                 <a href="{{url('storage/regras_submissao/'.$s->Regras)}}" download><i class='bx bxs-download'></i>Regras</a>
               </p>
-              <a href="{{route('Submissoes/Entrega',$s->id)}}" class="btn bg-fr text-white">Visualizar</a>
+              <a href="{{route('Submissoes/Entrega',["IDSubmissao" =>$s->id,"IDEntrega"=>$s->IDEntrega])}}" class="btn bg-fr text-white">Visualizar</a>
             </div>
         </div>
         @endforeach
