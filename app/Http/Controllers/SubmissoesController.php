@@ -52,17 +52,31 @@ class SubmissoesController extends Controller
             }
 
             $data['Submissoes'] = DB::select("
-            SELECT 
-                s.Categoria,
-                s.id,
-                s.Regras,
-                MIN(CASE WHEN s.id = en.IDSubmissao THEN en.id ELSE 0 END) as IDEntrega
-            FROM submissoes s
-            LEFT JOIN entergas en ON(s.id = en.IDSubmissao)
-            INNER JOIN eventos e ON(s.IDEvento = e.id) 
-            $AND
-            GROUP BY s.Categoria, s.id, s.Regras
-        ");
+                SELECT 
+                    s.Categoria,
+                    s.id,
+                    s.Regras,
+                    en.IDEntrega
+                FROM 
+                    submissoes s
+                LEFT JOIN (
+                    SELECT 
+                        en.IDSubmissao, 
+                        en.id as IDEntrega 
+                    FROM 
+                        entergas en
+                    WHERE 
+                        en.IDInscrito = $currentId
+                ) as en ON s.id = en.IDSubmissao
+                INNER JOIN 
+                    eventos e ON s.IDEvento = e.id 
+                $AND
+                GROUP BY 
+                    s.Categoria, 
+                    s.id, 
+                    s.Regras, 
+                    en.IDEntrega
+            ");
         }
         return view($view,$data);
     }
