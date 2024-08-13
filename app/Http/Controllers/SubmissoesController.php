@@ -300,7 +300,7 @@ class SubmissoesController extends Controller
             $mensagem = 'Erro '. $th->getMessage();
             if(Auth::user()->tipo == 3){
                 $rota = 'Submissoes/Entrega';
-                $aid = ["IDSubmissao"=>$request->IDSubmissao,"IDEntrega" => $request->IDEntrega];
+                $aid = ["IDSubmissao"=>$request->IDSubmissao,"IDEntrega" => 0];
             }else{
                 $rota = 'Submissoes/index';
                 $aid = ["IDSubmissao"=>$request->IDSubmissao,"IDEntrega" => $request->IDEntrega];
