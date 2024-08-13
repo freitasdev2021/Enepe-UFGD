@@ -56,7 +56,7 @@ class SubmissoesController extends Controller
                     s.Categoria,
                     s.id,
                     s.Regras,
-                    CASE WHEN s.id = en.IDSubmissao THEN en.id ELSE 0 END as IDEntrega
+                    CASE WHEN s.id = en.IDSubmissao THEN en.IDSubmissao ELSE 0 END as IDEntrega
                 FROM 
                     submissoes s
                 LEFT JOIN (
