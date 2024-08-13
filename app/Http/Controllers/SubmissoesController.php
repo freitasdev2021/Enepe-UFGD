@@ -56,7 +56,7 @@ class SubmissoesController extends Controller
                 s.Categoria,
                 s.id,
                 s.Regras,
-                MAX(CASE WHEN s.id = en.IDSubmissao THEN en.id ELSE 0 END) as IDEntrega
+                MIN(CASE WHEN s.id = en.IDSubmissao THEN en.id ELSE 0 END) as IDEntrega
             FROM submissoes s
             LEFT JOIN entergas en ON(s.id = en.IDSubmissao)
             INNER JOIN eventos e ON(s.IDEvento = e.id) 
