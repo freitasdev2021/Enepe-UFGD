@@ -56,7 +56,7 @@ class SubmissoesController extends Controller
                     s.Categoria,
                     s.id,
                     s.Regras,
-                    CASE WHEN s.id = en.IDSubmissao THEN en.IDSubmissao ELSE 0 END as IDEntrega
+                    CASE WHEN s.id = en.IDSubmissao THEN en.IDEntrega ELSE 0 END as IDEntrega
                 FROM 
                     submissoes s
                 LEFT JOIN (
@@ -453,9 +453,9 @@ class SubmissoesController extends Controller
         }
 
         $WHERE = "";
-if (isset($_GET['Modalidade']) && !empty($_GET['Modalidade'])) {
-    $WHERE = " AND s.Categoria='" . $_GET['Modalidade'] . "'";
-}
+        if (isset($_GET['Modalidade']) && !empty($_GET['Modalidade'])) {
+            $WHERE = " AND s.Categoria='" . $_GET['Modalidade'] . "'";
+        }
 
         $SQL = "SELECT
             e.Titulo,
