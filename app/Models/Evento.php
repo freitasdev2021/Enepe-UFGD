@@ -23,6 +23,8 @@ class Evento extends Model
         'TERInscricoes',
         'Normas',
         'Contatos',
-        'Capa'
+        'Capa',
+        'ModeloApresentacao',
+        'Ensalamento'
     ];
 }

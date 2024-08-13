@@ -70,7 +70,7 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-12">
-                            <label>Normas de Submissão</label>
+                            <label>Normas de Apresentação</label>
                             <textarea name="Normas" class="form-control">{{isset($Registro) ? $Registro->Normas : ''}}</textarea>
                         </div>
                     </div>
@@ -78,6 +78,19 @@
                         <div class="col-sm-12">
                             <label>Descrição</label>
                             <textarea name="Descricao" class="form-control">{{isset($Registro) ? $Registro->Descricao : ''}}</textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <label>Ensalamento</label>
+                            <textarea name="Ensalamento" class="form-control">{{isset($Registro) ? $Registro->Ensalamento : ''}}</textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <label>Modelo de Apresentação</label>
+                            <input type="file" name="ModeloApresentacao" class="form-control">
+                            <input type="hidden" name="oldModeloApresentacao" value="{{isset($Registro) ? $Registro->ModeloApresentacao : ''}}">
                         </div>
                     </div>
                     <div class="row">

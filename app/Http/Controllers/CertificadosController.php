@@ -219,7 +219,7 @@ class CertificadosController extends Controller
                             array_push($erros,"Atenção! Modelo de Telespectadores de Palestra Feito de Maneira Incorreta! ou o Certificado não atende os requisitos de Telespectador de Palestra,ou não assistiu nenhuma palestra, favor refaze-lo na aba 'Modelos' ");
                         }else{
                             foreach($Assistiu as $as){
-                                $STRConteudo = str_replace(['{telespectador}','{palestra}','{evento}'],[$Inscrito->name,$as->Titulo,$Evento->Titulo],$Modelo->DSModelo);
+                                $STRConteudo = str_replace(['{telespectador}','{palestra}'],[$Inscrito->name,$as->Titulo],$Modelo->DSModelo);
                                 $Conteudo = explode("|",$STRConteudo);
                                 $emissao[] = array(
                                     "Conteudo" => $Conteudo,
@@ -284,7 +284,7 @@ class CertificadosController extends Controller
             //
             if(count($erros) == 0){
                 foreach($emissao as $e){
-                    self::setCertificado($e['Conteudo'],$e['IDInscrito'],$e['Arquivo'],$e['Inscrito'],$e['Evento'],$e['IDEvento'],$e['Modelo']);
+                    self::setCertificado(wordwrap($e['Conteudo'],50,'<br>/n'),$e['IDInscrito'],$e['Arquivo'],$e['Inscrito'],$e['Evento'],$e['IDEvento'],$e['Modelo']);
                 }
                 $mensagem = 'Salvo com Sucesso';
                 $status = 'success';
@@ -337,7 +337,7 @@ class CertificadosController extends Controller
         // Definir as propriedades da fonte
         $fontSize = 50;
         $lineHeight = $fontSize * 1.2; // Altura da linha
-        $x = 900; // Posição horizontal
+        $x = 1000; // Posição horizontal
         $initialY = 450; // Posição inicial vertical
         $fontPath = public_path('fonts/arial.ttf');
         $certificado = $certificadoManager->read(realpath(storage_path('app/public/modelos/'.$Modelo)));

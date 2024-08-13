@@ -271,6 +271,12 @@ class EventosController extends Controller
                     $request->file('Capa')->storeAs('Site',$Foto,'public');
                     $data['Capa'] = $Foto;
                 }
+
+                if($request->file('ModeloApresentacao')){
+                    $Foto = $request->file('ModeloApresentacao')->getClientOriginalName();
+                    $request->file('ModeloApresentacao')->storeAs('Site',$Foto,'public');
+                    $data['ModeloApresentacao'] = $Foto;
+                }
                 $rota = 'Eventos/Novo';
                 $aid = '';
                 Evento::create($data);
@@ -280,6 +286,13 @@ class EventosController extends Controller
                     Storage::disk('public')->delete('Site/'.$request->oldCapa);
                     $request->file('Capa')->storeAs('Site',$Foto,'public');
                     $data['Capa'] = $Foto;
+                }
+
+                if($request->file('ModeloApresentacao')){
+                    $Foto = $request->file('ModeloApresentacao')->getClientOriginalName();
+                    Storage::disk('public')->delete('Site/'.$request->oldModeloApresentacao);
+                    $request->file('ModeloApresentacao')->storeAs('Site',$Foto,'public');
+                    $data['ModeloApresentacao'] = $Foto;
                 }
                 $rota = 'Eventos/Edit';
                 $aid = $request->id;

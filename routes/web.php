@@ -9,6 +9,7 @@ use App\Http\Controllers\SubmissoesController;
 use App\Http\Controllers\OrganizadoresController;
 use App\Http\Controllers\CertificadosController;
 use App\Http\Controllers\SiteController;
+use App\Http\Controllers\NotificaController;
 use App\Models\Certificados;
 use App\Http\Controllers\SalasController;
 use App\Http\Controllers\AtividadesController;
@@ -125,6 +126,9 @@ Route::middleware('auth')->group(function () {
         Route::get('Eventos/Inscricoes/inscreverAluno/{IDEvento}',[EventosController::class,'inscreverAluno'])->name('Eventos/Inscricoes/inscreverAluno');
         Route::get('Eventos/Inscricoes/{IDEvento}',[EventosController::class,'inscricoes'])->name('Eventos/Inscricoes');
         Route::get('Eventos/Inscricoes/list/{IDEvento}',[EventosController::class,'getInscricoes'])->name('Eventos/Inscricoes/list');
+        //Notificações
+        Route::post('Notificacoes',[NotificaController::class,'notificacoes'])->name('Notificacoes/Send');
+        //
     });
     //CAMADA DE PROTEÇÃO AVALIADORES
     Route::middleware('avaliador')->group(function(){

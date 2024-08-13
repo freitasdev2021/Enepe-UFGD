@@ -58,9 +58,9 @@
                </div>
                <div class="card-body">
                   <h5 class="card-title">{{$Evento->Titulo}}</h5>
-                  <p class="card-text">o Evento vai de {{date('d/m/Y',strtotime($Evento->Inicio))}} a {{date('d/m/Y',strtotime($Evento->Termino))}} e será Online</p>
+                  {{-- <p class="card-text">o Evento vai de {{date('d/m/Y',strtotime($Evento->Inicio))}} a {{date('d/m/Y',strtotime($Evento->Termino))}} e será Online</p> --}}
                   <h5 class="card-title">Sobre o Evento</h5>
-                  <p class="card-text">fsdfdsfdfsdfs</p>
+                  <p class="card-text">{{$Evento->Descricao}}</p>
                   <div class="col-sm-12">
                      <h3 align="center">Inscreva-se na Plataforma</h3>
                      <hr>
@@ -114,7 +114,7 @@
                   <strong>Submissões</strong>
                </div>
                <div class="card-body">
-                  <h5 class="card-title text-center">as Submissões vão de {{date('d/m/Y',strtotime($Evento->INISubmissao))}} a {{date('d/m/Y',strtotime($Evento->TERSubmissao))}}</h5>
+                  <h5 class="card-title text-center">Prazo para submissão: {{date('d/m/Y',strtotime($Evento->INISubmissao))}} - {{date('d/m/Y',strtotime($Evento->TERSubmissao))}}</h5>
                   <br>
                   @foreach($Submissoes as $s)
                   <div class="card">
@@ -124,6 +124,21 @@
                   </div>
                   <br>
                   @endforeach
+               </div>
+            </div>
+            <!--NORMAS DE APRESENTAÇÃO-->
+            <br>
+            <div class="card">
+               <div class="card-header">
+                     <strong>Normas de Apresentação</strong>
+                  </div>
+                  <div class="card-body">
+                     <a href="{{url('storage/Site/'.$Evento->ModeloApresentacao)}}" download>Modelo de Apresentações</a>
+                     <br>
+                     <p class="card-text">
+                        {{$Evento->Normas}}
+                     </p>
+                  </p>
                </div>
             </div>
             <!--Atividades-->
@@ -165,6 +180,7 @@
                            <br>
                            <h6>{{$p->Nome}}</h6>
                            <p class="card-text">{{$p->Palestra}}</p>
+                           <p class="card-text">{{date('d/m/Y',strtotime($p->created_at))}}  {{$p->Inicio}} - {{$p->Termino}}</p>
                         </div>
                      </div>
                      @endforeach
