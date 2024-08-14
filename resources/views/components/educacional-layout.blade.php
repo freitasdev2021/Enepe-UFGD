@@ -19,6 +19,7 @@
                     <x-Modulo nome="Submissões" icon="bx bx-task" rota="Submissoes/index" endereco="Submissoes"/>
                     <x-Modulo nome="Certificados" icon="bx bxs-certification" rota="Certifica/index" endereco="Certifica"/>
                     <x-Modulo nome="Organizadores" icon="bx bxs-user" rota="Organizadores/index" endereco="Organizadores"/>
+                    <x-Modulo nome="Formulários" icon="bx bxs-dock-top" rota="Formularios/index" endereco="Formularios"/>
                     @elseif(in_array(Auth::user()->tipo,[0,2]))
                     <x-Modulo nome="Submissões" icon="bx bx-task" rota="Submissoes/index" endereco="Submissoes"/> 
                     <x-Modulo nome="Atividades" icon="bx bxs-pencil" rota="Atividades/index" endereco="Atividades"/>

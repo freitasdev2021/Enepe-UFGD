@@ -13,7 +13,7 @@ use App\Http\Controllers\NotificaController;
 use App\Models\Certificados;
 use App\Http\Controllers\SalasController;
 use App\Http\Controllers\AtividadesController;
-use App\Http\Controllers\InscricoesController;
+use App\Http\Controllers\FormulariosController;
 use App\Http\Controllers\ZoomController;
 use Illuminate\Support\Facades\Route;
 //ROTAS PRINCIPAIS
@@ -56,6 +56,17 @@ Route::middleware('auth')->group(function () {
     });
     //CAMADA DE PROTEÇÃO ORGANIZADORES
     Route::middleware('organizador')->group(function(){
+        //FORMULÁRIO
+        Route::post('Formularios/Save',[FormulariosController::class,'save'])->name('Formularios/Save');
+        Route::get('Formularios',[FormulariosController::class,'index'])->name('Formularios/index');
+        Route::get('Formularios/list',[FormulariosController::class,'getFormularios'])->name('Formularios/list');
+        Route::get('Formularios/Cadastro',[FormulariosController::class,'cadastro'])->name('Formularios/Novo');
+        Route::get('Formularios/Cadastro/{id}',[FormulariosController::class,'cadastro'])->name('Formularios/Edit');
+        //Formulario
+        Route::get('Formularios/Respostas/{id}',[FormulariosController::class,'respostas'])->name('Formularios/Respostas');
+        Route::get('Formularios/getRespostas/{id}',[FormulariosController::class,'getRespostas'])->name('Formularios/getRespostas');
+        Route::get('Formularios/Visualizar/{id}',[FormulariosController::class,'visualizar'])->name('Formularios/Visualizar');
+        Route::post('Formularios/Responder',[FormulariosController::class,'responder'])->name('Formularios/Responder');
         //ORGANIZADORES
         Route::post('Organizadores/Save',[OrganizadoresController::class,'save'])->name('Organizadores/Save');
         Route::get('Organizadores',[OrganizadoresController::class,'index'])->name('Organizadores/index');
