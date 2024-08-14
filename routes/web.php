@@ -11,6 +11,9 @@ use App\Http\Controllers\CertificadosController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\NotificaController;
 use App\Models\Certificados;
+use App\Models\Formulario;
+use Illuminate\Support\Facades\Session;
+use App\Http\Controllers\ExportController;
 use App\Http\Controllers\SalasController;
 use App\Http\Controllers\AtividadesController;
 use App\Http\Controllers\FormulariosController;
@@ -21,8 +24,15 @@ Route::get('/', function () {
     return view('auth.register');
 });
 Route::get('/dashboard', function () {
+    $Formularios = [];
+
+    if(Session::get('IDEvento')){
+        $Formularios = Formulario::where('IDEvento',Session::get('IDEvento'))->get();
+    }
+
     return view('dashboard',[
-        "Certificados" => Certificados::where("IDInscrito",Auth::user()->id)->get()
+        "Certificados" => Certificados::where("IDInscrito",Auth::user()->id)->get(),
+        "Formularios" => $Formularios
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 //ROTA DO SITE
@@ -43,7 +53,9 @@ Route::middleware('auth')->group(function () {
         Route::post('Submissoes/Entregas/Save', [SubmissoesController::class, 'saveEntrega'])->name('Submissoes/Entregas/Save');
         Route::get('Submissoes/getTrabalho/{IDEntrega}', [SubmissoesController::class, 'getTrabalho'])->name('Submissoes/getTrabalho');
         //EVENTOS
+        Route::get('Formularios/Visualizar/{id}',[FormulariosController::class,'visualizar'])->name('Formularios/Visualizar');
         Route::get('Eventos/Cadastro/{id}',[EventosController::class,'cadastro'])->name('Eventos/Edit');
+        Route::post('Formularios/Responder',[FormulariosController::class,'responder'])->name('Formularios/Responder');
         Route::get('Eventos',[EventosController::class,'index'])->name('Eventos/index');
         Route::get('Eventos/list',[EventosController::class,'getEventos'])->name('Eventos/list');
         Route::get('Atividades',[AtividadesController::class,'indexInscrito'])->name('Atividades/index');
@@ -65,8 +77,8 @@ Route::middleware('auth')->group(function () {
         //Formulario
         Route::get('Formularios/Respostas/{id}',[FormulariosController::class,'respostas'])->name('Formularios/Respostas');
         Route::get('Formularios/getRespostas/{id}',[FormulariosController::class,'getRespostas'])->name('Formularios/getRespostas');
-        Route::get('Formularios/Visualizar/{id}',[FormulariosController::class,'visualizar'])->name('Formularios/Visualizar');
-        Route::post('Formularios/Responder',[FormulariosController::class,'responder'])->name('Formularios/Responder');
+        Route::get('Formularios/Respostas/Export/{id}', [ExportController::class, 'exportRespostas'])->name('Formularios/Respostas/Export');
+
         //ORGANIZADORES
         Route::post('Organizadores/Save',[OrganizadoresController::class,'save'])->name('Organizadores/Save');
         Route::get('Organizadores',[OrganizadoresController::class,'index'])->name('Organizadores/index');

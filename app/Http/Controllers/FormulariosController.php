@@ -51,10 +51,10 @@ class FormulariosController extends Controller
     }
 
     public function respostas($id){
-        $Registro = DB::select("SELECT r.Respostas FROM respostas r INNER JOIN formularios f ON(f.id = r.IDForm) WHERE f.id = $id")[0];
+        $Registro = DB::select("SELECT f.Formulario FROM formularios f WHERE f.id = $id")[0];
         return view('Formularios.respostas',array(
             "submodulos" => self::cadastroSubmodulos,
-            "respostas" => json_decode($Registro->Respostas),
+            "respostas" => json_decode($Registro->Formulario),
             "id" => $id
         ));
     }
@@ -180,7 +180,7 @@ class FormulariosController extends Controller
                 $item = [];
                 $item[] = $r->Titulo;
                 $item[] = $r->Evento;
-                $item[] = "<a href=".route('Formularios/Edit',$r->IDForm).">Abrir</a>&nbsp<a href=".route('Formularios/Visualizar',$r->IDForm).">Visualizar</a>&nbsp<a href=".route('Formularios/Respostas',$r->IDForm).">Respostas</a>";
+                $item[] = "<a class='btn btn-danger btn-xs' href=".route('Formularios/Respostas/Export',$r->IDForm).">Exportar Respostas</a>&nbsp<a class='btn btn-success btn-xs' href=".route('Formularios/Edit',$r->IDForm).">Abrir</a>&nbsp<a class='btn btn-primary btn-xs' href=".route('Formularios/Visualizar',$r->IDForm).">Visualizar</a>&nbsp<a class='btn btn-secondary btn-xs' href=".route('Formularios/Respostas',$r->IDForm).">Respostas</a>";
                 $itensJSON[] = $item;
             }
         }else{

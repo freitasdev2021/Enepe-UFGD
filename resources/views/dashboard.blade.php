@@ -46,8 +46,61 @@
         </div>
      </div>
      @elseif(in_array(Auth::user()->tipo,[0,2]))
-     
+     @if(count($Formularios) > 0)
+     <div class="card">
+        <div class="card-header bg-fr text-white">
+            Formulários De Avaliação Disponíveis
+        </div>
+        <div class="card-body row">
+            <hr>
+            <table class="table table-sm tabela" id="escolas">
+                <thead>
+                    <tr>
+                        <th style="text-align:center;" scope="col">Nome</th>
+                        <th style="text-align:center;" scope="col">Opções</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($Formularios as $f)
+                    <tr>
+                        <td>{{$f->Titulo}}</td>
+                        <td><a href="{{route('Formularios/Visualizar',$f->id)}}">Abrir</a></td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+     </div>
+     @endif
+     <br>
      @elseif(in_array(Auth::user()->tipo,[0,3]))
+     @if(count($Formularios) > 0)
+     <div class="card">
+        <div class="card-header bg-fr text-white">
+            Formulários De Avaliação Disponíveis
+        </div>
+        <div class="card-body row">
+            <hr>
+            <table class="table table-sm tabela" id="escolas">
+                <thead>
+                    <tr>
+                        <th style="text-align:center;" scope="col">Nome</th>
+                        <th style="text-align:center;" scope="col">Opções</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($Formularios as $f)
+                    <tr>
+                        <td>{{$f->Titulo}}</td>
+                        <td><a href="{{route('Formularios/Visualizar',$f->id)}}">Abrir</a></td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+     </div>
+     @endif
+     <br>
      <div class="card">
         <div class="card-header bg-fr text-white">
          Certificados
