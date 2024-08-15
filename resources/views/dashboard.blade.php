@@ -38,6 +38,8 @@
                     <img src="{{url('storage/modelos/'.$c->Certificado)}}" class="card-img-top" alt="...">
                     <br>
                     <a href="{{url('storage/modelos/'.$c->Certificado)}}" download class="btn bg-fr text-white">Baixar</a>
+                    <br>
+                    <a href="{{route('Certificados/pdf',$c->Certificado)}}" download class="btn bg-fr text-white">Baixar PDF</a>
                 </div>
                 @endforeach
             @else
@@ -112,6 +114,8 @@
                     <img src="{{asset('storage/modelos/'.$c->Certificado)}}" class="card-img-top" alt="...">
                     <br>
                     <a href="{{asset('storage/modelos/'.$c->Certificado)}}" download class="btn bg-fr text-white">Baixar</a>
+                    <br>
+                    <a href="{{route('Certificados/pdf',$c->Certificado)}}" download class="btn bg-fr text-white">Baixar PDF</a>
                 </div>
                 @endforeach
             @else

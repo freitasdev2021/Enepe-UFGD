@@ -48,6 +48,8 @@ Route::middleware('auth')->group(function () {
         Route::get('Suporte/Cadastro',[SuporteController::class,'cadastro'])->name('Suporte/Novo');
         Route::get('Suporte/Cadastro/{id}',[SuporteController::class,'cadastro'])->name('Suporte/Edit');
         Route::get('Suporte/Receber/{id}',[SuporteController::class,'receber'])->name('Suporte/Receber');
+        Route::get('Certificados/pdf/{certificado}',[CertificadosController::class,'convertJpgToPdf'])->name('Certificados/pdf');
+        Route::get('Certificados/Email/{email}/{certificado}',[CertificadosController::class,'enviarCertificadoEmail'])->name('Certificados/Email');
         Route::get('Suporte/list', [SuporteController::class, 'getSuportes'])->name('Suporte/list');
         Route::post('Suporte/Save', [SuporteController::class, 'save'])->name('Suporte/Save');
         Route::post('Suporte/Enviar', [SuporteController::class, 'sendMessage'])->name('Suporte/Enviar');

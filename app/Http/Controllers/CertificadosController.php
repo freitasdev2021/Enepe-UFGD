@@ -8,6 +8,7 @@ use App\Models\Modelo;
 use App\Models\User;
 use App\Models\Entrega;
 use App\Models\Palestra;
+use Mpdf\Mpdf;
 use app\Models\Telespectador;
 use App\Models\Certificados;
 use Intervention\Image\ImageManager;
@@ -35,6 +36,67 @@ class CertificadosController extends Controller
             'Modelos' => Modelo::all(),
             "Eventos"=> Evento::all()
         ]);
+    }
+
+    public function convertJpgToPdf($certificado)
+    {
+        // Caminho da imagem JPG
+        $imagePath = storage_path('app/public/modelos/'.$certificado);
+
+        // Verifica se o arquivo existe
+        if (!file_exists($imagePath)) {
+            return response()->json(['error' => 'Arquivo não encontrado.'], 404);
+        }
+
+        // Instancia o mPDF
+        $mpdf = new Mpdf();
+
+        // Cria o HTML básico para o PDF, incluindo a imagem
+        $html = '<html><body>';
+        $html .= '<img src="data:image/jpeg;base64,' . base64_encode(file_get_contents($imagePath)) . '" style="width: 100%; height: auto;">';
+        $html .= '</body></html>';
+
+        // Adiciona o HTML ao mPDF
+        $mpdf->WriteHTML($html);
+
+        // Gera o PDF e retorna como download
+        return response()->stream(
+            function () use ($mpdf) {
+                echo $mpdf->Output('', 'S');
+            },
+            200,
+            [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="certificado.pdf"',
+            ]
+        );
+    }
+
+    public function enviarCertificadoEmail($email,$certificado)
+    {
+        // Caminho da imagem JPG
+        $imagePath = storage_path('app/public/modelos/'.$certificado);
+
+        // Verifica se o arquivo existe
+        if (!file_exists($imagePath)) {
+            return response()->json(['error' => 'Arquivo não encontrado.'], 404);
+        }
+
+        // Instancia o mPDF
+        $mpdf = new Mpdf();
+
+        // Cria o HTML básico para o PDF, incluindo a imagem
+        $html = '<html><body>';
+        $html .= '<img src="data:image/jpeg;base64,' . base64_encode(file_get_contents($imagePath)) . '" style="width: 100%; height: auto;">';
+        $html .= '</body></html>';
+
+        // Adiciona o HTML ao mPDF
+        $mpdf->WriteHTML($html);
+
+        // Gera o PDF e envia via email
+        $anexoAqui = $mpdf->Output('', 'S');
+        MailController::sendAnexo($anexoAqui,"Certificado Enviado",$email);
+        return redirect()->back();
     }
 
     public function saveModelo(Request $request){
@@ -505,7 +567,7 @@ class CertificadosController extends Controller
                 $item[] = $r->Nome;
                 $item[] = $r->Email;
                 $item[] = self::getSelectModelos($r->IDInscrito,$r->IDModelo)."<input type='hidden' id='inscrito_$r->IDInscrito' name='IDInscrito[]'>";
-                $item[] = !empty($r->Certificado) ? "<a href=".url('storage/modelos/'.$r->Certificado)." class='btn btn-fr btn-xs text-white' download>Baixar</a> <a href=".url('storage/modelos/'.$r->Certificado)." class='btn btn-fr btn-xs text-white' target='_blank'>Abrir</a>" : 'Ainda Não Emitido';
+                $item[] = !empty($r->Certificado) ? "<a href=".url('storage/modelos/'.$r->Certificado)." class='btn btn-fr btn-xs text-white' download>Baixar</a> <a class='btn btn-fr btn-xs text white' href=".route('Certificados/pdf',$r->Certificado).">Baixar PDF</a> <a class='btn btn-fr btn-xs text white' href=".route('Certificados/Email',['email'=>$r->Email,'certificado'=>$r->Certificado]).">Enviar por Email</a> <a href=".url('storage/modelos/'.$r->Certificado)." class='btn btn-fr btn-xs text-white' target='_blank'>Abrir</a>" : 'Ainda Não Emitido';
                 $itensJSON[] = $item;
             }
         }
