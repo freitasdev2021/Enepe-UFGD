@@ -24,6 +24,7 @@
                         <option value="Inscritos" {{isset($_GET['Tipo']) && $_GET['Tipo'] == 'Inscritos' ? 'selected' : ''}}>Inscritos</option>
                         <option value="Palestrantes" {{isset($_GET['Tipo']) && $_GET['Tipo'] == 'Palestrantes' ? 'selected' : ''}}>Palestrantes</option>
                         <option value="Organizadores e Avaliadores" {{isset($_GET['Tipo']) && $_GET['Tipo'] == 'Organizadores e Avaliadores' ? 'selected' : ''}}>Organizadores e Avaliadores</option>
+                        <option value="Fizeram a Avaliação" {{isset($_GET['Tipo']) && $_GET['Tipo'] == 'Fizeram a Avaliação' ? 'selected' : ''}}>Fizeram a Avaliação</option>
                     </select>
                 </div>
                 <div class="col-auto">

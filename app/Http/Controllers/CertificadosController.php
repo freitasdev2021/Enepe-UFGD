@@ -457,6 +457,19 @@ class CertificadosController extends Controller
                 LEFT JOIN modelos m ON(m.id = c.IDModelo)
                 WHERE u.tipo IN(1,2)
             SQL;
+        }elseif(isset($_GET['Tipo']) && $_GET['Tipo'] == 'Fizeram a Avaliação'){
+            $SQL = <<<SQL
+                SELECT 
+                    u.name as Nome,
+                    u.Email as Email,
+                    u.id as IDInscrito,
+                    c.IDModelo,
+                    c.Certificado
+                FROM users u
+                LEFT JOIN certificados c ON(u.id = c.IDInscrito)
+                LEFT JOIN modelos m ON(m.id = c.IDModelo)
+                WHERE u.id IN(SELECT IDUser FROM formularios f INNER JOIN respostas r ON(f.id = r.IDForm) WHERE f.IDEvento = $evento)
+            SQL;
         }else{
             $SQL = <<<SQL
                 SELECT 
