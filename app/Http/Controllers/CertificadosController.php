@@ -55,7 +55,7 @@ class CertificadosController extends Controller
         // Gera o PDF e retorna como download
         return response()->stream(
             function () use ($pdf) {
-                $pdf->Output('','S');
+                echo $pdf->Output('','S');
             },
             200,
             [
