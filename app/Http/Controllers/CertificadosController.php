@@ -55,14 +55,17 @@ class CertificadosController extends Controller
         // Gera o PDF e retorna como download
         return response()->stream(
             function () use ($pdf) {
-                echo $pdf->Output('','S');
+                echo $pdf->Output('', 'S');
             },
             200,
             [
                 'Content-Type' => 'application/pdf',
                 'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+                'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+                'Pragma' => 'no-cache',
+                'Expires' => 'Thu, 01 Jan 1970 00:00:00 GMT',
             ]
-        );
+        );        
     }
 
     public function enviarCertificadoEmail($email,$certificado)
