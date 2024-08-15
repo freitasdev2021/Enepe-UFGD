@@ -48,7 +48,7 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <label>Feedback</label>
-                            <textarea class="form-control" name="Feedback"></textarea>
+                            <textarea class="form-control" name="Feedback" required></textarea>
                         </div>
                     </div>
                     <div class="row">
