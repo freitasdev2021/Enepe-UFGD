@@ -7,7 +7,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 use Illuminate\Support\Facades\Route;
 
-class modulo extends Component
+class Modulo extends Component
 {
     public $rota;
     public $nome;
