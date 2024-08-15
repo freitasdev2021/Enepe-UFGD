@@ -75,26 +75,30 @@ class CertificadosController extends Controller
             $Modelos = [];
             $Inscrit = [];
             foreach($request->modelo as $m){
-                if(!is_null($m)){
+                //if(!is_null($m)){
                     array_push($Modelos,$m);
-                }
+                //}
             }
 
             foreach($request->IDInscrito as $i){
-                if(!is_null($i)){
+                //if(!is_null($i)){
                     array_push($Inscrit,$i);
-                }
+                //}
             }
             
             $Evento = Evento::find($request->IDEvento);
             $Certificados = [];
             for($i=0;$i<count($Inscrit);$i++){
-                //if(!Certificados::where('IDEvento',$request->IDEvento)->where('IDModelo',$Modelos[$i])->where('IDInscrito',$Inscrit[$i])){
+                $existeCertificado = Certificados::where('IDEvento', $request->IDEvento)
+                        ->where('IDModelo', $Modelos[$i])
+                        ->where('IDInscrito', $Inscrit[$i])
+                        ->exists();
+                if(!$existeCertificado && !is_null($Inscrit[$i])){
                     $Certificados[] = array(
                         "Modelos" => $Modelos[$i],
                         "Inscritos" => $Inscrit[$i]
                     );
-                //}
+                }
             }
             //dd($Certificados);
             $emissao = [];
@@ -111,7 +115,7 @@ class CertificadosController extends Controller
                         if(!str_contains($Modelo->DSModelo,'{organizador}') || !str_contains($Modelo->DSModelo,'{evento}') || !$Inscrito){
                             array_push($erros,"Atenção! Modelo de Organizadores Feito de Maneira Incorreta! ou o Certificado não atende os requisitos de Organizador, favor refaze-lo na aba 'Modelos' ");
                         }else{
-                            $STRConteudo = str_replace(['{organizador}','{evento}'],[$Inscrito->name,$Evento->Titulo],$Modelo->DSModelo);
+                            $STRConteudo = str_replace(['{organizador}','{evento}'],[wordwrap($Inscrito->name,50,"<br>/n"),$Evento->Titulo],$Modelo->DSModelo);
                             $Conteudo = explode("|",$STRConteudo);
                             $emissao[] = array(
                                 "Conteudo" => $Conteudo,
@@ -215,11 +219,11 @@ class CertificadosController extends Controller
                         $Inscrito = User::find($Certificado['Inscritos']);
                         $Assistiu = self::getPalestrasInscrito($Certificado['Inscritos'],$request->IDEvento);
                         //
-                        if(!str_contains($Modelo->DSModelo,'{telespectador}') || !$Assistiu || !str_contains($Modelo->DSModelo,'{palestra}') || !$Inscrito){
+                        if(!str_contains($Modelo->DSModelo,'{telespectadorpalestra}') || !$Assistiu || !str_contains($Modelo->DSModelo,'{palestra}') || !$Inscrito){
                             array_push($erros,"Atenção! Modelo de Telespectadores de Palestra Feito de Maneira Incorreta! ou o Certificado não atende os requisitos de Telespectador de Palestra,ou não assistiu nenhuma palestra, favor refaze-lo na aba 'Modelos' ");
                         }else{
                             foreach($Assistiu as $as){
-                                $STRConteudo = str_replace(['{telespectador}','{palestra}'],[$Inscrito->name,$as->Titulo],$Modelo->DSModelo);
+                                $STRConteudo = str_replace(['{telespectadorpalestra}','{palestra}','{evento}'],[$Inscrito->name,$as->Titulo,$Evento->Titulo],$Modelo->DSModelo);
                                 $Conteudo = explode("|",$STRConteudo);
                                 $emissao[] = array(
                                     "Conteudo" => $Conteudo,
@@ -284,7 +288,7 @@ class CertificadosController extends Controller
             //
             if(count($erros) == 0){
                 foreach($emissao as $e){
-                    self::setCertificado(wordwrap($e['Conteudo'],50,'<br>/n'),$e['IDInscrito'],$e['Arquivo'],$e['Inscrito'],$e['Evento'],$e['IDEvento'],$e['Modelo']);
+                    self::setCertificado($e['Conteudo'],$e['IDInscrito'],$e['Arquivo'],$e['Inscrito'],$e['Evento'],$e['IDEvento'],$e['Modelo']);
                 }
                 $mensagem = 'Salvo com Sucesso';
                 $status = 'success';
@@ -412,25 +416,32 @@ class CertificadosController extends Controller
         if(isset($_GET['Tipo']) && $_GET['Tipo'] == 'Palestrantes'){
             $SQL = <<<SQL
                 SELECT 
-                    p.Nome,
-                    p.Email,
-                    p.id as IDInscrito,
-                    c.IDModelo,
-                    c.Certificado
-                FROM palestrantes p
-                INNER JOIN palestras pal ON(p.id = pal.IDPalestrante)
-                LEFT JOIN certificados c ON(p.id = c.IDInscrito)
-                LEFT JOIN modelos m ON(m.id = c.IDModelo)
-                WHERE pal.IDEvento = $evento
-            SQL;
+                p.Nome,
+                p.Email,
+                p.id as IDInscrito,
+                MAX(c.IDModelo) as IDModelo,
+                MAX(c.Certificado) as Certificado
+                FROM 
+                    palestrantes p
+                INNER JOIN 
+                    palestras pal ON p.id = pal.IDPalestrante
+                LEFT JOIN 
+                    certificados c ON p.id = c.IDInscrito
+                LEFT JOIN 
+                    modelos m ON m.id = c.IDModelo
+                WHERE 
+                    pal.IDEvento = $evento
+                GROUP BY 
+                    p.Nome, p.Email, p.id;
+                SQL;
         }elseif(isset($_GET['Tipo']) && $_GET['Tipo'] == 'Inscritos'){
             $SQL = <<<SQL
                 SELECT 
                     u.name as Nome,
                     u.Email as Email,
                     u.id as IDInscrito,
-                    MAX(c.Certificado) as Certificado,
-                    MAX(c.IDModelo) as IDModelo
+                    c.Certificado as Certificado,
+                    c.IDModelo as IDModelo
                 FROM 
                     users u
                 INNER JOIN 
@@ -441,8 +452,7 @@ class CertificadosController extends Controller
                     modelos m ON m.id = c.IDModelo
                 WHERE 
                     i.IDEvento = $evento
-                GROUP BY 
-                    u.name, u.Email, u.id;
+                ;
             SQL;
         }elseif(isset($_GET['Tipo']) && $_GET['Tipo'] == 'Organizadores e Avaliadores'){
             $SQL = <<<SQL

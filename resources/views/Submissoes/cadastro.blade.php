@@ -26,11 +26,11 @@
                     @endif
                     <div class="row">
                         <div class="col-sm-2">
-                            <label>Min. Caracteres</label>
+                            <label>Min. Palavras</label>
                             <input type="number" name="MinLength" class="form-control" value="{{isset($Registro) ? $Registro->MinLength : ''}}" required>
                         </div>
                         <div class="col-sm-2">
-                            <label>Max. Caracteres</label>
+                            <label>Max. Palavras</label>
                             <input type="number" name="MaxLength" class="form-control" value="{{isset($Registro) ? $Registro->MaxLength : ''}}" required>
                         </div>
                         <div class="col-sm-4">
@@ -45,14 +45,11 @@
                         <div class="col-sm-4">
                             <label>Modalidade</label>
                             <select name="Categoria" class="form-control">
-                                <option value="">Selecione</option>>
-                                <option value="Aluno de Iniciação Científica da UFGD">Aluno de Iniciação Científica da UFGD</option>
-                                <option value="Aluno da Graduação da UFGD">Aluno da Graduação da UFGD</option>
-                                <option value="Aluno da Pós-Graduação da UFGD">Aluno da Pós-Graduação da UFGD</option>
-                                <option value="Docente da UFGD">Docente da UFGD</option>
-                                <option value="Técnico Administrativo da UFGD">Técnico Administrativo da UFGD</option>
-                                <option value="Outro">Outro</option>
-                                <option value="Avaliador(a) externo(a)">Avaliador(a) externo(a)</option>
+                                <option value="">Selecione</option>
+                                <option value="Ensino">Ensino</option>
+                                <option value="Pesquisa">Pesquisa</option>
+                                <option value="Extensão">Extensão</option>
+                                <option value="Extensão">Pós-Graduação</option>
                             </select>
                         </div>
                     </div>

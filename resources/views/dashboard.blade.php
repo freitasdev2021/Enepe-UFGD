@@ -35,9 +35,9 @@
             @if(Count($Certificados))
                 @foreach($Certificados as $c)
                 <div class="card sala p-1" style="width: 18rem;">
-                    <img src="{{asset('certificados/'.$c->Certificado)}}" class="card-img-top" alt="...">
+                    <img src="{{url('storage/modelos/'.$c->Certificado)}}" class="card-img-top" alt="...">
                     <br>
-                    <a href="{{asset('certificados/'.$c->Certificado)}}" download class="btn bg-fr text-white">Baixar</a>
+                    <a href="{{url('storage/modelos/'.$c->Certificado)}}" download class="btn bg-fr text-white">Baixar</a>
                 </div>
                 @endforeach
             @else
@@ -105,13 +105,13 @@
         <div class="card-header bg-fr text-white">
          Certificados
         </div>
-        <div class="card-body">
+        <div class="card-body row">
             @if(Count($Certificados))
                 @foreach($Certificados as $c)
                 <div class="card sala p-1" style="width: 18rem;">
-                    <img src="{{asset('certificados/'.$c->Certificado)}}" class="card-img-top" alt="...">
+                    <img src="{{asset('storage/modelos/'.$c->Certificado)}}" class="card-img-top" alt="...">
                     <br>
-                    <a href="{{asset('certificados/'.$c->Certificado)}}" download class="btn bg-fr text-white">Baixar</a>
+                    <a href="{{asset('storage/modelos/'.$c->Certificado)}}" download class="btn bg-fr text-white">Baixar</a>
                 </div>
                 @endforeach
             @else
