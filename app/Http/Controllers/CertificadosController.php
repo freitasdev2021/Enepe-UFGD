@@ -6,15 +6,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\Modelo;
 use App\Models\User;
-use App\Models\Entrega;
-use App\Models\Palestra;
-use Mpdf\Mpdf;
-use app\Models\Telespectador;
+use FPDF;
 use App\Models\Certificados;
 use Intervention\Image\ImageManager;
-use Intervention\Image\Laravel\Facades\Image;
 use Intervention\Image\Drivers\Gd\Driver;
-use Illuminate\Support\Facades\Storage;
 use App\Models\Evento;
 
 class CertificadosController extends Controller
@@ -49,25 +44,23 @@ class CertificadosController extends Controller
         }
 
         // Instancia o mPDF
-        $mpdf = new Mpdf();
+        // Cria o PDF com FPDF
+        $pdf = new FPDF();
+        $pdf->AddPage();
+        $pdf->Image($imagePath, 10, 10, 190);
 
-        // Cria o HTML básico para o PDF, incluindo a imagem
-        $html = '<html><body>';
-        $html .= '<img src="data:image/jpeg;base64,' . base64_encode(file_get_contents($imagePath)) . '" style="width: 100%; height: auto;">';
-        $html .= '</body></html>';
-
-        // Adiciona o HTML ao mPDF
-        $mpdf->WriteHTML($html);
+        // Define o nome do arquivo PDF
+        $fileName = 'certificado.pdf';
 
         // Gera o PDF e retorna como download
         return response()->stream(
-            function () use ($mpdf) {
-                echo $mpdf->Output('', 'S');
+            function () use ($pdf) {
+                $pdf->Output('I');
             },
             200,
             [
                 'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'attachment; filename="certificado.pdf"',
+                'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
             ]
         );
     }
@@ -82,19 +75,18 @@ class CertificadosController extends Controller
             return response()->json(['error' => 'Arquivo não encontrado.'], 404);
         }
 
+
         // Instancia o mPDF
-        $mpdf = new Mpdf();
+        // Cria o PDF com FPDF
+        $pdf = new FPDF();
+        $pdf->AddPage();
+        $pdf->Image($imagePath, 10, 10, 190);
 
-        // Cria o HTML básico para o PDF, incluindo a imagem
-        $html = '<html><body>';
-        $html .= '<img src="data:image/jpeg;base64,' . base64_encode(file_get_contents($imagePath)) . '" style="width: 100%; height: auto;">';
-        $html .= '</body></html>';
-
-        // Adiciona o HTML ao mPDF
-        $mpdf->WriteHTML($html);
+        // Define o nome do arquivo PDF
+        $fileName = 'certificado.pdf';
 
         // Gera o PDF e envia via email
-        $anexoAqui = $mpdf->Output('', 'S');
+        $anexoAqui = $pdf->Output('','S');
         MailController::sendAnexo($anexoAqui,"Certificado Enviado",$email);
         return redirect()->back();
     }

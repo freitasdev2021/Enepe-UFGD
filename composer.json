@@ -7,6 +7,7 @@
     "require": {
         "php": "^8.2",
         "firebase/php-jwt": "^6.10",
+        "fpdf/fpdf": "^1.86",
         "guzzlehttp/guzzle": "^7.8",
         "intervention/image": "^3.7",
         "intervention/image-laravel": "^1.3",
