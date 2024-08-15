@@ -1,5 +1,5 @@
 <x-educacional-layout>
-    @if(in_array(Auth::user()->tipo,[0,1]))
+    @if(in_array(Auth::user()->tipo,[1]))
     <div class="card">
         <div class="card-header bg-fr text-white">
             Disparar Notificações
@@ -45,7 +45,7 @@
             @endif
         </div>
      </div>
-     @elseif(in_array(Auth::user()->tipo,[0,2]))
+     @elseif(in_array(Auth::user()->tipo,[2]))
      @if(count($Formularios) > 0)
      <div class="card">
         <div class="card-header bg-fr text-white">
@@ -73,7 +73,7 @@
      </div>
      @endif
      <br>
-     @elseif(in_array(Auth::user()->tipo,[0,3]))
+     @elseif(in_array(Auth::user()->tipo,[3]))
      @if(count($Formularios) > 0)
      <div class="card">
         <div class="card-header bg-fr text-white">

@@ -10,6 +10,7 @@ use App\Http\Controllers\OrganizadoresController;
 use App\Http\Controllers\CertificadosController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\NotificaController;
+use App\Http\Controllers\SuporteController;
 use App\Models\Certificados;
 use App\Models\Formulario;
 use Illuminate\Support\Facades\Session;
@@ -42,6 +43,14 @@ Route::post('Certificados/Validar', [CertificadosController::class, 'validarCert
 Route::middleware('auth')->group(function () {
     //CAMADA DE PROTEÇÃO GERAL
     Route::middleware('geral')->group(function(){
+        //SUPORTE
+        Route::get('Suporte',[SuporteController::class,'index'])->name('Suporte/index');
+        Route::get('Suporte/Cadastro',[SuporteController::class,'cadastro'])->name('Suporte/Novo');
+        Route::get('Suporte/Cadastro/{id}',[SuporteController::class,'cadastro'])->name('Suporte/Edit');
+        Route::get('Suporte/Receber/{id}',[SuporteController::class,'receber'])->name('Suporte/Receber');
+        Route::get('Suporte/list', [SuporteController::class, 'getSuportes'])->name('Suporte/list');
+        Route::post('Suporte/Save', [SuporteController::class, 'save'])->name('Suporte/Save');
+        Route::post('Suporte/Enviar', [SuporteController::class, 'sendMessage'])->name('Suporte/Enviar');
         //PERFIL
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

@@ -11,7 +11,7 @@
              <div>
                 <a href="{{route('dashboard')}}" class="nav_logo"><i class='bx bxs-calendar-event text-white'></i></i><span class="nav_logo-name">FR Eventos</span> </a>
                 <div class="nav_list">
-                    @if(in_array(Auth::user()->tipo,[0,1]))
+                    @if(in_array(Auth::user()->tipo,[1]))
                     <x-Modulo nome="Eventos" icon="bx bxs-calendar-event" rota="Eventos/index" endereco="Eventos"/>
                     <x-Modulo nome="Palestras" icon="bx bx-user-pin" rota="Palestras/index" endereco="Palestras"/>
                     <x-Modulo nome="Palestrantes" icon="bx bxs-group" rota="Palestrantes/index" endereco="Palestrantes"/>
@@ -20,22 +20,23 @@
                     <x-Modulo nome="Certificados" icon="bx bxs-certification" rota="Certifica/index" endereco="Certifica"/>
                     <x-Modulo nome="Organizadores" icon="bx bxs-user" rota="Organizadores/index" endereco="Organizadores"/>
                     <x-Modulo nome="Formulários" icon="bx bxs-dock-top" rota="Formularios/index" endereco="Formularios"/>
-                    @elseif(in_array(Auth::user()->tipo,[0,2]))
+                    @elseif(in_array(Auth::user()->tipo,[2]))
                     <x-Modulo nome="Submissões" icon="bx bx-task" rota="Submissoes/index" endereco="Submissoes"/> 
                     <x-Modulo nome="Atividades" icon="bx bxs-pencil" rota="Atividades/index" endereco="Atividades"/>
-                    @elseif(in_array(Auth::user()->tipo,[0,3]))
-                    @if(!Session::has('IDEvento'))
-                    <x-Modulo nome="Eventos" icon="bx bxs-calendar-event" rota="Eventos/index" endereco="Eventos"/>
-                    @else
-                    <x-Modulo nome="Submissões" icon="bx bx-task" rota="Submissoes/index" endereco="Submissoes"/> 
-                    <x-Modulo nome="Palestras" icon="bx bx-user-pin" rota="Palestras/index" endereco="Palestras"/>
-                    <x-Modulo nome="Apresentações" icon="bx bxs-pencil" rota="Atividades/index" endereco="Atividades"/>
+                    @elseif(in_array(Auth::user()->tipo,[3]))
+                     @if(!Session::has('IDEvento'))
+                     <x-Modulo nome="Eventos" icon="bx bxs-calendar-event" rota="Eventos/index" endereco="Eventos"/>
+                     @else
+                     <x-Modulo nome="Submissões" icon="bx bx-task" rota="Submissoes/index" endereco="Submissoes"/> 
+                     <x-Modulo nome="Palestras" icon="bx bx-user-pin" rota="Palestras/index" endereco="Palestras"/>
+                     <x-Modulo nome="Apresentações" icon="bx bxs-pencil" rota="Atividades/index" endereco="Atividades"/>
+                     @endif
                     @endif
-                    @endif
-                    <a href="https://wa.me/5531983086235" class="nav_link" target="_blank">
+                    <x-Modulo nome="Suporte" icon="bx bx-support nav_icon" rota="Suporte/index" endereco="Suporte"/>
+                    {{-- <a href="https://wa.me/5531983086235" class="nav_link" target="_blank">
                      <i class='bx bx-support nav_icon'></i>
                      <span class="nav_name">Suporte</span>
-                    </a> 
+                    </a>  --}}
                 </div>
              </div>
              <form action="{{route('logout')}}" method="POST">

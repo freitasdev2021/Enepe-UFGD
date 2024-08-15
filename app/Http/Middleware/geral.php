@@ -16,7 +16,7 @@ class geral
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(!in_array(Auth::user()->tipo,[1,2,3])){
+        if(!in_array(Auth::user()->tipo,[0,1,2,3])){
             return redirect()->route('dashboard');
         }
         return $next($request);
