@@ -113,7 +113,7 @@
                 <div class="col-sm-12 text-left row">
                     @if(empty($Entregas) || !empty($Entregas) && $Entregas[0]->Status == "Aprovado com Ressalvas")
                         <button class="btn bg-fr text-white col-auto">Salvar</button>&nbsp;
-                        @if($Entregas[0]->Status == "Aprovado com Ressalvas")
+                        @if(!empty($Entregas) && $Entregas[0]->Status == "Aprovado com Ressalvas")
                             <button class="btn btn-warning revisar col-auto" data-trabalho="{{route('Submissoes/getTrabalho',$IDEntrega)}}">Revisar</button>
                         @endif
                     @endif
