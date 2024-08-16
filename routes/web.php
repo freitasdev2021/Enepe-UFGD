@@ -89,7 +89,6 @@ Route::middleware('auth')->group(function () {
         Route::get('Formularios/Respostas/{id}',[FormulariosController::class,'respostas'])->name('Formularios/Respostas');
         Route::get('Formularios/getRespostas/{id}',[FormulariosController::class,'getRespostas'])->name('Formularios/getRespostas');
         Route::get('Formularios/Respostas/Export/{id}', [ExportController::class, 'exportRespostas'])->name('Formularios/Respostas/Export');
-
         //ORGANIZADORES
         Route::post('Organizadores/Save',[OrganizadoresController::class,'save'])->name('Organizadores/Save');
         Route::get('Organizadores',[OrganizadoresController::class,'index'])->name('Organizadores/index');

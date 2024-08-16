@@ -65,7 +65,8 @@ class CertificadosController extends Controller
                 'Pragma' => 'no-cache',
                 'Expires' => 'Thu, 01 Jan 1970 00:00:00 GMT',
             ]
-        );        
+        );
+        
     }
 
     public function enviarCertificadoEmail($email,$certificado)
@@ -97,16 +98,71 @@ class CertificadosController extends Controller
     public function saveModelo(Request $request){
         try{
             $data = $request->all();
-            if($request->file('Arquivo')){
-                $Foto = $request->file('Arquivo')->getClientOriginalName();
-                $request->file('Arquivo')->storeAs('modelos',$Foto,'public');
-                $data['Arquivo'] = $Foto;
+            $erro = "";
+            switch($request->TPModelo){
+                case "Organizadores":
+                    //dd("teste");
+                    if(!str_contains($request->DSModelo,'{organizador}') || !str_contains($request->DSModelo,'{evento}')){
+                        $erro = "Atenção! Modelo de Organizadores Feito de Maneira Incorreta!";
+                    }
+                break;
+                case "Apresentadores":
+                    if(!str_contains($request->DSModelo,'{apresentador}') || 
+                    !str_contains($request->DSModelo,'{evento}') || 
+                    !str_contains($request->DSModelo,'{submissao}') || 
+                    !str_contains($request->DSModelo,'{palavraschave}') || 
+                    !str_contains($request->DSModelo,'{autores}')
+                    ){
+                        $erro = "Atenção! Modelo de Apresentadores Feito de Maneira Incorreta!";
+                    }
+                    //
+                break;
+                case "Telespectadores":
+                    if(!str_contains($request->DSModelo,'{telespectador}') || !str_contains($request->DSModelo,'{evento}')){
+                        $erro = "Atenção! Modelo de Telespectadores Feito de Maneira Incorreta!";
+                    }
+                break;
+                case "Avaliador de Sessão":
+                    if(!str_contains($request->DSModelo,'{avaliadorsessao}') || !str_contains($request->DSModelo,'{evento}')){
+                        $erro = "Atenção! Modelo de Avaliador de Sessão Feito de Maneira Incorreta!";
+                    }
+                break;
+                case "Moderador de Sessão":
+                    if(!str_contains($request->DSModelo,'{moderador}') || !str_contains($request->DSModelo,'{evento}')){
+                        $erro = "Atenção! Modelo de Moderadores Feito de Maneira Incorreta!";
+                    }
+                break;
+                case "Telespectador de Palestra":
+                    if(!str_contains($request->DSModelo,'{telespectadorpalestra}') || !str_contains($request->DSModelo,'{evento}') || !str_contains($request->DSModelo,'{palestra}')){
+                        $erro = "Atenção! Modelo de Telespectadores de Palestra Feito de Maneira Incorreta!";
+                    }
+                break;
+                case "Palestrante":
+                    if(!str_contains($request->DSModelo,'{palestrante}') || !str_contains($request->DSModelo,'{evento}') || !str_contains($request->DSModelo,'{palestra}')){
+                        $erro = "Atenção! Modelo de Palestrante Feito de Maneira Incorreta!";
+                    }
+                break;
+                case "Avaliadores":
+                    if(!str_contains($request->DSModelo,'{avaliador}') || !str_contains($request->DSModelo,'{evento}')){
+                        $erro = "Atenção! Modelo de Avaliadores Feito de Maneira Incorreta!";
+                    }
+                break;
             }
-            
-            Modelo::create($data);
+            //CONFERÊNCIA DE ERROS
+            if(!empty($erro)){
+                $status = 'error';
+                $mensagem = $erro;
+            }else{
+                if($request->file('Arquivo')){
+                    $Foto = $request->file('Arquivo')->getClientOriginalName();
+                    $request->file('Arquivo')->storeAs('modelos',$Foto,'public');
+                    $data['Arquivo'] = $Foto;
+                }
+                Modelo::create($data);
+                $status = 'success';
+                $mensagem = 'Modelo Salvo com Sucesso';
+            }
             $aid = '';
-            $mensagem = 'Modelo Salvo com Sucesso';
-            $status = 'success';
             $rota = 'Certificados/Modelos/Novo';
         }catch(\Throwable $th){
             $aid = '';
