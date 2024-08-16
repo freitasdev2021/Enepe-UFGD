@@ -38,7 +38,7 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-6">
-                            <h5>Palavras Chave: {{$Trabalho->palavrasChave}}</h5>
+                            <h5>palavras-chave: {{$Trabalho->palavrasChave}}</h5>
                         </div>
                     </div>
                     <hr>
