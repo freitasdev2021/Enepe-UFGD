@@ -142,41 +142,36 @@ class SubmissoesController extends Controller
         $Evento = Evento::find($Submissao->IDEvento);
         $IDUser = Auth::user()->id;
         $AND = ' e.IDSubmissao='.$IDSubmissao;
-        $SEL = 'MAX(e.Apresentador) as Apresentador,';
         if(Auth::user()->tipo == 3){
             $AND .=  " AND e.IDInscrito = $IDUser";
-            $SEL = '';
         }
 
         if($IDEntrega > 0){
             $AND .= " AND e.id =".$IDEntrega;
         }
 
-        $SQL = "SELECT 
-            MIN(e.created_at) as created_at,  -- Assume the earliest created_at for each group
-            e.Titulo,
-            MIN(e.Autores) as Autores,
-            MIN(e.IDSubmissao) as IDSubmissao,
-            MIN(e.palavrasChave) as palavrasChave,
-            MIN(e.Tematica) as Tematica,
-            MIN(e.Descricao) as Descricao,
-            $SEL
-            MIN(e.id) as id,  -- Assume the minimum id for each group
-            COALESCE(MAX(r.Status), 'Desconhecido') as Situacao,  -- Use MAX to get a representative status
-            COALESCE(MAX(CASE WHEN e.id = r.IDEntrega THEN r.Feedback ELSE 'Aguardando Correção' END), 'Aguardando Correção') as Feedback,
-            MAX(r.id) as last_repro_id  -- Captura o maior ID de reprovação
-        FROM 
-            entergas e
-        LEFT JOIN 
-            reprovacoes r ON(e.id = r.IDEntrega)
-        WHERE  
-            $AND
-        GROUP BY 
-            e.Titulo, r.Status
-        ORDER BY 
-            last_repro_id DESC;  -- Ordena pelo maior ID de reprovação
-
+        $SQL = "SELECT e.Titulo,
+            e.id as IDEntrega,
+            s.id as IDSubmissao,
+            i.name as Inscrito,
+            e.Apresentador,
+            e.IDAvaliador,
+            e.IDInscrito,
+            e.Autores,
+            e.palavrasChave,
+            e.Tematica,
+            e.Descricao,
+            e.Status,
+            a.name as Avaliador,
+            e.Status
+        FROM entergas e
+        INNER JOIN submissoes s ON(s.id = e.IDSubmissao)
+        INNER JOIN users i ON (i.id = e.IDInscrito)
+        LEFT JOIN users a ON(a.id = e.IDAvaliador)
+        WHERE $AND
         ";
+
+        //dd($SQL);
         $Entregas = DB::select($SQL);
         //dd($Entregas);
         return view('Submissoes.entrega',[
@@ -207,14 +202,7 @@ class SubmissoesController extends Controller
     public function correcao($IDEntrega){
         return view('Submissoes.correcao',[
             'submodulos' => self::submodulos,
-            'Trabalho' => DB::select("SELECT 
-                    e.*,
-                    r.Status as Situacao,
-                    CASE WHEN e.id = r.IDEntrega THEN r.Feedback ELSE 'Aguardando Correção' END as Feedback
-                FROM entergas e
-                LEFT JOIN reprovacoes r ON(e.id = r.IDEntrega)
-                WHERE e.id = $IDEntrega ORDER BY r.id DESC LIMIT 1
-            ")[0] 
+            'Trabalho' => Entrega::find($IDEntrega)
         ]);
     }
 
@@ -224,10 +212,12 @@ class SubmissoesController extends Controller
 
     public function corrigir(Request $request){
         try{
-            Reprovacao::create($request->all());
+            Entrega::find($request->IDEntrega)->update([
+                "Status"=> $request->Status
+            ]);
             $mensagem = 'Trabalho corrigido com sucesso!';
-            $rota = 'Submissoes/index';
-            $aid = '';
+            $rota = 'Submissoes/Entregues';
+            $aid = $request->IDSubmissao;
             $status = 'success';
         }catch(\Throwable $th){
             $mensagem = 'Erro '. $th->getMessage();
@@ -280,22 +270,14 @@ class SubmissoesController extends Controller
             }
 
             $status = 'success';
-            if(Auth::user()->tipo == 3){
-                $data['IDInscrito'] = Auth::user()->id;
-                $rota = 'Submissoes/Entrega';
-                $mensagem = 'Trabalho Enviado com Sucesso!';
-                $aid = ["IDSubmissao"=>$request->IDSubmissao,"IDEntrega" => 0];
-                if(!$request->IDEntrega){
-                    Entrega::create($data);
-                }else{
-                    unset($data['_token']);
-                    unset($data['_method']);
-                    Entrega::find($request->IDEntrega)->update($data);
-                }
+            $data['IDInscrito'] = Auth::user()->id;
+            $rota = 'Submissoes/Entrega';
+            $mensagem = 'Trabalho Enviado com Sucesso!';
+            $aid = ["IDSubmissao"=>$request->IDSubmissao,"IDEntrega" => 0];
+            $data['Status'] = "Aguardando Correção";
+            if(!$request->IDEntrega){
+                Entrega::create($data);
             }else{
-                $rota = 'Submissoes/index';
-                $mensagem = 'Trabalho Atualizado com Sucesso!';
-                $aid = ["IDSubmissao"=>$request->IDSubmissao,"IDEntrega" => $request->IDEntrega];
                 unset($data['_token']);
                 unset($data['_method']);
                 Entrega::find($request->IDEntrega)->update($data);
@@ -340,44 +322,30 @@ class SubmissoesController extends Controller
             }
         }else{
             $IDAvaliador = Auth::user()->id;
-            $registros = DB::select("SELECT 
-                    ev.Titulo as Evento,
-                    i.name as Inscrito,
-                    s.Categoria,
-                    s.Regras,
-                    e.Titulo,
-                    e.id as IDEntrega,
-                    r.Status
-                FROM 
-                    submissoes as s
-                INNER JOIN 
-                    entergas e ON s.id = e.IDSubmissao
-                INNER JOIN 
-                    users i ON i.id = e.IDInscrito
-                INNER JOIN 
-                    eventos ev ON ev.id = s.IDEvento
-                LEFT JOIN 
-                    reprovacoes r ON r.id = (
-                        SELECT 
-                            r2.id 
-                        FROM 
-                            reprovacoes r2 
-                        WHERE 
-                            r2.IDEntrega = e.id 
-                        ORDER BY 
-                            r2.id DESC 
-                        LIMIT 1
-                    )
-                WHERE 
-                    e.IDAvaliador = $IDAvaliador
-                ORDER BY 
-                    e.id;
-            ");
+            $SQL = "SELECT e.Titulo,
+                e.id as IDEntrega,
+                s.id as IDSubmissao,
+                i.name as Inscrito,
+                e.Apresentador,
+                e.IDAvaliador,
+                e.IDInscrito,
+                a.name as Avaliador,
+                ev.Titulo as Evento,
+                s.Categoria,
+                e.Status
+            FROM entergas e
+            INNER JOIN submissoes s ON(s.id = e.IDSubmissao)
+            INNER JOIN eventos ev ON(ev.id = s.IDEvento)
+            INNER JOIN users i ON (i.id = e.IDInscrito)
+            LEFT JOIN users a ON(a.id = e.IDAvaliador)
+            WHERE a.id = $IDAvaliador
+            ORDER BY Inscrito DESC";
+            $registros = DB::select($SQL);
             if(count($registros) > 0){
                 foreach($registros as $r){
                     $item = [];
                     $item[] = $r->Evento;
-                    $item[] = $r->Status;
+                    $item[] = empty($r->Status) ? 'Aguardando Correção' : $r->Status;
                     $item[] = $r->Titulo;
                     $item[] = $r->Categoria;
                     $item[] = "<a href=".route('Submissoes/Correcao',$r->IDEntrega).">Abrir</a>";
@@ -461,31 +429,23 @@ class SubmissoesController extends Controller
             $WHERE = " AND s.Categoria='" . $_GET['Modalidade'] . "'";
         }
 
-        $SQL = "SELECT
-            e.Titulo,
-            s.Categoria,
-            a.id as IDAvaliador,
-            u.name as Inscrito,
-            e.Apresentador as Apresentador,
-            a.name as Avaliador,
-            COALESCE(r.Status, 'Aguardando Correção') as Status,
-            e.IDInscrito,
+        $SQL = "SELECT e.Titulo,
             e.id as IDEntrega,
-            s.id as IDSubmissao
+            s.id as IDSubmissao,
+            i.name as Inscrito,
+            e.Apresentador,
+            e.IDAvaliador,
+            e.IDInscrito,
+            a.name as Avaliador,
+            e.Status
         FROM entergas e
-        INNER JOIN submissoes s ON (s.id = e.IDSubmissao)
-        INNER JOIN users u ON (u.id = e.IDInscrito)
-        LEFT JOIN users a ON (a.id = e.IDAvaliador)
-        LEFT JOIN (
-            SELECT r1.IDEntrega, r1.Status
-            FROM reprovacoes r1
-            INNER JOIN (
-                SELECT IDEntrega, MAX(id) as MaxID
-                FROM reprovacoes
-                GROUP BY IDEntrega
-            ) r2 ON r1.id = r2.MaxID
-        ) r ON (e.id = r.IDEntrega)
-        WHERE s.id = $IDSubmissao $WHERE";
+        INNER JOIN submissoes s ON(s.id = e.IDSubmissao)
+        INNER JOIN users i ON (i.id = e.IDInscrito)
+        LEFT JOIN users a ON(a.id = e.IDAvaliador)
+        WHERE s.id = $IDSubmissao
+        ORDER BY Inscrito DESC
+        $WHERE
+        ";
 
             //dd($SQL);
         $registros = DB::select($SQL);
@@ -495,12 +455,11 @@ class SubmissoesController extends Controller
                 $RemoveATR = '"'. strval(route('Submissoes/RemoveAtr',$r->IDEntrega)). '"';
                 $item = [];
                 $item[] = $r->Titulo;
-                $item[] = $r->Categoria;
                 $item[] = $r->Inscrito;
                 $item[] = $r->Apresentador;
                 $item[] = ($r->IDAvaliador == 0) ? $selectAvaliador."<input type='hidden' value='$r->IDInscrito' name='Inscrito[]'>" : $r->Avaliador." <button class='btn btn-xs btn-danger' type='button' onclick='removerAtribuicao($RemoveATR)'>Remover Atribuição</button>";
-                $item[] = $r->Status;
-                $item[] = "<a href=".route('Submissoes/Entrega',["IDEntrega"=>$r->IDEntrega,"IDSubmissao"=>$r->IDSubmissao]).">Abrir</a> <a href=".route('Submissoes/Correcao',$r->IDEntrega).">Corrigir</a>";
+                $item[] = empty($r->Status) ? 'Aguardando Correção' : $r->Status;
+                $item[] = "<a href=".route('Submissoes/Correcao',$r->IDEntrega).">Abrir</a>";
                 $itensJSON[] = $item;
             }
         }else{

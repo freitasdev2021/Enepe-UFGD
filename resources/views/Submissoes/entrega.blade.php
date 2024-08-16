@@ -1,6 +1,6 @@
 <x-educacional-layout>
     <div class="row">
-        <div class="col-sm-6">
+        <div class="col-sm-12">
             <form action="{{route('Submissoes/Entregas/Save')}}" method="POST">
                 @csrf
                 @method("POST")
@@ -39,13 +39,19 @@
                 {{-- @if(session('Submissao'))
                 {{dd(session('Submissao'))}}
                 @endif --}}
+                @if(!empty($Entregas))
+                    <div class="row bg-warning p-2">
+                        <strong>{{$Entregas[0]->Status}}</strong>
+                    </div>
+                @endif
+                <br>
                 <div class="row">
                     <div class="col-sm-12">
                         <label>Título</label>
                         @if(session('Submissao'))
-                            <input type="text" name="Titulo" class="form-control" value="{{in_array(Auth::user()->tipo,[1,2]) ? $Entregas[0]->Titulo : $Entrega['Titulo'] }}" required>
+                            <input type="text" name="Titulo" class="form-control" value="{{in_array(Auth::user()->tipo,[1,2]) ? $Entregas->Titulo : $Entrega['Titulo'] }}" required>
                         @else
-                            <input type="text" name="Titulo" class="form-control" value="{{in_array(Auth::user()->tipo,[1,2]) ? $Entregas[0]->Titulo : '' }}" required>
+                            <input type="text" name="Titulo" class="form-control" value="{{in_array(Auth::user()->tipo,[1,2]) ? $Entregas->Titulo : '' }}" required>
                         @endif
                     </div>
                 </div>
@@ -53,17 +59,17 @@
                     <div class="col-sm-6">
                         <label>Autores (Separe por ',')</label>
                         @if(session('Submissao'))
-                        <input type="text" name="Autores" class="form-control" value="{{in_array(Auth::user()->tipo,[1,2]) ? $Entregas[0]->Autores : $Entrega['Autores'] }}">
+                        <input type="text" name="Autores" class="form-control" value="{{in_array(Auth::user()->tipo,[1,2]) ? $Entregas->Autores : $Entrega['Autores'] }}" required>
                         @else
-                        <input type="text" name="Autores" class="form-control" value="{{in_array(Auth::user()->tipo,[1,2]) ? $Entregas[0]->Autores : '' }}">
+                        <input type="text" name="Autores" class="form-control" value="{{in_array(Auth::user()->tipo,[1,2]) ? $Entregas->Autores : '' }}" required>
                         @endif
                     </div>
                     <div class="col-sm-6">
                         <label>palavras-chaves (Separe por ',')</label>
                         @if(session('Submissao'))
-                        <input type="text" name="palavrasChave" class="form-control" value="{{in_array(Auth::user()->tipo,[1,2]) ? $Entregas[0]->palavrasChave : $Entrega['palavrasChave'] }}">
+                        <input type="text" name="palavrasChave" class="form-control" value="{{in_array(Auth::user()->tipo,[1,2]) ? $Entregas->palavrasChave : $Entrega['palavrasChave'] }}" required>
                         @else
-                        <input type="text" name="palavrasChave" class="form-control" value="{{in_array(Auth::user()->tipo,[1,2]) ? $Entregas[0]->palavrasChave : '' }}">
+                        <input type="text" name="palavrasChave" class="form-control" value="{{in_array(Auth::user()->tipo,[1,2]) ? $Entregas->palavrasChave : '' }}" required>
                         @endif
                     </div>
                 </div>
@@ -71,9 +77,9 @@
                     <div class="col-sm-6">
                         <label>Apresentador</label>
                         @if(session('Submissao'))
-                        <input name="Apresentador" type="text" class="form-control" value="{{in_array(Auth::user()->tipo,[1,2]) ? $Entregas[0]->Apresentador : $Entrega['Apresentador'] }}">
+                        <input name="Apresentador" type="text" class="form-control" value="{{in_array(Auth::user()->tipo,[1,2]) ? $Entregas->Apresentador : $Entrega['Apresentador'] }}" required>
                         @else
-                        <input name="Apresentador" type="text" class="form-control" value="{{in_array(Auth::user()->tipo,[1,2]) ? $Entregas[0]->Apresentador : '' }}">
+                        <input name="Apresentador" type="text" class="form-control" value="{{in_array(Auth::user()->tipo,[1,2]) ? $Entregas->Apresentador : '' }}" required>
                         @endif
                     </div>
                     <div class="col-sm-6">
@@ -82,11 +88,11 @@
                             <option>Selecione</option>
                             @if(session('Submissao'))
                                 @foreach($Tematica as $t)
-                                <option value="{{$t}}" {{in_array(Auth::user()->tipo,[1,2]) && $Entregas[0]->Tematica == $Entrega['Tematica'] ? 'selected' : '' }}>{{$t}}</option>
+                                <option value="{{$t}}" {{in_array(Auth::user()->tipo,[1,2]) && $Entregas->Tematica == $Entrega['Tematica'] ? 'selected' : '' }}>{{$t}}</option>
                                 @endforeach
                             @else
                                 @foreach($Tematica as $t)
-                                <option value="{{$t}}" {{in_array(Auth::user()->tipo,[1,2]) && $Entregas[0]->Tematica == $t ? 'selected' : '' }}>{{$t}}</option>
+                                <option value="{{$t}}" {{in_array(Auth::user()->tipo,[1,2]) && $Entregas->Tematica == $t ? 'selected' : '' }}>{{$t}}</option>
                                 @endforeach
                             @endif
                         </select>
@@ -96,53 +102,25 @@
                     <div class="col-sm-12">
                         <label>Resumo</label>
                         @if(session('Submissao'))
-                        <textarea name="Descricao" class="form-control" required >{{in_array(Auth::user()->tipo,[1,2]) ? $Entregas[0]->Descricao : $Entrega['Descricao'] }}</textarea>
+                        <textarea name="Descricao" class="form-control" required >{{in_array(Auth::user()->tipo,[1,2]) ? $Entregas->Descricao : $Entrega['Descricao'] }}</textarea>
                         @else
-                        <textarea name="Descricao" class="form-control" required >{{in_array(Auth::user()->tipo,[1,2]) ? $Entregas[0]->Descricao : '' }}</textarea>
+                        <textarea name="Descricao" class="form-control" required >{{in_array(Auth::user()->tipo,[1,2]) ? $Entregas->Descricao : '' }}</textarea>
                         @endif
                     </div>
                 </div>
                 <br>
+                {{-- {{dd($debug)}} --}}
                 <div class="col-sm-12 text-left row">
-                    @if($Evento->TERSubmissao > NOW() && isset($Entregas[0]) && in_array($Entregas[0]->Situacao,['Aprovado com Ressalvas']) || count($Entregas) == 0)
-                    <button class="btn bg-fr text-white col-auto">Salvar</button>
+                    @if(empty($Entregas) || !empty($Entregas) && $Entregas[0]->Status == "Aprovado com Ressalvas")
+                        <button class="btn bg-fr text-white col-auto">Salvar</button>&nbsp;
+                        @if($Entregas[0]->Status == "Aprovado com Ressalvas")
+                            <button class="btn btn-warning revisar col-auto" data-trabalho="{{route('Submissoes/getTrabalho',$IDEntrega)}}">Revisar</button>
+                        @endif
                     @endif
                     &nbsp;
                     <a class="btn btn-light col-auto" href="{{(Auth::user()->tipo == 3) ? route('Submissoes/index') : route('Submissoes/Entregues',$IDSubmissao)}}">Voltar</a>
                 </div>
             </form>
-        </div>
-        <div class="col-sm-6">
-            <label style="visibility: hidden">a</label>
-            <table class="table">
-                <thead class="bg-fr text-white">
-                    <tr>
-                        <th colspan="5" style="text-align:center;">Entregas</th>
-                    </tr>
-                    <tr>
-                        <th>Titulo</th>
-                        <th>Entrega</th>
-                        <th>Situação</th>
-                        <th>Feedback</th>
-                        <th>Opções</th>
-                    </tr>
-                </thead>
-                <body>
-                    @foreach($Entregas as $e)
-                    <tr>
-                        <td>{{$e->Titulo}}</td>
-                        <td>{{date('d/m/Y',strtotime($e->created_at))}}</td>
-                        <td>{{$e->Situacao}}</td>
-                        <td>{{$e->Feedback}}</td>
-                        @if(in_array($e->Situacao,['Aprovado com Ressalvas']))
-                        <td>
-                            <button class="btn btn-light revisar" data-trabalho="{{route('Submissoes/getTrabalho',$e->id)}}">Revisar</button>
-                        </td>
-                        @endif
-                    </tr>
-                    @endforeach
-                </body>
-            </table>
         </div>
     </div>
     <script>

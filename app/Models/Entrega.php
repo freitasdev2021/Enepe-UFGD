@@ -20,6 +20,7 @@ class Entrega extends Model
         'Apresentador',
         'Descricao',
         'Autores',
-        'palavrasChave'
+        'palavrasChave',
+        'Status'
     ];
 }

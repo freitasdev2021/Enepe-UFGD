@@ -20,6 +20,7 @@
                     @csrf
                     @method("POST")
                     <input type="hidden" name="IDEntrega" value="{{$Trabalho->id}}">
+                    <input type="hidden" name="IDSubmissao" value="{{$Trabalho->IDSubmissao}}">
                     @if(session('success'))
                     <div class="col-sm-12 shadow p-2 bg-success text-white">
                         <strong>{{session('success')}}</strong>
@@ -42,15 +43,9 @@
                     </div>
                     <hr>
                     <div class="row resumo">
-                        {{$Trabalho->Descricao."ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss"}}
+                        {{$Trabalho->Descricao}}
                     </div>
                     <hr>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <label>Feedback</label>
-                            <textarea class="form-control" name="Feedback" required></textarea>
-                        </div>
-                    </div>
                     <div class="row">
                         <div class="col-sm-12">
                             <label>Situação</label>
