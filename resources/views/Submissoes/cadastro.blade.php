@@ -36,11 +36,11 @@
                         <div class="col-sm-4">
                             <label>Modalidade</label>
                             <select name="Categoria" class="form-control">
-                                <option value="">Selecione</option>
-                                <option value="Ensino">Ensino</option>
-                                <option value="Pesquisa">Pesquisa</option>
-                                <option value="Extensão">Extensão</option>
-                                <option value="Extensão">Pós-Graduação</option>
+                                @foreach($Modalidades as $m)
+                                    @if(!empty($m))
+                                        <option value="{{$m}}" {{isset($Registro) && $Registro->Modalidade == $m ? 'selected' : ''}}>{{$m}}</option>
+                                    @endif
+                                @endforeach
                             </select>
                         </div>
                     </div>

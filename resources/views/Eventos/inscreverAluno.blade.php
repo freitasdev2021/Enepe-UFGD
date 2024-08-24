@@ -39,13 +39,11 @@
                             <label>Categoria</label>
                             <select name="Categoria" class="form-control">
                                 <option value="">Selecione</option>
-                                <option value="Aluno de Iniciação Científica da UFGD" {{isset($Registro) && $Registro->Categoria == 'Aluno de Iniciação Científica da UFGD' ? 'selected' : ''}}>Aluno de Iniciação Científica da UFGD</option>
-                                <option value="Aluno da Graduação da UFGD" {{isset($Registro) && $Registro->Categoria == 'Aluno da Graduação da UFGD' ? 'selected' : ''}}>Aluno da Graduação da UFGD</option>
-                                <option value="Aluno da Pós-Graduação da UFGD" {{isset($Registro) && $Registro->Categoria == 'Aluno da Pós-Graduação da UFGD' ? 'selected' : ''}}>Aluno da Pós-Graduação da UFGD</option>
-                                <option value="Docente da UFGD" {{isset($Registro) && $Registro->Categoria == 'Docente da UFGD' ? 'selected' : ''}}>Docente da UFGD</option>
-                                <option value="Técnico Administrativo da UFGD" {{isset($Registro) && $Registro->Categoria == 'Técnico Administrativo da UFGD' ? 'selected' : ''}}>Técnico Administrativo da UFGD</option>
-                                <option value="Outro" {{isset($Registro) && $Registro->Categoria == 'Outro' ? 'selected' : ''}}>Outro</option>
-                                <option value="Avaliador(a) externo(a)" {{isset($Registro) && $Registro->Categoria == 'Avaliador(a) Externo(a)' ? 'selected' : ''}}>Avaliador(a) externo(a)</option>
+                                @foreach($Categorias as $c)
+                                    @if(!empty($c))
+                                        <option value="{{$c}}" {{isset($Registro) && $Registro->Categoria == $c ? 'selected' : ''}}>{{$c}}</option>
+                                    @endif
+                                @endforeach
                             </select>
                         </div>
                     </div>

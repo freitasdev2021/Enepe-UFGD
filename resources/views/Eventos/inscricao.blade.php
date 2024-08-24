@@ -20,14 +20,12 @@
             <div class="col-sm-12">
                 <label>Categoria</label>
                 <select name="Categoria" class="form-control">
-                    <option value="">Selecione</option>>
-                    <option value="Aluno de Iniciação Científica da UFGD">Aluno de Iniciação Científica da UFGD</option>
-                    <option value="Aluno da Graduação da UFGD">Aluno da Graduação da UFGD</option>
-                    <option value="Aluno da Pós-Graduação da UFGD">Aluno da Pós-Graduação da UFGD</option>
-                    <option value="Docente da UFGD">Docente da UFGD</option>
-                    <option value="Técnico Administrativo da UFGD">Técnico Administrativo da UFGD</option>
-                    <option value="Outro">Outro</option>
-                    <option value="Avaliador(a) externo(a)">Avaliador(a) externo(a)</option>
+                    <option value="">Selecione</option>
+                    @foreach($Categorias as $c)
+                        @if(!empty($c))
+                            <option value="{{$c}}">{{$c}}</option>
+                        @endif
+                    @endforeach
                 </select>
             </div>
             <br>

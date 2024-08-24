@@ -82,11 +82,12 @@ class SubmissoesController extends Controller
     }
 
     public function cadastro($id = null){
+        $Evento = Evento::find(Session::get('IDEvento'));
         $view = array(
             'id' => '',
             'submodulos' => self::submodulos,
             'avaliadores' => User::where('tipo',2)->get(),
-            'eventos' => Evento::all()
+            'Modalidades' => json_decode($Evento->Modalidades,true)
         );
 
         if($id){

@@ -87,16 +87,20 @@ class EventosController extends Controller
     }
 
     public function inscricoes($IDEvento){
+        $Evento = Evento::find($IDEvento);
         return view("Eventos.inscritos",[
             "IDEvento" => $IDEvento,
-            "submodulos" => self::cadastroSubmodulos
+            "submodulos" => self::cadastroSubmodulos,
+            'Categorias' => json_decode($Evento->Categorias,true)
         ]);
     }
 
     public function inscreverAluno($IDEvento,$IDAluno=null){
+        $Evento = Evento::find($IDEvento);
         $view = [
             "IDEvento" => $IDEvento,
-            "submodulos" => self::cadastroSubmodulos
+            "submodulos" => self::cadastroSubmodulos,
+            'Categorias' => json_decode($Evento->Categorias,true)
         ];
 
         if($IDAluno){
@@ -229,6 +233,9 @@ class EventosController extends Controller
             $view['submodulos'] = self::cadastroSubmodulos;
             $view['Registro'] = Evento::find($id);
             $view['Contatos'] = json_decode($view['Registro']->Contatos,true);
+            $view['Modalidades'] = json_decode($view['Registro']->Modalidades,true);
+            $view['Categorias'] = json_decode($view['Registro']->Categorias,true);
+            $view['Site'] = json_decode($view['Registro']->Site,true);
         }
 
         return view('Eventos.cadastro',$view);
@@ -274,6 +281,9 @@ class EventosController extends Controller
         try{
             $data = $request->all();
             $data['Contatos'] = json_encode(array_combine($request->Nome,$request->Contato));
+            $data['Categorias'] = json_encode($request->Categoria);
+            $data['Modalidades'] = json_encode($request->Modalidade);
+            $data['Site'] = json_encode($request->Site);
             if(!$request->id){
                 if($request->file('Capa')){
                     $Foto = $request->file('Capa')->getClientOriginalName();

@@ -34,13 +34,14 @@
                <div class="collapse navbar-collapse" id="navbarNav">
                   <ul class="navbar-nav">
                      <li class="nav-item">
-                        <a class="nav-link" href="#">Login/Registro</a>
+                        <a class="nav-link" href="{{route('login')}}">Login/Registro</a>
                      </li>
                   </ul>
                </div>
             </div>
          </nav>
          <!--CAROUSEL--->
+         @if(in_array("Capa",$Site))
          <div id="carouselExampleSlidesOnly" class="carousel slide p-2" data-bs-ride="carousel">
             <div class="carousel-inner">
                <div class="carousel-item active">
@@ -48,19 +49,28 @@
                </div>
             </div>
          </div>
+         @endif
          <!----------->
          <!--ARTICLE 1-->
          <br>
          <div class="p-2">
+            @if(in_array("Inscritos",$Site))
             <div class="card">
                <div class="card-header">
                   <strong>Inscrições</strong>
                </div>
                <div class="card-body">
+                  @if(in_array("Prazo de Inscricoes",$Site))
+                  <h5 class="card-title text-center">Prazo das Inscrições: {{date('d/m/Y',strtotime($Evento->INIInscricao))}} - {{date('d/m/Y',strtotime($Evento->TERInscricoes))}}</h5>
+                  @endif
                   <h5 class="card-title">{{$Evento->Titulo}}</h5>
                   {{-- <p class="card-text">o Evento vai de {{date('d/m/Y',strtotime($Evento->Inicio))}} a {{date('d/m/Y',strtotime($Evento->Termino))}} e será Online</p> --}}
                   <h5 class="card-title">Sobre o Evento</h5>
                   <p class="card-text">{{$Evento->Descricao}}</p>
+                  @if(in_array("Inicio e Termino do Evento",$Site))
+                  <h5 class="card-title">Duração do Evento:</h5>
+                  <p>{{date('d/m/Y H:i',strtotime($Evento->Inicio))}} - {{date('d/m/Y H:i',strtotime($Evento->Termino))}}</p>
+                  @endif
                   <div class="col-sm-12">
                      <h3 align="center">Inscreva-se na Plataforma</h3>
                      <hr>
@@ -107,14 +117,18 @@
                </div>
             </div>
             <br>
+            @endif
             <!--SUBMISSOES-->
+            @if(in_array("Submissoes",$Site))
             <br>
             <div class="card">
                <div class="card-header">
                   <strong>Submissões</strong>
                </div>
                <div class="card-body">
-                  <h5 class="card-title text-center">Prazo para submissão: {{date('d/m/Y',strtotime($Evento->INISubmissao))}} - {{date('d/m/Y',strtotime($Evento->TERSubmissao))}}</h5>
+                  @if(in_array("Prazo de Submissoes",$Site))
+                  <h5 class="card-title text-center">Prazo das Submissões: {{date('d/m/Y',strtotime($Evento->INISubmissao))}} - {{date('d/m/Y',strtotime($Evento->TERSubmissao))}}</h5>
+                  @endif
                   <br>
                   @foreach($Submissoes as $s)
                   <div class="card">
@@ -126,8 +140,10 @@
                   @endforeach
                </div>
             </div>
+            @endif
             <!--NORMAS DE APRESENTAÇÃO-->
             <br>
+            @if(in_array("Normas",$Site))
             <div class="card">
                <div class="card-header">
                      <strong>Normas de Apresentação</strong>
@@ -143,6 +159,8 @@
             </div>
             <!--Palestras-->
             <br>
+            @endif
+            @if(in_array("Palestras",$Site))
             <div class="card">
                <div class="card-header">
                   <strong>Palestras</strong>
@@ -165,6 +183,8 @@
                </div>
             </div>
             <br>
+            @endif
+            @if(in_array("Contatos",$Site))
             <!-----CONTATOS------>
             <div class="card">
                <div class="card-header">
@@ -181,6 +201,7 @@
                   <br>
                </div>
             </div>
+            @endif
             <!------------------->
          </div>
       </main>

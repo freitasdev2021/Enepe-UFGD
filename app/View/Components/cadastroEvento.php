@@ -8,12 +8,13 @@ use Illuminate\View\Component;
 
 class cadastroEvento extends Component
 {
+    public $Registro;
     /**
      * Create a new component instance.
      */
-    public function __construct()
+    public function __construct($Registro)
     {
-        //
+        $this->Registro = $Registro;
     }
 
     /**

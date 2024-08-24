@@ -16,7 +16,6 @@ class Evento extends Model
         'Descricao',
         'Inicio',
         'Termino',
-        'Categoria',
         'INISubmissao',
         'TERSubmissao',
         'INIInscricao',
@@ -25,6 +24,8 @@ class Evento extends Model
         'Contatos',
         'Capa',
         'ModeloApresentacao',
-        'Ensalamento'
+        'Categorias',
+        'Modalidades',
+        'Site'
     ];
 }

@@ -14,11 +14,13 @@ class SiteController extends Controller
     }
 
     public function site($id){
+        $Evento =  Evento::where('id',$id)->first();
         return view('Site.index',[
             "Submissoes" => Submissao::select('Regras','Categoria')->where('IDEvento',$id)->get(),
             "Palestras" => DB::select("SELECT pl.*,pa.Nome,pa.Foto FROM palestras pl INNER JOIN palestrantes pa ON(pl.IDPalestrante = pa.id) INNER JOIN eventos e ON(e.id = pl.IDEvento) WHERE e.id = $id "),
-            "Evento" => Evento::where('id',$id)->first(),
-            "Atividades" => Atividade::where('id',$id)->get()
+            "Evento" =>$Evento,
+            "Atividades" => Atividade::where('id',$id)->get(),
+            "Site" => json_decode($Evento->Site,true)
         ]);
     }
 }
