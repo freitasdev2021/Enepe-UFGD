@@ -9,6 +9,7 @@ use App\Models\User;
 use FPDF;
 use App\Models\Certificados;
 use Intervention\Image\ImageManager;
+use Illuminate\Support\Facades\Session;
 use Intervention\Image\Drivers\Gd\Driver;
 use App\Models\Evento;
 
@@ -98,70 +99,15 @@ class CertificadosController extends Controller
     public function saveModelo(Request $request){
         try{
             $data = $request->all();
-            $erro = "";
-            switch($request->TPModelo){
-                case "Organizadores":
-                    //dd("teste");
-                    if(!str_contains($request->DSModelo,'{organizador}') || !str_contains($request->DSModelo,'{evento}')){
-                        $erro = "Atenção! Modelo de Organizadores Feito de Maneira Incorreta!";
-                    }
-                break;
-                case "Apresentadores":
-                    if(!str_contains($request->DSModelo,'{apresentador}') || 
-                    !str_contains($request->DSModelo,'{evento}') || 
-                    !str_contains($request->DSModelo,'{submissao}') || 
-                    !str_contains($request->DSModelo,'{palavraschave}') || 
-                    !str_contains($request->DSModelo,'{autores}')
-                    ){
-                        $erro = "Atenção! Modelo de Apresentadores Feito de Maneira Incorreta!";
-                    }
-                    //
-                break;
-                case "Telespectadores":
-                    if(!str_contains($request->DSModelo,'{telespectador}') || !str_contains($request->DSModelo,'{evento}')){
-                        $erro = "Atenção! Modelo de Telespectadores Feito de Maneira Incorreta!";
-                    }
-                break;
-                case "Avaliador de Sessão":
-                    if(!str_contains($request->DSModelo,'{avaliadorsessao}') || !str_contains($request->DSModelo,'{evento}')){
-                        $erro = "Atenção! Modelo de Avaliador de Sessão Feito de Maneira Incorreta!";
-                    }
-                break;
-                case "Moderador de Sessão":
-                    if(!str_contains($request->DSModelo,'{moderador}') || !str_contains($request->DSModelo,'{evento}')){
-                        $erro = "Atenção! Modelo de Moderadores Feito de Maneira Incorreta!";
-                    }
-                break;
-                case "Telespectador de Palestra":
-                    if(!str_contains($request->DSModelo,'{telespectadorpalestra}') || !str_contains($request->DSModelo,'{evento}') || !str_contains($request->DSModelo,'{palestra}')){
-                        $erro = "Atenção! Modelo de Telespectadores de Palestra Feito de Maneira Incorreta!";
-                    }
-                break;
-                case "Palestrante":
-                    if(!str_contains($request->DSModelo,'{palestrante}') || !str_contains($request->DSModelo,'{evento}') || !str_contains($request->DSModelo,'{palestra}')){
-                        $erro = "Atenção! Modelo de Palestrante Feito de Maneira Incorreta!";
-                    }
-                break;
-                case "Avaliadores":
-                    if(!str_contains($request->DSModelo,'{avaliador}') || !str_contains($request->DSModelo,'{evento}')){
-                        $erro = "Atenção! Modelo de Avaliadores Feito de Maneira Incorreta!";
-                    }
-                break;
-            }
             //CONFERÊNCIA DE ERROS
-            if(!empty($erro)){
-                $status = 'error';
-                $mensagem = $erro;
-            }else{
-                if($request->file('Arquivo')){
-                    $Foto = $request->file('Arquivo')->getClientOriginalName();
-                    $request->file('Arquivo')->storeAs('modelos',$Foto,'public');
-                    $data['Arquivo'] = $Foto;
-                }
-                Modelo::create($data);
-                $status = 'success';
-                $mensagem = 'Modelo Salvo com Sucesso';
+            if($request->file('Arquivo')){
+                $Foto = $request->file('Arquivo')->getClientOriginalName();
+                $request->file('Arquivo')->storeAs('modelos',$Foto,'public');
+                $data['Arquivo'] = $Foto;
             }
+            Modelo::create($data);
+            $status = 'success';
+            $mensagem = 'Modelo Salvo com Sucesso';
             $aid = '';
             $rota = 'Certificados/Modelos/Novo';
         }catch(\Throwable $th){
@@ -199,10 +145,10 @@ class CertificadosController extends Controller
                 //}
             }
             
-            $Evento = Evento::find($request->IDEvento);
+            $Evento = Evento::find(Session::get('IDEvento'));
             $Certificados = [];
             for($i=0;$i<count($Inscrit);$i++){
-                $existeCertificado = Certificados::where('IDEvento', $request->IDEvento)
+                $existeCertificado = Certificados::where('IDEvento', Session::get('IDEvento'))
                         ->where('IDModelo', $Modelos[$i])
                         ->where('IDInscrito', $Inscrit[$i])
                         ->exists();
@@ -226,9 +172,15 @@ class CertificadosController extends Controller
                         //dd("teste");
                         $Inscrito = User::find($Certificado['Inscritos']);
                         if(!str_contains($Modelo->DSModelo,'{organizador}') || !str_contains($Modelo->DSModelo,'{evento}') || !$Inscrito){
-                            array_push($erros,"Atenção! Modelo de Organizadores Feito de Maneira Incorreta! ou o Certificado não atende os requisitos de Organizador, favor refaze-lo na aba 'Modelos' ");
-                        }else{
-                            $STRConteudo = str_replace(['{organizador}','{evento}'],[wordwrap($Inscrito->name,50,"<br>/n"),$Evento->Titulo],$Modelo->DSModelo);
+                            $STRConteudo = "";
+                            if(!str_contains($Modelo->DSModelo,'{organizador}')){
+                                $STRConteudo .= str_replace(['{evento}'],[wordwrap($Evento->Titulo,50,"<br>/n")],$Modelo->DSModelo);
+                            }
+
+                            if(!str_contains($Modelo->DSModelo,'{evento}')){
+                                $STRConteudo .= str_replace(['{organizador}'],[wordwrap($Inscrito->name,50,"<br>/n")],$Modelo->DSModelo);
+                            }
+
                             $Conteudo = explode("|",$STRConteudo);
                             $emissao[] = array(
                                 "Conteudo" => $Conteudo,
@@ -236,14 +188,26 @@ class CertificadosController extends Controller
                                 "Arquivo" => $Modelo->Arquivo,
                                 "Inscrito" => $Inscrito->name,
                                 "Evento" => $Evento->Titulo,
-                                "IDEvento"=> $request->IDEvento,
+                                "IDEvento"=> Session::get('IDEvento'),
+                                "Modelo" => $Certificado['Modelos'] 
+                            );
+                        }else{
+                            $STRConteudo = str_replace(['{organizador}','{evento}'],[$Inscrito->name,$Evento->Titulo],$Modelo->DSModelo);
+                            $Conteudo = explode("|",$STRConteudo);
+                            $emissao[] = array(
+                                "Conteudo" => $Conteudo,
+                                "IDInscrito" => $Certificado['Inscritos'],
+                                "Arquivo" => $Modelo->Arquivo,
+                                "Inscrito" => $Inscrito->name,
+                                "Evento" => $Evento->Titulo,
+                                "IDEvento"=> Session::get('IDEvento'),
                                 "Modelo" => $Certificado['Modelos'] 
                             );
                         }
                     break;
                     case "Apresentadores":
                         $Inscrito = User::find($Certificado['Inscritos']);
-                        $Trabalho = self::getTrabalho($Certificado['Inscritos'],$request->IDEvento);
+                        $Trabalho = self::getTrabalho($Certificado['Inscritos'],Session::get('IDEvento'));
                         //
                         if(!str_contains($Modelo->DSModelo,'{apresentador}') || 
                         !str_contains($Modelo->DSModelo,'{evento}') || 
@@ -253,7 +217,38 @@ class CertificadosController extends Controller
                         !$Inscrito ||
                         !$Trabalho
                         ){
-                            array_push($erros,"Atenção! Modelo de Apresentadores Feito de Maneira Incorreta! ou o Certificado não atende os requisitos de Apresentador, que deve ter trabalhos apresentados, favor refaze-lo na aba 'Modelos' ");
+                            $STRConteudo = "";
+
+                            if(!str_contains($Modelo->DSModelo,'{apresentador}')){
+                                $STRConteudo .= str_replace(['{evento}','{submissao}','{palavraschave}','{autores}'],[$Evento->Titulo,$Trabalho->Titulo,$Trabalho->palavrasChave,$Trabalho->Autores],$Modelo->DSModelo);
+                            }
+
+                            if(!str_contains($Modelo->DSModelo,'{evento}')){
+                                $STRConteudo .= str_replace(['{apresentador}','{submissao}','{palavraschave}','{autores}'],[$Inscrito->name,$Trabalho->Titulo,$Trabalho->palavrasChave,$Trabalho->Autores],$Modelo->DSModelo);
+                            }
+
+                            if(!str_contains($Modelo->DSModelo,'{submissao}')){
+                                $STRConteudo .= str_replace(['{apresentador}','{evento}','{palavraschave}','{autores}'],[$Inscrito->name,$Evento->Titulo,$Trabalho->palavrasChave,$Trabalho->Autores],$Modelo->DSModelo);
+                            }
+
+                            if(!str_contains($Modelo->DSModelo,'{palavraschave}')){
+                                $STRConteudo .= str_replace(['{apresentador}','{evento}','{submissao}','{autores}'],[$Inscrito->name,$Evento->Titulo,$Trabalho->Titulo,$Trabalho->Autores],$Modelo->DSModelo);
+                            }
+
+                            if(!str_contains($Modelo->DSModelo,'{autores}')){
+                                $STRConteudo .= str_replace(['{apresentador}','{evento}','{submissao}','{palavraschave}'],[$Inscrito->name,$Evento->Titulo,$Trabalho->Titulo,$Trabalho->palavrasChave],$Modelo->DSModelo);
+                            }
+
+                            $Conteudo = explode("|",$STRConteudo);
+                            $emissao[] = array(
+                                "Conteudo" => $Conteudo,
+                                "IDInscrito" => $Certificado['Inscritos'],
+                                "Arquivo" => $Modelo->Arquivo,
+                                "Inscrito" => $Inscrito->name,
+                                "Evento" => $Evento->Titulo,
+                                "IDEvento"=> Session::get('IDEvento'),
+                                "Modelo" => $Certificado['Modelos'] 
+                            );
                         }else{
                             $STRConteudo = str_replace(['{apresentador}','{evento}','{submissao}','{palavraschave}','{autores}'],[$Inscrito->name,$Evento->Titulo,$Trabalho->Titulo,$Trabalho->palavrasChave,$Trabalho->Autores],$Modelo->DSModelo);
                             $Conteudo = explode("|",$STRConteudo);
@@ -263,7 +258,7 @@ class CertificadosController extends Controller
                                 "Arquivo" => $Modelo->Arquivo,
                                 "Inscrito" => $Inscrito->name,
                                 "Evento" => $Evento->Titulo,
-                                "IDEvento"=> $request->IDEvento,
+                                "IDEvento"=> Session::get('IDEvento'),
                                 "Modelo" => $Certificado['Modelos'] 
                             );
                         }
@@ -273,7 +268,27 @@ class CertificadosController extends Controller
                         $Inscrito = User::find($Certificado['Inscritos']);
                         //
                         if(!str_contains($Modelo->DSModelo,'{telespectador}') || !str_contains($Modelo->DSModelo,'{evento}') || !$Inscrito){
-                            array_push($erros,"Atenção! Modelo de Telespectadores Feito de Maneira Incorreta! ou o Certificado não atende os requisitos de Telespectador, favor refaze-lo na aba 'Modelos' ");
+                            
+                            $STRConteudo = "";
+
+                            if(!str_contains($Modelo->DSModelo,'{telespectador}')){
+                                $STRConteudo .= str_replace(['{evento}'],[$Evento->Titulo],$Modelo->DSModelo);
+                            }
+
+                            if(!str_contains($Modelo->DSModelo,'{evento}')){
+                                $STRConteudo .= str_replace(['{telespectador}'],[$Inscrito->name],$Modelo->DSModelo);
+                            }
+
+                            $Conteudo = explode("|",$STRConteudo);
+                            $emissao[] = array(
+                                "Conteudo" => $Conteudo,
+                                "IDInscrito" => $Certificado['Inscritos'],
+                                "Arquivo" => $Modelo->Arquivo,
+                                "Inscrito" => $Inscrito->name,
+                                "Evento" => $Evento->Titulo,
+                                "IDEvento"=> Session::get('IDEvento'),
+                                "Modelo" => $Certificado['Modelos'] 
+                            );
                         }else{
                             $STRConteudo = str_replace(['{telespectador}','{evento}'],[$Inscrito->name,$Evento->Titulo],$Modelo->DSModelo);
                             $Conteudo = explode("|",$STRConteudo);
@@ -283,7 +298,7 @@ class CertificadosController extends Controller
                                 "Arquivo" => $Modelo->Arquivo,
                                 "Inscrito" => $Inscrito->name,
                                 "Evento" => $Evento->Titulo,
-                                "IDEvento"=> $request->IDEvento,
+                                "IDEvento"=> Session::get('IDEvento'),
                                 "Modelo" => $Certificado['Modelos'] 
                             );
                         }
@@ -292,7 +307,27 @@ class CertificadosController extends Controller
                         $Inscrito = User::find($Certificado['Inscritos']);
                         //
                         if(!str_contains($Modelo->DSModelo,'{avaliadorsessao}') || !str_contains($Modelo->DSModelo,'{evento}') || !$Inscrito){
-                            array_push($erros,"Atenção! Modelo de Avaliador de Sessão Feito de Maneira Incorreta! ou o Certificado não atende os requisitos de Avaliador de Sessão, favor refaze-lo na aba 'Modelos' ");
+
+                            $STRConteudo = "";
+
+                            if(!str_contains($Modelo->DSModelo,'{avaliadorsessao}')){
+                                $STRConteudo .= str_replace(['{evento}'],[$Evento->Titulo],$Modelo->DSModelo);
+                            }
+
+                            if(!str_contains($Modelo->DSModelo,'{evento}')){
+                                $STRConteudo .= str_replace(['{avaliadorsessao}'],[$Inscrito->name],$Modelo->DSModelo);
+                            }
+
+                            $Conteudo = explode("|",$STRConteudo);
+                            $emissao[] = array(
+                                "Conteudo" => $Conteudo,
+                                "IDInscrito" => $Certificado['Inscritos'],
+                                "Arquivo" => $Modelo->Arquivo,
+                                "Inscrito" => $Inscrito->name,
+                                "Evento" => $Evento->Titulo,
+                                "IDEvento"=> Session::get('IDEvento'),
+                                "Modelo" => $Certificado['Modelos'] 
+                            );
                         }else{
                             $STRConteudo = str_replace(['{avaliadorsessao}','{evento}'],[$Inscrito->name,$Evento->Titulo],$Modelo->DSModelo);
                             $Conteudo = explode("|",$STRConteudo);
@@ -302,7 +337,7 @@ class CertificadosController extends Controller
                                 "Arquivo" => $Modelo->Arquivo,
                                 "Inscrito" => $Inscrito->name,
                                 "Evento" => $Evento->Titulo,
-                                "IDEvento"=> $request->IDEvento,
+                                "IDEvento"=> Session::get('IDEvento'),
                                 "Modelo" => $Certificado['Modelos'] 
                             );
                         }
@@ -312,7 +347,27 @@ class CertificadosController extends Controller
                         $Inscrito = User::find($Certificado['Inscritos']);
                         //
                         if(!str_contains($Modelo->DSModelo,'{moderador}') || !str_contains($Modelo->DSModelo,'{evento}') || !$Inscrito){
-                            array_push($erros,"Atenção! Modelo de Moderadores Feito de Maneira Incorreta! ou o Certificado não atende os requisitos de Moderador, favor refaze-lo na aba 'Modelos' ");
+                            $STRConteudo = "";
+
+                            if(!str_contains($Modelo->DSModelo,'{moderador}')){
+                                $STRConteudo .= str_replace(['{evento}'],[$Evento->Titulo],$Modelo->DSModelo);
+                            }
+
+                            if(!str_contains($Modelo->DSModelo,'{evento}')){
+                                $STRConteudo .= str_replace(['{moderador}'],[$Inscrito->name],$Modelo->DSModelo);
+                            }
+
+                            $Conteudo = explode("|",$STRConteudo);
+                            $emissao[] = array(
+                                "Conteudo" => $Conteudo,
+                                "IDInscrito" => $Certificado['Inscritos'],
+                                "Arquivo" => $Modelo->Arquivo,
+                                "Inscrito" => $Inscrito->name,
+                                "Evento" => $Evento->Titulo,
+                                "IDEvento"=> Session::get('IDEvento'),
+                                "Modelo" => $Certificado['Modelos'] 
+                            );
+                            
                         }else{
                             $STRConteudo = str_replace(['{moderador}','{evento}'],[$Inscrito->name,$Evento->Titulo],$Modelo->DSModelo);
                             $Conteudo = explode("|",$STRConteudo);
@@ -322,7 +377,7 @@ class CertificadosController extends Controller
                                 "Arquivo" => $Modelo->Arquivo,
                                 "Inscrito" => $Inscrito->name,
                                 "Evento" => $Evento->Titulo,
-                                "IDEvento"=> $request->IDEvento,
+                                "IDEvento"=> Session::get('IDEvento'),
                                 "Modelo" => $Certificado['Modelos'] 
                             );
                         }
@@ -330,13 +385,24 @@ class CertificadosController extends Controller
                     break;
                     case "Telespectador de Palestra":
                         $Inscrito = User::find($Certificado['Inscritos']);
-                        $Assistiu = self::getPalestrasInscrito($Certificado['Inscritos'],$request->IDEvento);
+                        $Assistiu = self::getPalestrasInscrito($Certificado['Inscritos'],Session::get('IDEvento'));
                         //
-                        if(!str_contains($Modelo->DSModelo,'{telespectadorpalestra}') || !$Assistiu || !str_contains($Modelo->DSModelo,'{palestra}') || !$Inscrito){
-                            array_push($erros,"Atenção! Modelo de Telespectadores de Palestra Feito de Maneira Incorreta! ou o Certificado não atende os requisitos de Telespectador de Palestra,ou não assistiu nenhuma palestra, favor refaze-lo na aba 'Modelos' ");
-                        }else{
+                        if(!str_contains($Modelo->DSModelo,'{telespectadorpalestra}') || !str_contains($Modelo->DSModelo,'{evento}') || !$Assistiu || !str_contains($Modelo->DSModelo,'{palestra}') || !$Inscrito){
                             foreach($Assistiu as $as){
-                                $STRConteudo = str_replace(['{telespectadorpalestra}','{palestra}','{evento}'],[$Inscrito->name,$as->Titulo,$Evento->Titulo],$Modelo->DSModelo);
+                                $STRConteudo = "";
+
+                                if(!str_contains($Modelo->DSModelo,'{telespectadorpalestra}')){
+                                    $STRConteudo .= str_replace(['{palestra}','{evento}'],[$as->Titulo,$Evento->Titulo],$Modelo->DSModelo);
+                                }
+
+                                if(!str_contains($Modelo->DSModelo,'{palestra}')){
+                                    $STRConteudo = str_replace(['{telespectadorpalestra}','{evento}'],[$Inscrito->name,$as->Titulo,$Evento->Titulo],$Modelo->DSModelo);
+                                }
+
+                                if(!str_contains($Modelo->DSModelo,'{evento}')){
+                                    $STRConteudo = str_replace(['{telespectadorpalestra}','{palestra}'],[$Inscrito->name,$as->Titulo],$Modelo->DSModelo);
+                                }
+
                                 $Conteudo = explode("|",$STRConteudo);
                                 $emissao[] = array(
                                     "Conteudo" => $Conteudo,
@@ -344,7 +410,21 @@ class CertificadosController extends Controller
                                     "Arquivo" => $Modelo->Arquivo,
                                     "Inscrito" => $Inscrito->name,
                                     "Evento" => $Evento->Titulo,
-                                    "IDEvento"=> $request->IDEvento,
+                                    "IDEvento"=> Session::get('IDEvento'),
+                                    "Modelo" => $Certificado['Modelos'] 
+                                );
+                            }
+                        }else{
+                            foreach($Assistiu as $as){
+                                $STRConteudo = str_replace(['{telespectadorpalestra}','{evento}','{palestra}'],[$Inscrito->name,$Evento->Titulo,$as->Titulo],$Modelo->DSModelo);
+                                $Conteudo = explode("|",$STRConteudo);
+                                $emissao[] = array(
+                                    "Conteudo" => $Conteudo,
+                                    "IDInscrito" => $Certificado['Inscritos'],
+                                    "Arquivo" => $Modelo->Arquivo,
+                                    "Inscrito" => $Inscrito->name,
+                                    "Evento" => $Evento->Titulo,
+                                    "IDEvento"=> Session::get('IDEvento'),
                                     "Modelo" => $Certificado['Modelos'] 
                                 );
                             }
@@ -353,10 +433,36 @@ class CertificadosController extends Controller
                     break;
                     case "Palestrante":
                         $Inscrito = Palestrante::find($Certificado['Inscritos']);
-                        $Palestrou = self::getPalestrasPalestrante($Certificado['Inscritos'],$request->IDEvento);
+                        $Palestrou = self::getPalestrasPalestrante($Certificado['Inscritos'],Session::get('IDEvento'));
                         //
                         if(!str_contains($Modelo->DSModelo,'{palestrante}') || !str_contains($Modelo->DSModelo,'{evento}') || !$Palestrou || !str_contains($Modelo->DSModelo,'{palestra}') || !$Inscrito){
-                            array_push($erros,"Atenção! Modelo de Palestrante Feito de Maneira Incorreta! ou o Certificado não atende os requisitos de Palestrante,ou não deu nenhuma palestra, favor refaze-lo na aba 'Modelos' ");
+                            foreach($Palestrou as $pa){
+
+                                $STRConteudo = "";
+
+                                if(!str_contains($Modelo->DSModelo,'{palestrante}')){
+                                    $STRConteudo .= str_replace(['{palestra}','{evento}'],[$pa->Titulo,$Evento->Titulo],$Modelo->DSModelo);
+                                }
+
+                                if(!str_contains($Modelo->DSModelo,'{evento}')){
+                                    $STRConteudo .= str_replace(['{palestrante}','{palestra}'],[$Inscrito->Nome,$pa->Titulo],$Modelo->DSModelo);
+                                }
+
+                                if(!str_contains($Modelo->DSModelo,'{palestra}')){
+                                    $STRConteudo .= str_replace(['{palestrante}','{evento}'],[$Inscrito->Nome,$Evento->Titulo],$Modelo->DSModelo);
+                                }
+
+                                $Conteudo = explode("|",$STRConteudo);
+                                $emissao[] = array(
+                                    "Conteudo" => $Conteudo,
+                                    "IDInscrito" => $Certificado['Inscritos'],
+                                    "Arquivo" => $Modelo->Arquivo,
+                                    "Inscrito" => $Inscrito->name,
+                                    "Evento" => $Evento->Titulo,
+                                    "IDEvento"=> Session::get('IDEvento'),
+                                    "Modelo" => $Certificado['Modelos'] 
+                                );
+                            }
                         }else{
                             foreach($Palestrou as $pa){
                                 $STRConteudo = str_replace(['{palestrante}','{palestra}','{evento}'],[$Inscrito->Nome,$pa->Titulo,$Evento->Titulo],$Modelo->DSModelo);
@@ -367,7 +473,7 @@ class CertificadosController extends Controller
                                     "Arquivo" => $Modelo->Arquivo,
                                     "Inscrito" => $Inscrito->name,
                                     "Evento" => $Evento->Titulo,
-                                    "IDEvento"=> $request->IDEvento,
+                                    "IDEvento"=> Session::get('IDEvento'),
                                     "Modelo" => $Certificado['Modelos'] 
                                 );
                             }
@@ -378,7 +484,25 @@ class CertificadosController extends Controller
                         $Inscrito = User::find($Certificado['Inscritos']);
 
                         if(!str_contains($Modelo->DSModelo,'{avaliador}') || !str_contains($Modelo->DSModelo,'{evento}') || !$Inscrito){
-                            array_push($erros,"Atenção! Modelo de Avaliadores Feito de Maneira Incorreta! ou o Certificado não atende os requisitos de Avaliador, favor refaze-lo na aba 'Modelos' ");
+                            $STRConteudo = "";
+                            if(!str_contains($Modelo->DSModelo,'{avaliador}')){
+                                $STRConteudo .= str_replace(['{evento}'],[wordwrap($Evento->Titulo,50,"<br>/n")],$Modelo->DSModelo);
+                            }
+
+                            if(!str_contains($Modelo->DSModelo,'{evento}')){
+                                $STRConteudo .= str_replace(['{avaliador}'],[wordwrap($Inscrito->name,50,"<br>/n")],$Modelo->DSModelo);
+                            }
+
+                            $Conteudo = explode("|",$STRConteudo);
+                            $emissao[] = array(
+                                "Conteudo" => $Conteudo,
+                                "IDInscrito" => $Certificado['Inscritos'],
+                                "Arquivo" => $Modelo->Arquivo,
+                                "Inscrito" => $Inscrito->name,
+                                "Evento" => $Evento->Titulo,
+                                "IDEvento"=> Session::get('IDEvento'),
+                                "Modelo" => $Certificado['Modelos'] 
+                            );
                         }else{
                             $STRConteudo = str_replace(['{avaliador}','{evento}'],[$Inscrito->name,$Evento->Titulo],$Modelo->DSModelo);
                             $Conteudo = explode("|",$STRConteudo);
@@ -389,7 +513,7 @@ class CertificadosController extends Controller
                                 "Arquivo" => $Modelo->Arquivo,
                                 "Inscrito" => $Inscrito->name,
                                 "Evento" => $Evento->Titulo,
-                                "IDEvento"=> $request->IDEvento,
+                                "IDEvento"=> Session::get('IDEvento'),
                                 "Modelo" => $Certificado['Modelos'] 
                             );
                         }
@@ -520,11 +644,7 @@ class CertificadosController extends Controller
 
     public function getCertificados(){
 
-        if(isset($_GET['evento'])){
-            $evento = $_GET['evento'];
-        }else{
-            $evento = 0;
-        }
+        $evento = Session::get('IDEvento');
 
         if(isset($_GET['Tipo']) && $_GET['Tipo'] == 'Palestrantes'){
             $SQL = <<<SQL

@@ -25,22 +25,13 @@
                     <input type="hidden" name="id" value="{{$Registro->id}}">
                     @endif
                     <div class="row">
-                        <div class="col-sm-2">
+                        <div class="col-sm-4">
                             <label>Min. Palavras</label>
                             <input type="number" name="MinLength" class="form-control" value="{{isset($Registro) ? $Registro->MinLength : ''}}" required>
                         </div>
-                        <div class="col-sm-2">
+                        <div class="col-sm-4">
                             <label>Max. Palavras</label>
                             <input type="number" name="MaxLength" class="form-control" value="{{isset($Registro) ? $Registro->MaxLength : ''}}" required>
-                        </div>
-                        <div class="col-sm-4">
-                            <label>Evento</label>
-                            <select name="IDEvento" class="form-control">
-                                <option value="">Selecione</option>
-                                @foreach($eventos as $e)
-                                <option value="{{$e->id}}" {{isset($Registro) && $Registro->IDEvento == $e->id ? 'selected' : ''}}>{{$e->Titulo}}</option>
-                                @endforeach
-                            </select>
                         </div>
                         <div class="col-sm-4">
                             <label>Modalidade</label>

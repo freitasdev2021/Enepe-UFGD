@@ -10,18 +10,9 @@
                 @endif
                 <div class="card-body periudos">
                     <div class="row">
-                        <div class="col-sm-6">
+                        <div class="col-sm-12">
                             <label>Titulo</label>
                             <input type="text" name="Titulo" class="form-control" value="{{isset($Registro) ? $Registro->Titulo : ''}}">
-                        </div>
-                        <div class="col-sm-6">
-                            <label>Evento</label>
-                            <select name="IDEvento" class="form-control">
-                                <option value="">Selecione</option>
-                                @foreach($Eventos as $e)
-                                <option value="{{$e->id}}" {{isset($Registro) && $Registro->IDEvento == $e->id ? 'selected' : ''}}>{{$e->Titulo}}</option>
-                                @endforeach
-                            </select>
                         </div>
                     </div>
                     <br>

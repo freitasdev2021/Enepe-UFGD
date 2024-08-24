@@ -105,6 +105,8 @@ class SubmissoesController extends Controller
     public function save(Request $request){
         try{
             $data = $request->all();
+            $IDEvento = Session::get('IDEvento');
+            $data['IDEvento'] = $IDEvento;
             if(!$request->id){
                 $rota = 'Submissoes/Novo';
                 $aid = '';
@@ -299,6 +301,7 @@ class SubmissoesController extends Controller
     }
 
     public function getSubmissoes(){
+        $IDEvento = Session::get('IDEvento');
         if(Auth::user()->tipo == 1){
             $registros = DB::select("SELECT 
                 e.Titulo as Evento,
@@ -306,7 +309,7 @@ class SubmissoesController extends Controller
                 s.id,
                 s.Regras
                 FROM submissoes s
-                INNER JOIN eventos e ON(s.IDEvento = e.id)
+                INNER JOIN eventos e ON(s.IDEvento = e.id) AND s.IDEvento = $IDEvento
             ");
             if(count($registros) > 0){
                 foreach($registros as $r){
@@ -338,7 +341,7 @@ class SubmissoesController extends Controller
             INNER JOIN eventos ev ON(ev.id = s.IDEvento)
             INNER JOIN users i ON (i.id = e.IDInscrito)
             LEFT JOIN users a ON(a.id = e.IDAvaliador)
-            WHERE a.id = $IDAvaliador
+            WHERE a.id = $IDAvaliador AND ev.id = $IDEvento
             ORDER BY Inscrito DESC";
             $registros = DB::select($SQL);
             if(count($registros) > 0){

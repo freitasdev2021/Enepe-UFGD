@@ -181,19 +181,24 @@ class EventosController extends Controller
                 i.Categoria,
                 i.id as IDInscricao,
                 u.email as Email,
-                u.id as IDUser
+                u.id as IDUser,
+                CASE WHEN c.id IS NULL THEN 0 ELSE 1 END as Certificou,
+                CASE WHEN e.id IS NULL THEN 0 ELSE 1 END as Entregou
             FROM inscricoes i
             INNER JOIN users u ON(u.id = i.IDUser)
+            LEFT JOIN certificados c ON(u.id = c.IDInscrito)
+            LEFT JOIN entergas e ON(e.IDInscrito = u.id)
             WHERE i.IDEvento = $IDEvento
         SQL;
         $registros = DB::select($SQL);
         if(count($registros) > 0){
             foreach($registros as $r){
+                $ApagarInscrito = '"'.route('Inscricoes/Excluir',$r->IDInscricao).'"';
                 $item = [];
                 $item[] = $r->Nome;
                 $item[] = $r->Categoria;
                 $item[] = $r->Email;
-                $item[] = "<a href=".route('Eventos/Inscricoes/editarAluno',['IDEvento'=>$IDEvento,"IDAluno"=>$r->IDUser]).">Abrir</a>";
+                $item[] = "<a href=".route('Eventos/Inscricoes/editarAluno',['IDEvento'=>$IDEvento,"IDAluno"=>$r->IDUser]).">Abrir</a> <button class='btn btn-danger text-white btn-xs' onclick='apagarInscrito($ApagarInscrito,$r->Certificou,$r->Entregou)'>Apagar</button>";
                 $itensJSON[] = $item;
             }
         }else{
@@ -207,6 +212,10 @@ class EventosController extends Controller
         ];
         
         echo json_encode($resultados);
+    }
+
+    public function apagaInscrito($IDInscrito){
+       Inscricao::find($IDInscrito)->delete();
     }
 
     public function cadastro($id=null){
@@ -279,7 +288,8 @@ class EventosController extends Controller
                 }
                 $rota = 'Eventos/Novo';
                 $aid = '';
-                Evento::create($data);
+                $createEvento = Evento::create($data);
+                Session::put('IDEvento',$createEvento->id);
             }else{
                 if($request->file('Capa')){
                     $Foto = $request->file('Capa')->getClientOriginalName();

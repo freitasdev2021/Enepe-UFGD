@@ -140,14 +140,16 @@ class PalestrasController extends Controller
 
     public function save(Request $request){
         try{
+            $data = $request->all();
+            $data['IDEvento'] = Session::get('IDEvento');;
             if(!$request->id){
                 $rota = 'Palestras/Novo';
                 $aid = '';
-                Palestra::create($request->all());
+                Palestra::create($data);
             }else{
                 $rota = 'Palestras/Edit';
                 $aid = $request->id;
-                Palestra::find($request->id)->update($request->all());
+                Palestra::find($request->id)->update($data);
             }
             $mensagem = "Salvo";
             $status = 'success';
@@ -220,7 +222,8 @@ class PalestrasController extends Controller
     }
 
     public function getPalestras(){
-        $registros = DB::select("SELECT pl.*,pa.Nome,e.Titulo as Evento FROM palestras pl INNER JOIN palestrantes pa ON(pl.IDPalestrante = pa.id) INNER JOIN eventos e ON(e.id = pl.IDEvento)");
+        $IDEvento = Session::get('IDEvento');
+        $registros = DB::select("SELECT pl.*,pa.Nome,e.Titulo as Evento FROM palestras pl INNER JOIN palestrantes pa ON(pl.IDPalestrante = pa.id) INNER JOIN eventos e ON(e.id = pl.IDEvento) AND pl.IDEvento = $IDEvento");
         if(count($registros) > 0){
             foreach($registros as $r){
                 $item = [];
@@ -248,7 +251,8 @@ class PalestrasController extends Controller
     }
 
     public function getPalestrantes(){
-        $registros = Palestrante::all();
+        $IDEvento = Session::get('IDEvento');
+        $registros = DB::select("SELECT pa.Curriculo,pa.Nome,pa.Foto,pa.id FROM palestras pl INNER JOIN palestrantes pa ON(pl.IDPalestrante = pa.id) INNER JOIN eventos e ON(e.id = pl.IDEvento) AND pl.IDEvento = $IDEvento");
         if(count($registros) > 0){
             foreach($registros as $r){
                 $item = [];

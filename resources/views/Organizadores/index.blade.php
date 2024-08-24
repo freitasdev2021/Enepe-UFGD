@@ -31,4 +31,20 @@
             <!--//-->
         </div>
     </div>
+    <script>
+        function apagarOrganizador(link,Certificou){
+            if(Certificou == 1){
+                alert("Não há Possibilidade de Excluir o Organizador, pois o Organizador Tem Certificado(s)")
+            }else{
+                if(confirm("Deseja Excluir o Organizador?")){
+                    $.ajax({
+                        method : 'GET',
+                        url : link
+                    }).done(function(response){
+                        window.location.reload()
+                    })
+                }
+            }
+        }
+    </script>
 </x-educacional-layout>

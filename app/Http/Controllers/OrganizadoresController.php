@@ -5,6 +5,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class OrganizadoresController extends Controller
 {
@@ -32,6 +33,10 @@ class OrganizadoresController extends Controller
         }
 
         return view('Organizadores.cadastro', $view);
+    }
+
+    public function apagaOrganizador($IDOrganizador){
+        return User::find($IDOrganizador)->delete();
     }
 
     public function delete(Request $request){
@@ -72,13 +77,23 @@ class OrganizadoresController extends Controller
     }
 
     public function getOrganizadores(){
-        $registros = User::where('Tipo',1)->where('id','!=',Auth::user()->id)->get();
+        $currentId = Auth::user()->id;
+        $registros = DB::select("SELECT 
+        u.name,
+        u.email,
+        u.id,
+        CASE WHEN c.id IS NULL THEN 0 ELSE 1 END as Certificou
+        FROM users u 
+        LEFT JOIN certificados c ON(u.id = c.IDInscrito) 
+        WHERE u.tipo = 1 AND u.id != $currentId
+        ");
         if(count($registros) > 0){
             foreach($registros as $r){
+                $ApagarOrganizador = '"'.route('Organizadores/Excluir',$r->id).'"';
                 $item = [];
                 $item[] = $r->name;
                 $item[] = $r->email;
-                $item[] = "<a href=".route('Organizadores/Edit',$r->id).">Abrir</a>";
+                $item[] = "<a href=".route('Organizadores/Edit',$r->id).">Abrir</a> <button class='btn btn-danger text-white btn-xs' onclick='apagarOrganizador($ApagarOrganizador,$r->Certificou)'>Apagar</button>";
                 $itensJSON[] = $item;
             }
         }else{

@@ -28,14 +28,6 @@
                     </select>
                 </div>
                 <div class="col-auto">
-                    <select name="evento" class="form-control" required>
-                        <option value="">Selecione o Evento</option>
-                        @foreach($Eventos as $e)
-                        <option value="{{$e->id}}" {{isset($_GET['evento']) && $_GET['evento'] == $e->id ? 'selected' : ''}}>{{$e->Titulo}}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-auto">
                     <button class="btn bg-fr text-white" type="submit">Filtrar</button>
                 </div>
             </form>

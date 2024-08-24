@@ -13,9 +13,12 @@ use App\Http\Controllers\NotificaController;
 use App\Http\Controllers\SuporteController;
 use App\Models\Certificados;
 use App\Models\Formulario;
+use App\Models\Submissao;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\SalasController;
+use App\Models\Evento;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\AtividadesController;
 use App\Http\Controllers\FormulariosController;
 use App\Http\Controllers\ZoomController;
@@ -26,14 +29,38 @@ Route::get('/', function () {
 });
 Route::get('/dashboard', function () {
     $Formularios = [];
-
+    $Inscritos = [];
+    $Submissoes = [];
     if(Session::get('IDEvento')){
+        $IDEvento = Session::get('IDEvento');
         $Formularios = Formulario::where('IDEvento',Session::get('IDEvento'))->get();
+        $Inscritos = DB::select("SELECT i.id FROM inscricoes i INNER JOIN eventos ev ON(ev.id = i.IDEvento) WHERE ev.id = $IDEvento");
+        $Submissoes = DB::select("SELECT e.id from entergas e INNER JOIN submissoes s ON(e.IDSubmissao = s.id) INNER JOIN eventos ev ON(ev.id = s.IDEvento) = ev.id = $IDEvento");
     }
-
+    $IDEvento = Session::get('IDEvento');
+    $currentId = Auth::user()->id;
+    $Eventos = DB::select("SELECT 
+        e.Titulo AS Evento,
+        MAX(e.Capa) as Capa,
+        MIN(e.id) AS IDEvento,  -- Usa MIN para obter o menor id do grupo
+        MAX(e.Descricao) AS Descricao,  -- Usa MAX para evitar problemas de agregação
+        MAX(CASE WHEN i.IDUser = $currentId THEN 1 ELSE 0 END) AS Inscrito,  -- Usa MAX para obter um valor representativo,
+        MAX(CASE WHEN e.TERInscricoes > NOW() THEN 'O prazo para a inscrição do evento está encerrado' ELSE 'Inscreva-se' END) as Inscricao
+    FROM 
+        eventos e
+    LEFT JOIN 
+        inscricoes i ON i.IDEvento = e.id
+    WHERE 
+        e.Termino > NOW()
+    GROUP BY 
+        e.Titulo                
+    ");
     return view('dashboard',[
         "Certificados" => Certificados::where("IDInscrito",Auth::user()->id)->get(),
-        "Formularios" => $Formularios
+        "Formularios" => $Formularios,
+        "Eventos" => $Eventos,
+        "Inscritos" => count($Inscritos),
+        "Submissoes"=> count($Submissoes)
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 //ROTA DO SITE
@@ -64,6 +91,7 @@ Route::middleware('auth')->group(function () {
         Route::post('Submissoes/Entregas/Save', [SubmissoesController::class, 'saveEntrega'])->name('Submissoes/Entregas/Save');
         Route::get('Submissoes/getTrabalho/{IDEntrega}', [SubmissoesController::class, 'getTrabalho'])->name('Submissoes/getTrabalho');
         //EVENTOS
+        Route::post('Eventos/Entrar',[EventosController::class,'entrar'])->name('Eventos/Entrar');
         Route::get('Formularios/Visualizar/{id}',[FormulariosController::class,'visualizar'])->name('Formularios/Visualizar');
         Route::get('Eventos/Cadastro/{id}',[EventosController::class,'cadastro'])->name('Eventos/Edit');
         Route::post('Formularios/Responder',[FormulariosController::class,'responder'])->name('Formularios/Responder');
@@ -96,6 +124,9 @@ Route::middleware('auth')->group(function () {
         Route::get('Organizadores/Cadastro',[OrganizadoresController::class,'cadastro'])->name('Organizadores/Novo');
         Route::get('Organizadores/Cadastro/{id}',[OrganizadoresController::class,'cadastro'])->name('Organizadores/Edit');
         //EVENTOS
+        Route::get('Organizadores/Excluir/{id}',[OrganizadoresController::class,'apagaOrganizador'])->name('Organizadores/Excluir');
+        Route::get('Avaliadores/Excluir/{id}',[AvaliadoresController::class,'apagaAvaliador'])->name('Avaliadores/Excluir');
+        Route::get('Eventos/Inscricoes/Excluir/{id}',[EventosController::class,'apagaInscrito'])->name('Inscricoes/Excluir');
         Route::post('Eventos/Save',[EventosController::class,'save'])->name('Eventos/Save');
         Route::post('Eventos/Delete',[EventosController::class,'delete'])->name('Eventos/Delete');
         Route::get('Eventos/Cadastro',[EventosController::class,'cadastro'])->name('Eventos/Novo');
@@ -169,7 +200,6 @@ Route::middleware('auth')->group(function () {
     });
     //CAMADA DE PROTEÇÃO INSCRITOS
     Route::middleware('participante')->group(function(){
-        Route::post('Eventos/Entrar',[EventosController::class,'entrar'])->name('Eventos/Entrar');
         Route::post('Eventos/Inscrever',[EventosController::class,'inscrever'])->name('Eventos/Inscrever');
         Route::get('Eventos/Inscricao/{IDEvento}', [EventosController::class, 'inscricao'])->name('Eventos/Inscricao');
     });

@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Evento;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 class AvaliadoresController extends Controller
 {
     public const submodulos = array([
@@ -37,6 +39,10 @@ class AvaliadoresController extends Controller
 
     public function delete(Request $request){
         return User::find($request->id)->where('Tipo',2)->delete();
+    }
+
+    public function apagaAvaliador($IDAvaliador){
+        return User::find($IDAvaliador)->delete();
     }
 
     public function save(Request $request){
@@ -75,13 +81,25 @@ class AvaliadoresController extends Controller
     }
 
     public function getAvaliadores(){
-        $registros = User::where('Tipo',2)->get();
+        $IDEvento = Session::get('IDEvento');
+        $registros = DB::select("SELECT 
+        u.name,
+        u.email,
+        u.id,
+        CASE WHEN c.id IS NULL THEN 0 ELSE 1 END as Certificou,
+        CASE WHEN e.id IS NULL THEN 0 ELSE 1 END as Avaliou
+        FROM users u 
+        LEFT JOIN certificados c ON(u.id = c.IDInscrito) 
+        LEFT JOIN entergas e ON(u.id = e.IDAvaliador)
+        WHERE u.tipo = 2
+        ");
         if(count($registros) > 0){
             foreach($registros as $r){
+                $ApagarAvaliador = '"'.route('Avaliadores/Excluir',$r->id).'"';
                 $item = [];
                 $item[] = $r->name;
                 $item[] = $r->email;
-                $item[] = "<a href=".route('Avaliadores/Edit',$r->id).">Abrir</a>";
+                $item[] = "<a href=".route('Avaliadores/Edit',$r->id).">Abrir</a> <button class='btn btn-danger text-white btn-xs' onclick='apagarAvaliador($ApagarAvaliador,$r->Certificou,$r->Avaliou)'>Apagar</button>";
                 $itensJSON[] = $item;
             }
         }else{

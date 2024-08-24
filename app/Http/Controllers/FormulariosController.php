@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Evento;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
 use App\Models\Formulario;
 use App\Models\Resposta;
@@ -142,6 +143,7 @@ class FormulariosController extends Controller
 
     public function save(Request $request){
         $data = $request->all();
+        $data['IDEvento'] = Session::get('IDEvento');
         $arrayFormParsed = [];
         $arrayForm = array_map(function($a){
             if(!empty($a['Conteudo'])){
@@ -174,7 +176,8 @@ class FormulariosController extends Controller
     }
 
     public function getFormularios(){
-        $registros = DB::select("SELECT f.Titulo,e.Titulo as Evento,f.id as IDForm FROM formularios f INNER JOIN eventos e ON(e.id = f.IDEvento) ");
+        $IDEvento = Session::get('IDEvento');
+        $registros = DB::select("SELECT f.Titulo,e.Titulo as Evento,f.id as IDForm FROM formularios f INNER JOIN eventos e ON(e.id = f.IDEvento) AND e.id = $IDEvento ");
         if(count($registros) > 0){
             foreach($registros as $r){
                 $item = [];

@@ -32,4 +32,20 @@
             <!--//-->
         </div>
     </div>
+    <script>
+        function apagarInscrito(link,Certificou,Entregou){
+            if(Certificou == 1 || Entregou == 1){
+                alert("Não há Possibilidade de Excluir a Inscrição, pois o Inscrito ja Submeteu Trabalho(s) e(ou) Tem Certificado(s)")
+            }else{
+                if(confirm("Deseja Excluir a Inscrição?")){
+                    $.ajax({
+                        method : 'GET',
+                        url : link
+                    }).done(function(response){
+                        window.location.reload()
+                    })
+                }
+            }
+        }
+    </script>
 </x-educacional-layout>

@@ -141,29 +141,6 @@
                   </p>
                </div>
             </div>
-            <!--Atividades-->
-            <br>
-            <div class="card">
-               <div class="card-header">
-                  <strong>Atividades</strong>
-               </div>
-               <div class="card-body">
-                  <div class="row salas">
-                     @foreach($Atividades as $a)
-                     <div class="card sala" style="width: 18rem;">
-                        <img src="{{asset('img/presentation.jpg')}}" class="card-img-top" alt="...">
-                        <div class="card-body">
-                           <h5 class="card-title">{{$a->Titulo}}</h5>
-                           <br>
-                           <p class="card-text">{{date('d/m/Y H:i:s',strtotime($a->Inicio))}}</p>
-                           <h6>{{$a->Sala}}</h6>
-                           <p class="card-text">{{$a->Descricao}}</p>
-                        </div>
-                     </div>
-                     @endforeach
-                  </div>
-               </div>
-            </div>
             <!--Palestras-->
             <br>
             <div class="card">

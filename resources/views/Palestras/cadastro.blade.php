@@ -25,18 +25,9 @@
                     <input type="hidden" name="id" value="{{$Registro->id}}">
                     @endif
                     <div class="row">
-                        <div class="col-sm-4">
+                        <div class="col-sm-8">
                             <label>Título</label>
                             <input type="text" name="Titulo" class="form-control" value="{{isset($Registro) ? $Registro->Titulo : ''}}" required>
-                        </div>
-                        <div class="col-sm-4">
-                            <label>Evento</label>
-                            <select name="IDEvento" class="form-control">
-                                <option value="">Selecione</option>
-                                @foreach($eventos as $e)
-                                <option value="{{$e->id}}" {{isset($Registro) && $Registro->IDEvento == $e->id ? 'selected' : ''}}>{{$e->Titulo}}</option>
-                                @endforeach
-                            </select>
                         </div>
                         <div class="col-sm-4">
                             <label>Palestrante</label>
