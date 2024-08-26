@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Evento;
+use App\Models\Banca;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -56,7 +57,12 @@ class AvaliadoresController extends Controller
                 $data['password'] = Hash::make($RandPW);
                 $Evento = Evento::find($request->IDEvento);
                 MailController::send($request->email,'Confirmação - Avaliador','Mail.cadastroavaliador',array('Evento'=> $Evento->Titulo,'Senha'=> $RandPW,'Email'=> $request->email));
-                User::create($data);
+                $User = User::create($data);
+                Banca::create([
+                    "IDUser"=> $User->id,
+                    "IDEvento"=> $request->IDEvento,
+                    "Tipo"=> 2
+                ]);
             }else{
                 $rota = 'Avaliadores/Edit';
                 if($request->alteraSenha){
@@ -65,6 +71,15 @@ class AvaliadoresController extends Controller
                     $data['password'] = Hash::make($RandPW);
                     MailController::send($request->email,'Confirmação - Avaliador','Mail.cadastroavaliador',array('Senha'=> $RandPW,'Email'=> $request->email,'Evento'=> $Evento->Titulo));
                 }
+                
+                if(!empty($request->IDEvento) && !Banca::where('IDEvento',$request->IDEvento)->exists()){
+                    Banca::where('IDUser',$request->id)->update([
+                        "IDEvento"->$request->IDEvento
+                    ]);
+                    $Evento = Evento::find($request->IDEvento);
+                    MailController::send($request->email,'Confirmação - Avaliador','Mail.cadastroavaliador',array('Evento'=> $Evento->Titulo,'Senha'=> "A Mesma",'Email'=> $request->email));
+                }
+
                 $aid = $request->id;
                 User::find($request->id)->update($data);
             }
@@ -91,7 +106,7 @@ class AvaliadoresController extends Controller
         FROM users u 
         LEFT JOIN certificados c ON(u.id = c.IDInscrito) 
         LEFT JOIN entergas e ON(u.id = e.IDAvaliador)
-        WHERE u.tipo = 2
+        WHERE u.tipo = 2 AND u.id IN(SELECT IDUser FROM bancaevento WHERE bancaevento.IDEvento = $IDEvento)
         ");
         if(count($registros) > 0){
             foreach($registros as $r){

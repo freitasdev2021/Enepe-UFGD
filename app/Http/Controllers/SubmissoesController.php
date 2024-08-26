@@ -163,6 +163,7 @@ class SubmissoesController extends Controller
             e.Autores,
             e.palavrasChave,
             e.Tematica,
+            e.Feedback,
             e.Descricao,
             e.Status,
             a.name as Avaliador,
@@ -216,8 +217,10 @@ class SubmissoesController extends Controller
     public function corrigir(Request $request){
         try{
             Entrega::find($request->IDEntrega)->update([
-                "Status"=> $request->Status
+                "Status"=> $request->Status,
+                "Feedback"=>$request->Feedback
             ]);
+            MailController::send(Auth::user()->email,'Aviso de Correção da Submissão','Mail.submissao',array('Status'=> $request->Status,'Mensagem'=> "Sua Submissão foi Corrigida!"));
             $mensagem = 'Trabalho corrigido com sucesso!';
             $rota = 'Submissoes/Entregues';
             $aid = $request->IDSubmissao;
@@ -278,7 +281,9 @@ class SubmissoesController extends Controller
             $mensagem = 'Trabalho Enviado com Sucesso!';
             $aid = ["IDSubmissao"=>$request->IDSubmissao,"IDEntrega" => 0];
             $data['Status'] = "Aguardando Correção";
+            MailController::send(Auth::user()->email,'Aviso de Submissão','Mail.submissao',array('Status'=> "Aguardando Correção",'Mensagem'=> "Por favor Aguarde sua Submissão ser Corrigida"));
             if(!$request->IDEntrega){
+                $data['NEntrega'] = rand(1,99999);
                 Entrega::create($data);
             }else{
                 unset($data['_token']);
@@ -437,6 +442,10 @@ class SubmissoesController extends Controller
             e.id as IDEntrega,
             s.id as IDSubmissao,
             i.name as Inscrito,
+            e.Autores,
+            e.palavrasChave,
+            e.Tematica,
+            e.Descricao,
             e.Apresentador,
             e.IDAvaliador,
             e.IDInscrito,
@@ -461,6 +470,9 @@ class SubmissoesController extends Controller
                 $item[] = $r->Titulo;
                 $item[] = $r->Inscrito;
                 $item[] = $r->Apresentador;
+                $item[] = $r->palavrasChave;
+                $item[] = $r->Tematica;
+                $item[] = $r->Descricao;
                 $item[] = ($r->IDAvaliador == 0) ? $selectAvaliador."<input type='hidden' value='$r->IDInscrito' name='Inscrito[]'>" : $r->Avaliador." <button class='btn btn-xs btn-danger' type='button' onclick='removerAtribuicao($RemoveATR)'>Remover Atribuição</button>";
                 $item[] = empty($r->Status) ? 'Aguardando Correção' : $r->Status;
                 $item[] = "<a href=".route('Submissoes/Correcao',$r->IDEntrega).">Abrir</a>";

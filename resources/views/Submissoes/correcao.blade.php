@@ -56,6 +56,10 @@
                                 <option value="Reprovado">Reprovado</option>
                             </select>
                         </div>
+                        <div class="col-sm-12">
+                            <label>Feedback</label>
+                            <textarea class="form-control" maxlength="100" name="Feedback" required></textarea>
+                        </div>
                     </div>
                     <br>
                     <div class="col-sm-12 text-left row">

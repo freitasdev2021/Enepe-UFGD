@@ -40,8 +40,23 @@
                 {{dd(session('Submissao'))}}
                 @endif --}}
                 @if(!empty($Entregas))
-                    <div class="row bg-warning p-2">
+                    <div class="bg-secondary p-2">
+                        <strong>Título:</strong>
+                        <p>
+                            <strong>{{$Entregas[0]->Titulo}}</strong>
+                        </p>
+                    </div>
+                    <br>
+                    <div class="bg-warning p-2">
                         <strong>{{$Entregas[0]->Status}}</strong>
+                    </div>
+                    <br>
+                    <div class="bg-primary p-2">
+                        <strong>Feedback:</strong>
+                        <br>
+                        <p>
+                            <strong>{{$Entregas[0]->Feedback}}</strong>
+                        </p>
                     </div>
                 @endif
                 <br>

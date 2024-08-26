@@ -98,15 +98,15 @@
                     <div class="row">
                         <label>Personalização do Site</label>
                         <div>
-                            <input type="checkbox" name="Site[]" value="Capa" {{in_array("Capa",$Site) ? 'checked' : ''}}>&nbsp;Capa
-                            <input type="checkbox" name="Site[]" value="Inscritos" {{in_array("Inscritos",$Site) ? 'checked' : ''}}>&nbsp;Inscricoes
-                            <input type="checkbox" name="Site[]" value="Submissoes" {{in_array("Submissoes",$Site) ? 'checked' : ''}}>&nbsp;Submissoes
-                            <input type="checkbox" name="Site[]" value="Normas" {{in_array("Normas",$Site) ? 'checked' : ''}}>&nbsp;Normas
-                            <input type="checkbox" name="Site[]" value="Palestras" {{in_array("Palestras",$Site) ? 'checked' : ''}}>&nbsp;Palestras
-                            <input type="checkbox" name="Site[]" value="Contatos" {{in_array("Contatos",$Site) ? 'checked' : ''}}>&nbsp;Contatos
-                            <input type="checkbox" name="Site[]" value="Prazo de Submissoes" {{in_array("Prazo de Submissoes",$Site) ? 'checked' : ''}}>&nbsp;Prazo de Submissões
-                            <input type="checkbox" name="Site[]" value="Prazo de Inscricoes" {{in_array("Prazo de Inscricoes",$Site) ? 'checked' : ''}}>&nbsp;Prazo de Inscrições
-                            <input type="checkbox" name="Site[]" value="Inicio e Termino do Evento" {{in_array("Inicio e Termino do Evento",$Site) ? 'checked' : ''}}>&nbsp;Início e Término do Evento
+                            <input type="checkbox" name="Site[]" value="Capa" {{ isset($Registro) && in_array("Capa",$Site) ? 'checked' : ''}}>&nbsp;Capa
+                            <input type="checkbox" name="Site[]" value="Inscritos" {{ isset($Registro) && in_array("Inscritos",$Site) ? 'checked' : ''}}>&nbsp;Inscricoes
+                            <input type="checkbox" name="Site[]" value="Submissoes" {{ isset($Registro) && in_array("Submissoes",$Site) ? 'checked' : ''}}>&nbsp;Submissoes
+                            <input type="checkbox" name="Site[]" value="Normas" {{ isset($Registro) && in_array("Normas",$Site) ? 'checked' : ''}}>&nbsp;Normas
+                            <input type="checkbox" name="Site[]" value="Palestras" {{ isset($Registro) && in_array("Palestras",$Site) ? 'checked' : ''}}>&nbsp;Palestras
+                            <input type="checkbox" name="Site[]" value="Contatos" {{ isset($Registro) && in_array("Contatos",$Site) ? 'checked' : ''}}>&nbsp;Contatos
+                            <input type="checkbox" name="Site[]" value="Prazo de Submissoes" {{ isset($Registro) && in_array("Prazo de Submissoes",$Site) ? 'checked' : ''}}>&nbsp;Prazo de Submissões
+                            <input type="checkbox" name="Site[]" value="Prazo de Inscricoes" {{ isset($Registro) && in_array("Prazo de Inscricoes",$Site) ? 'checked' : ''}}>&nbsp;Prazo de Inscrições
+                            <input type="checkbox" name="Site[]" value="Inicio e Termino do Evento" {{ isset($Registro) && in_array("Inicio e Termino do Evento",$Site) ? 'checked' : ''}}>&nbsp;Início e Término do Evento
                         </div>
                     </div>
                     <div class="row">
@@ -116,7 +116,7 @@
                         </div>
                         <!--REGISTRO DOS CONTATOS-->
                         <div class="row contatos">
-                            @if(isset($Registro))
+                            @if(isset($Registro) && count($Contatos) > 0)
                                 @foreach($Contatos as $cKey => $c)
                                     @if(!empty($cKey))
                                         <div class="row ctt">
@@ -145,7 +145,7 @@
                         </div>
                         <!--REGISTRO DE CATEGORIAS-->
                         <div class="row categorias">
-                            @if(isset($Registro))
+                            @if(isset($Registro) && count($Categorias) > 0)
                                 @foreach($Categorias as $c)
                                     @if(!empty($c))
                                         <div class="row ctg">
@@ -155,7 +155,7 @@
                                             </div>
                                             <div class="col-sm-2">
                                                 <label>Remover</label>
-                                                <input type="button" id="removeContato" class="form-control btn btn-danger" value="X">
+                                                <input type="button" id="removeCategoria" class="form-control btn btn-danger" value="X">
                                             </div>
                                         </div>
                                     @endif
@@ -170,7 +170,7 @@
                         </div>
                         <!--REGISTRO DE MODALIDADES-->
                         <div class="row modalidades">
-                            @if(isset($Registro))
+                            @if(isset($Registro) && count($Modalidades) > 0)
                                 @foreach($Modalidades as $m)
                                     @if(!empty($m))
                                         <div class="row mdd">

@@ -242,8 +242,10 @@ class EventosController extends Controller
     }
 
     public function inscricao($IDEvento){
+        $Evento = Evento::find($IDEvento);
         return view('Eventos.inscricao',[
-            'Evento' => Evento::find($IDEvento)
+            'Evento' => Evento::find($IDEvento),
+            'Categorias' => json_decode($Evento->Categorias,true)
         ]);
     }
 

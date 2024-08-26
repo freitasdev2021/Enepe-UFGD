@@ -58,6 +58,9 @@
                     <strong>
                         <a class="text-primary" href="{{route("login")}}" class="text-body">Já Está Cadastrado?</a>
                     </strong>
+                    <strong>
+                        <a class="text-primary" href="{{route("PasswordReset/Email")}}" class="text-body">Esqueci minha Senha</a>
+                    </strong>
                 </div>
 
                 <div class="text-center text-lg-start mt-4 pt-2">

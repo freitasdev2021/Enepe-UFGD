@@ -111,7 +111,6 @@
         <div class="card-header bg-fr text-white">
             Cadastrar Evento
         </div>
-        <div class="card-body">
             <div class="col-sm-12 p-2 center-form">
                 <form action="{{route('Eventos/Save')}}" method="POST" enctype="multipart/form-data">
                     @csrf
@@ -126,77 +125,66 @@
                     </div>
                     <br>
                     @endif
-                    @if(isset($Registro))
-                    <input type="hidden" name="id" value="{{$Registro->id}}">
-                    @endif
                     <div class="row">
                         <div class="col-sm-12">
                             <label>Capa do Evento</label>
-                            <img src="{{isset($Registro) ? url('storage/Site/'.$Registro->Capa) : asset('img/uploadModelo.jpg') }}" id="capa" height="500px" width="100%">
+                            <img src="{{asset('img/uploadModelo.jpg')}}" id="capa" height="500px" width="100%">
                             <input type="file" name="Capa" style="display:none;" onchange="displaySelectedImage(event, 'capa')">
-                            <input type="hidden" name="oldCapa" value="{{isset($Registro) ? $Registro->Capa : ''}}">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-12">
                             <label>Título</label>
-                            <input type="text" name="Titulo" class="form-control" value="{{isset($Registro) ? $Registro->Titulo : ''}}" required>
+                            <input type="text" name="Titulo" class="form-control" required>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-6">
                             <label>Início</label>
-                            <input type="datetime-local" name="Inicio" class="form-control" value="{{(isset($Registro)) ? $Registro->Inicio : ''}}" >
+                            <input type="datetime-local" name="Inicio" class="form-control">
                         </div>
                         <div class="col-sm-6">
                             <label>Término</label>
-                            <input type="datetime-local" name="Termino" class="form-control" value="{{(isset($Registro)) ? $Registro->Termino : ''}}">
+                            <input type="datetime-local" name="Termino" class="form-control">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-6">
                             <label>Início das Inscrições</label>
-                            <input type="date" name="INIInscricao" class="form-control" value="{{(isset($Registro)) ? $Registro->INIInscricao : ''}}" >
+                            <input type="date" name="INIInscricao" class="form-control">
                         </div>
                         <div class="col-sm-6">
                             <label>Término das Inscrições</label>
-                            <input type="date" name="TERInscricoes" class="form-control" value="{{(isset($Registro)) ? $Registro->TERInscricoes : ''}}">
+                            <input type="date" name="TERInscricoes" class="form-control">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-6">
                             <label>Início das Submissões</label>
-                            <input type="datetime-local" name="INISubmissao" class="form-control" value="{{(isset($Registro)) ? $Registro->INISubmissao : ''}}" >
+                            <input type="datetime-local" name="INISubmissao" class="form-control">
                         </div>
                         <div class="col-sm-6">
                             <label>Término das Submissões</label>
-                            <input type="datetime-local" name="TERSubmissao" class="form-control" value="{{(isset($Registro)) ? $Registro->TERSubmissao : ''}}">
+                            <input type="datetime-local" name="TERSubmissao" class="form-control">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-12">
                             <label>Normas de Apresentação</label>
-                            <textarea name="Normas" class="form-control">{{isset($Registro) ? $Registro->Normas : ''}}</textarea>
+                            <textarea name="Normas" class="form-control"></textarea>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-12">
                             <label>Descrição</label>
-                            <textarea name="Descricao" class="form-control">{{isset($Registro) ? $Registro->Descricao : ''}}</textarea>
+                            <textarea name="Descricao" class="form-control"></textarea>
                         </div>
                     </div>
-                    {{-- <div class="row">
-                        <div class="col-sm-12">
-                            <label>Ensalamento</label>
-                            <textarea name="Ensalamento" class="form-control">{{isset($Registro) ? $Registro->Ensalamento : ''}}</textarea>
-                        </div>
-                    </div> --}}
-                    <input type="hidden" name="Ensalamento">
                     <div class="row">
                         <div class="col-sm-12">
                             <label>Modelo de Apresentação</label>
                             <input type="file" name="ModeloApresentacao" class="form-control">
-                            <input type="hidden" name="oldModeloApresentacao" value="{{isset($Registro) ? $Registro->ModeloApresentacao : ''}}">
+                            <input type="hidden" name="oldModeloApresentacao">
                         </div>
                     </div>
                     <br>
@@ -208,7 +196,7 @@
                             <input type="checkbox" name="Site[]" value="Submissoes">&nbsp;Submissoes
                             <input type="checkbox" name="Site[]" value="Normas">&nbsp;Normas
                             <input type="checkbox" name="Site[]" value="Palestras">&nbsp;Palestras
-                            <input type="checkbox" name="Site[]" values="Contatos">&nbsp;Contatos
+                            <input type="checkbox" name="Site[]" value="Contatos">&nbsp;Contatos
                             <input type="checkbox" name="Site[]" value="Prazo de Submissoes">&nbsp;Prazo de Submissões
                             <input type="checkbox" name="Site[]" value="Prazo de Inscricoes">&nbsp;Prazo de Inscrições
                             <input type="checkbox" name="Site[]" value="Inicio e Termino do Evento">&nbsp;Início e Término do Evento
@@ -221,26 +209,7 @@
                         </div>
                         <!--REGISTRO DOS CONTATOS-->
                         <div class="row contatos">
-                            @if(isset($Registro))
-                                @foreach($Contatos as $cKey => $c)
-                                    @if(!empty($cKey))
-                                        <div class="row ctt">
-                                            <div class="col-sm-6">
-                                                <label>Nome</label>
-                                                <input type="text" name="Nome[]" class="form-control" value="{{$cKey}}">
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <label>Contato</label>
-                                                <input type="text" name="Contato[]" class="form-control" value="{{$c}}" >
-                                            </div>
-                                            <div class="col-sm-2">
-                                                <label>Remover</label>
-                                                <input type="button" id="removeContato" class="form-control btn btn-danger" value="X">
-                                            </div>
-                                        </div>
-                                    @endif
-                                @endforeach
-                            @endif
+
                         </div>
                     </div>
                     <div class="row">
@@ -250,22 +219,7 @@
                         </div>
                         <!--REGISTRO DE CATEGORIAS-->
                         <div class="row categorias">
-                            @if(isset($Registro))
-                                @foreach($Categorias as $c)
-                                    @if(!empty($c))
-                                        <div class="row ctg">
-                                            <div class="col-sm-6">
-                                                <label>Nome</label>
-                                                <input type="text" name="Categoria[]" class="form-control" value="{{$c}}">
-                                            </div>
-                                            <div class="col-sm-2">
-                                                <label>Remover</label>
-                                                <input type="button" id="removeContato" class="form-control btn btn-danger" value="X">
-                                            </div>
-                                        </div>
-                                    @endif
-                                @endforeach
-                            @endif
+                            
                         </div>
                     </div>
                     <div class="row">
@@ -275,22 +229,7 @@
                         </div>
                         <!--REGISTRO DE MODALIDADES-->
                         <div class="row modalidades">
-                            @if(isset($Registro))
-                                @foreach($Modalidades as $m)
-                                    @if(!empty($m))
-                                        <div class="row mdd">
-                                            <div class="col-sm-6">
-                                                <label>Nome</label>
-                                                <input type="text" name="Modalidade[]" class="form-control" value="{{$m}}">
-                                            </div>
-                                            <div class="col-sm-2">
-                                                <label>Remover</label>
-                                                <input type="button" id="removeModalidade" class="form-control btn btn-danger" value="X">
-                                            </div>
-                                        </div>
-                                    @endif
-                                @endforeach
-                            @endif
+                            
                         </div>
                     </div>
                     <!--MODELO MODALIDADES-->

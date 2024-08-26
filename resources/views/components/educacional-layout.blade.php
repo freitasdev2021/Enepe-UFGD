@@ -12,8 +12,8 @@
                 <a href="{{route('dashboard')}}" class="nav_logo"><i class='bx bxs-calendar-event text-white'></i></i><span class="nav_logo-name">FR Eventos</span> </a>
                 <div class="nav_list">
                     @if(in_array(Auth::user()->tipo,[1]))
+                     <x-Modulo nome="Eventos" icon="bx bxs-calendar-event" rota="Eventos/index" endereco="Eventos"/>
                      @if(Session::has('IDEvento'))
-                        <x-Modulo nome="Eventos" icon="bx bxs-calendar-event" rota="Eventos/index" endereco="Eventos"/>
                         <x-Modulo nome="Palestras" icon="bx bx-user-pin" rota="Palestras/index" endereco="Palestras"/>
                         <x-Modulo nome="Palestrantes" icon="bx bxs-group" rota="Palestrantes/index" endereco="Palestrantes"/>
                         <x-Modulo nome="Avaliadores" icon="bx bxs-user-check" rota="Avaliadores/index" endereco="Avaliadores"/>
@@ -35,6 +35,7 @@
                      @endif
                     @endif
                     <x-Modulo nome="Suporte" icon="bx bx-support nav_icon" rota="Suporte/index" endereco="Suporte"/>
+                    <x-Modulo nome="Suporte" icon="bx bxs-cog nav_icon" rota="Configuracoes/index" endereco="Configuracoes"/>
                     {{-- <a href="https://wa.me/5531983086235" class="nav_link" target="_blank">
                      <i class='bx bx-support nav_icon'></i>
                      <span class="nav_name">Suporte</span>

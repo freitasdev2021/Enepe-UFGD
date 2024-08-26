@@ -6,27 +6,7 @@
            @endforeach
         </div>
         <div class="fr-card-body">
-          <form action="{{$_SERVER['PHP_SELF']}}" method="GET">
-            <div class="row">
-              <label>Filtre por</label>
-              <div class="col-sm-6">
-                <select name="Modalidade" class="form-control">
-                  <option value="">Selecione a Modalidade</option>
-                  <option value="Aluno de Iniciação Científica da UFGD" {{isset($_GET['Modalidade']) && $_GET['Modalidade'] == 'Aluno de Iniciação Científica da UFGD' ? 'selected' : ''}}>Aluno de Iniciação Científica da UFGD</option>
-                  <option value="Aluno da Graduação da UFGD" {{isset($_GET['Modalidade']) && $_GET['Modalidade'] == 'Aluno da Graduação da UFGD' ? 'selected' : ''}}>Aluno da Graduação da UFGD</option>
-                  <option value="Aluno da Pós-Graduação da UFGD" {{isset($_GET['Modalidade']) && $_GET['Modalidade'] == 'Aluno da Pós-Graduação da UFGD' ? 'selected' : ''}}>Aluno da Pós-Graduação da UFGD</option>
-                  <option value="Docente da UFGD" {{isset($_GET['Modalidade']) && $_GET['Modalidade'] == 'Docente da UFGD' ? 'selected' : ''}}>Docente da UFGD</option>
-                  <option value="Técnico Administrativo da UFGD" {{isset($Registro) && $_GET['Modalidade'] == 'Técnico Administrativo da UFGD' ? 'selected' : ''}}>Técnico Administrativo da UFGD</option>
-                  <option value="Outro" {{isset($_GET['Modalidade']) && $_GET['Modalidade'] == 'Outro' ? 'selected' : ''}}>Outro</option>
-                  <option value="Avaliador(a) externo(a)" {{isset($_GET['Modalidade']) && $_GET['Modalidade'] == 'Avaliador(a) Externo(a)' ? 'selected' : ''}}>Avaliador(a) externo(a)</option>
-                </select>
-              </div>
-              <div class="col-sm-2">
-                <input type="submit" class="btn btn-success" value="Filtrar">
-              </div>
-            </div>            
-          </form>
-          <hr>
+            <hr>
             <!--LISTAS-->
             <form class="col-sm-12 p-2" action="{{route('Submissoes/Entregues/setAvaliador')}}" method="POST">
                 @csrf
@@ -49,6 +29,9 @@
                         <th style="text-align:center;" scope="col">Título</th>
                         <th style="text-align:center;" scope="col">Inscrito</th>
                         <th style="text-align:center;" scope="col">Apresentador</th>
+                        <th style="text-align:center;" scope="col">palavras-chave</th>
+                        <th style="text-align:center;" scope="col">Área Temática</th>
+                        <th style="text-align:center;" scope="col">Descrição</th>
                         <th style="text-align:center;" scope="col">Avaliador</th>
                         <th style="text-align:center;" scope="col">Situação</th>
                         <th style="text-align:center;" scope="col">Opções</th>

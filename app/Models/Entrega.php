@@ -21,6 +21,8 @@ class Entrega extends Model
         'Descricao',
         'Autores',
         'palavrasChave',
-        'Status'
+        'Status',
+        'Feedback',
+        'NEntrega'
     ];
 }

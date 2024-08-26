@@ -3,6 +3,7 @@
 use App\Http\Controllers\DyteController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EventosController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\PalestrasController;
 use App\Http\Controllers\AvaliadoresController;
 use App\Http\Controllers\SubmissoesController;
@@ -66,11 +67,17 @@ Route::get('/dashboard', function () {
 //ROTA DO SITE
 Route::get('Evento/{id}',[SiteController::class,'site'])->name("Site");
 Route::post('Certificados/Validar', [CertificadosController::class, 'validarCertificados'])->name('Certificados/Validar');
+Route::get('PasswordReset/Email',[UserController::class,'resetPasswordLinkView'])->name('PasswordReset/Email');
+Route::get('Password/Reset/{token}',[UserController::class,'resetPasswordLinkEmail'])->name('Password/Reset');
+Route::post('PasswordReset/SendEmail',[UserController::class,'resetPasswordLink'])->name('PasswordReset/SendEmail');
+Route::post('Passord/New',[UserController::class,'newPasswordLink'])->name('Password/New');
 //ROTA DO USUARIO LOGADO
 Route::middleware('auth')->group(function () {
     //CAMADA DE PROTEÇÃO GERAL
     Route::middleware('geral')->group(function(){
         //SUPORTE
+        Route::get('Configuracoes/index',[UserController::class,'index'])->name("Configuracoes/index");
+        Route::post('Configuracoes/resetPassword',[UserController::class,'resetPassword'])->name('Configuracoes/UpdatePassword');
         Route::get('Suporte',[SuporteController::class,'index'])->name('Suporte/index');
         Route::get('Suporte/Cadastro',[SuporteController::class,'cadastro'])->name('Suporte/Novo');
         Route::get('Suporte/Cadastro/{id}',[SuporteController::class,'cadastro'])->name('Suporte/Edit');

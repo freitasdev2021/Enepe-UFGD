@@ -33,6 +33,15 @@
                             <label>Email</label>
                             <input type="text" name="email" class="form-control" value="{{(isset($Registro)) ? $Registro->email : ''}}" required>
                         </div>
+                        <div class="col-sm-12">
+                            <label>Evento</label>
+                            <select name="IDEvento" class="form-control" required>
+                                <option value="">Selecione</option>
+                                @foreach($Eventos as $e)
+                                <option value="{{$e->id}}">{{$e->Titulo}}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                     @if(isset($Registro))
                     <br>
