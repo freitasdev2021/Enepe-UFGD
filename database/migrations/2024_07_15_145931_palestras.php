@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('Titulo',50)->nullable(false);
             $table->string('Palestra',100);
             $table->date('Data');
+            $table->integer('IDEvento');
             $table->integer('IDPalestrante');
             $table->time('Inicio');
             $table->time('Termino');

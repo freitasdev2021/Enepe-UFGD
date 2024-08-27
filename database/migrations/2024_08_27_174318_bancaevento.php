@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('salas',function(Blueprint $table){
+        Schema::create('bancaevento',function(Blueprint $table){
             $table->id();
+            $table->integer('IDUser');
             $table->integer('IDEvento');
-            $table->string('Sala',50);
-            $table->bigInteger('Capacidade');
+            $table->integer('Tipo');
             $table->date('created_at');
             $table->date('updated_at');
         });

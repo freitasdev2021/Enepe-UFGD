@@ -28,7 +28,7 @@ class MailController extends Controller
         $mail->SMTPKeepAlive = true; // Mantém a conexão SMTP viva para envios subsequentes
         $mail->Password   = 'SwPx3841';                               //SMTP password
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;            //Enable implicit TLS encryption
-        $mail->Port       = 587; 
+        $mail->Port       = ENV('MAIL_PORT'); 
         $mail->Timeout = 120; // 120 segundos
         //DESTINATÁRIO
         $mail->setFrom('comunicacao@freventosdigitais.com.br', 'FREventos'); //Rementente
@@ -62,7 +62,7 @@ class MailController extends Controller
         $mail->SMTPKeepAlive = true; // Mantém a conexão SMTP viva para envios subsequentes
         $mail->Password   = 'SwPx3841';                               //SMTP password
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;            //Enable implicit TLS encryption
-        $mail->Port       = 587; 
+        $mail->Port       = ENV('MAIL_PORT'); 
         $mail->Timeout = 120; // 120 segundos
         //DESTINATÁRIO
         $mail->setFrom('comunicacao@freventosdigitais.com.br', 'FREventos'); //Rementente
@@ -97,14 +97,14 @@ class MailController extends Controller
         $mail->SMTPKeepAlive = true; // Mantém a conexão SMTP viva para envios subsequentes
         $mail->Password   = 'SwPx3841';                               //SMTP password
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;            //Enable implicit TLS encryption
-        $mail->Port       = 587; 
+        $mail->Port       = ENV('MAIL_PORT'); 
         $mail->Timeout = 120; // 120 segundos
         //Corpo
         $mail->isHTML(true);  // Seta o formato do e-mail para aceitar conteúdo HTML
         $mail->Subject = $assunto;
         $mail->Body = view($view, $contentView);
         //DESTINATÁRIO
-        $mail->setFrom($de, 'UFGD'); //Rementente
+        $mail->setFrom('comunicacao@freventosdigitais.com.br', 'UFGD'); //Rementente
         foreach($para as $p){
             $mail->addAddress($p, 'Inscrito');     //Destinatário
             $mail->send();

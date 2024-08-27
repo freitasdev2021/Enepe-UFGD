@@ -22,6 +22,9 @@ return new class extends Migration
             $table->mediumText('Descricao');
             $table->string('Autores',100);
             $table->string('palavrasChave',100);
+            $table->string('Status');
+            $table->bigInteger('NEntrega');
+            $table->string('Feedback',100);
             $table->date('created_at');
             $table->date('updated_at');
         });

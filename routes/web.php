@@ -17,7 +17,6 @@ use App\Models\Formulario;
 use App\Models\Submissao;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\ExportController;
-use App\Http\Controllers\SalasController;
 use App\Models\Evento;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\AtividadesController;
@@ -138,13 +137,6 @@ Route::middleware('auth')->group(function () {
         Route::post('Eventos/Save',[EventosController::class,'save'])->name('Eventos/Save');
         Route::post('Eventos/Delete',[EventosController::class,'delete'])->name('Eventos/Delete');
         Route::get('Eventos/Cadastro',[EventosController::class,'cadastro'])->name('Eventos/Novo');
-        Route::get('Eventos/Salas/{IDEvento}',[SalasController::class,'index'])->name('Eventos/Salas/index');
-        Route::get('Eventos/Salas/list/{IDEvento}',[SalasController::class,'getSalas'])->name('Eventos/Salas/list');
-        Route::get('Eventos/{IDEvento}/Salas/Cadastro',[SalasController::class,'cadastro'])->name('Eventos/Salas/Novo');
-        Route::get('Eventos/{IDEvento}/Salas/Cadastro/{id}',[SalasController::class,'cadastro'])->name('Eventos/Salas/Edit');
-        //SALAS
-        Route::post('Eventos/Salas/Save',[SalasController::class,'save'])->name('Eventos/Salas/Save');
-        Route::post('Eventos/Salas/Delete',[SalasController::class,'delete'])->name('Eventos/Salas/Delete');
         //ATIVIDADES
         Route::post('Eventos/Atividades/Save',[AtividadesController::class,'save'])->name('Eventos/Atividades/Save');
         Route::post('Eventos/Atividades/Delete',[AtividadesController::class,'delete'])->name('Eventos/Atividades/Delete');

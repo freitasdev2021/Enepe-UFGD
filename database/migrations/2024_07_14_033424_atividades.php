@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('atividades',function(Blueprint $table){
             $table->id();
-            $table->integer('IDSala');
+            $table->integer('IDEvento');
             $table->text('IDMeeting');
             $table->string('URLMeeting',100);
             $table->string('Titulo',30);
             $table->string('Descricao',100);
-            $table->time('Inicio');
+            $table->dateTime('Inicio');
             $table->string('PWMeeting',45);
             $table->date('created_at');
             $table->date('updated_at');

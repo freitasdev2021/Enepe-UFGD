@@ -19,6 +19,17 @@ return new class extends Migration
             $table->dateTime('Termino');
             $table->date('created_at');
             $table->date('updated_at');
+            $table->datetime('INISubmissao');
+            $table->datetime('TERSubmissao');
+            $table->date("INIInscricao");
+            $table->date('TERInscricoes');
+            $table->text('Normas');
+            $table->text('Contatos');
+            $table->string('Capa',250);
+            $table->string('ModeloApresentacao',250);
+            $table->text('Categorias');
+            $table->text('Modalidades');
+            $table->text('Site');
         });
     }
 

@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('reprovacoes',function(Blueprint $table){
-            $table->id();
-            $table->string('Feedback',100);
+        Schema::create('apresentacoes',function(Blueprint $table){
             $table->integer('IDEntrega');
-            $table->integer('Status');
+            $table->integer('IDAtividade');
+            $table->integer('Apresentou');
             $table->date('created_at');
             $table->date('updated_at');
         });
