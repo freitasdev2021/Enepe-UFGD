@@ -358,7 +358,7 @@ class SubmissoesController extends Controller
             INNER JOIN eventos ev ON(ev.id = s.IDEvento)
             INNER JOIN users i ON (i.id = e.IDInscrito)
             LEFT JOIN users a ON(a.id = e.IDAvaliador)
-            WHERE a.id = $IDAvaliador AND ev.id = $IDEvento";
+            WHERE a.id = $IDAvaliador AND ev.id IN(SELECT IDEvento FROM bancaevento WHERE bancaevento.IDUser = $IDAvaliador)";
             $registros = DB::select($SQL);
             if(count($registros) > 0){
                 foreach($registros as $r){
