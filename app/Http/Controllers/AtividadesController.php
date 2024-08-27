@@ -107,7 +107,6 @@ class AtividadesController extends Controller
             'id' => '',
             'IDEvento' => $IDEvento,
             'submodulos' => self::submodulos,
-            'Salas' => Sala::all()->where('IDEvento',$IDEvento),
             "Aprovados" => DB::select($SQL),
             "Modalidades"=>json_decode(Evento::find($IDEvento)->Modalidades),
             "CurrentRoute" => route('Eventos/Atividades/Novo',$IDEvento)

@@ -57,7 +57,7 @@
                     <div class="col-sm-12 text-left row">
                         <button class="btn bg-fr text-white col-auto">Salvar</button>
                         &nbsp;
-                        <a class="btn btn-light col-auto" href="{{route('Avaliadores/index')}}">Voltar</a>
+                        <a class="btn btn-light col-auto" href="{{route('Organizadores/index')}}">Voltar</a>
                     </div>
                 </form>
             </div>
