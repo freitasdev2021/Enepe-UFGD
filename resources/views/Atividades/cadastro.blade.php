@@ -8,7 +8,24 @@
         <div class="fr-card-body">
             <!--LISTAS-->
             <div class="col-sm-12 p-2 center-form">
-                <form action="{{route('Eventos/Atividades/Save')}}" method="POST">
+                <form action="{{$CurrentRoute}}" method="GET" class="row">
+                    <div class="col-sm-10">
+                        <label>Modalidades</label>
+                        <select name="Modalidade" class="form-control">
+                            @foreach($Modalidades as $m)
+                                @if(!empty($m))
+                                    <option value="{{$m}}" {{isset($_GET['Modalidade']) && $_GET['Modalidade'] == $m ? 'selected' : ''}}>{{$m}}</option>
+                                @endif
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-sm-2">
+                        <label style="visibility:hidden">s</label>
+                        <input type="submit" value="Filtrar" class="form-control">
+                    </div>
+                </form>
+                <br>
+                <form action="{{route('Eventos/Atividades/Save')}}" method="POST" class="row">
                     @csrf
                     @method("POST")
                     @if(session('success'))
@@ -23,6 +40,7 @@
                     @endif
                     @if(isset($Registro))
                     <input type="hidden" name="id" value="{{$Registro->id}}">
+                    <input type="checkbox" name="mudarApresentacoes"> Mudar Apresentações?
                     @endif
                     <input type="hidden" name="IDEvento" value="{{$IDEvento}}">
                     <div class="row">
@@ -41,6 +59,31 @@
                             <textarea name="Descricao" class="form-control">{{isset($Registro) ? $Registro->Descricao : ''}}</textarea>
                         </div>
                     </div>
+                    <br>
+                    <table class="table table-sm tabela" id="escolas">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center;" scope="col">Titulo</th>
+                                <th style="text-align:center;" scope="col">Autores</th>
+                                <th style="text-align:center;" scope="col">Descrição</th>
+                                <th style="text-align:center;" scope="col">Apresentadores</th>
+                                <th style="text-align:center;" scope="col">Vai Apresentar?</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($Aprovados as $a)
+                            <tr>
+                                <td>{{$a->Titulo}}</td>
+                                <td>{{$a->Autores}}</td>
+                                <td>{{$a->Descricao}}</td>
+                                <td>{{$a->Apresentador}}</td>
+                                <td>
+                                    <input type="checkbox" name="Apresentar[]" {{isset($Registro) && in_array($a->IDEntrega,$Apresentadores) ? 'checked' : ''}} value="{{$a->IDEntrega}}"> Sim
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                     <br>
                     <div class="col-sm-12 text-left row">
                         <button class="btn bg-fr text-white col-auto">Salvar</button>

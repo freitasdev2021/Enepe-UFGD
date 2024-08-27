@@ -66,6 +66,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 //ROTA DO SITE
 Route::get('Evento/{id}',[SiteController::class,'site'])->name("Site");
+//RESET DE SENHA
 Route::post('Certificados/Validar', [CertificadosController::class, 'validarCertificados'])->name('Certificados/Validar');
 Route::get('PasswordReset/Email',[UserController::class,'resetPasswordLinkView'])->name('PasswordReset/Email');
 Route::get('Password/Reset/{token}',[UserController::class,'resetPasswordLinkEmail'])->name('Password/Reset');
@@ -175,6 +176,9 @@ Route::middleware('auth')->group(function () {
         Route::post('Avaliadores/Save', [AvaliadoresController::class, 'save'])->name('Avaliadores/Save');
         Route::post('Avaliadores/Delete', [AvaliadoresController::class, 'delete'])->name('Avaliadores/Delete');
         //SUBMISSOES
+        Route::get('Submissoes/Apresentacoes',[SubmissoesController::class,'apresentacoes'])->name('Submissoes/Apresentacoes');
+        Route::get('Submissoes/Apresentacoes/list',[SubmissoesController::class,'apresentacoesList'])->name('Submissoes/Apresentacoes/list');
+        Route::post('Submissoes/Apresentacoes/Save',[SubmissoesController::class,'saveApresentacoes'])->name('Submissoes/Apresentacoes/Save');
         Route::get('Submissoes/RemoveAtr/{id}', [SubmissoesController::class, 'RemoveAtr'])->name('Submissoes/RemoveAtr');
         Route::get('Submissoes/Cadastro', [SubmissoesController::class, 'cadastro'])->name('Submissoes/Novo');
         Route::get('Submissoes/Cadastro/{id}', [SubmissoesController::class, 'cadastro'])->name('Submissoes/Edit');

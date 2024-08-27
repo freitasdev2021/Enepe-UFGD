@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Submissao;
 use App\Models\Entrega;
 use Illuminate\Support\Facades\Session;
+use App\Models\Apresentacao;
 use App\Models\Reprovacao;
 use App\Models\User;
 use App\Models\Evento;
@@ -19,6 +20,10 @@ class SubmissoesController extends Controller
         'nome' => 'Submissoes',
         'rota' => 'Submissoes/index',
         'endereco' => 'index'
+    ],[
+        'nome'=> 'Apresentacoes',
+        'rota'=>'Submissoes/Apresentacoes',
+        'endereco'=> 'Apresentacoes'
     ]);
 
     public const cadastroSubmodulos = array([
@@ -79,6 +84,12 @@ class SubmissoesController extends Controller
             ");
         }
         return view($view,$data);
+    }
+
+    public function apresentacoes(){
+        return view('Submissoes.apresentacoes',[
+            'submodulos'=> self::submodulos
+        ]);
     }
 
     public function cadastro($id = null){
@@ -416,6 +427,65 @@ class SubmissoesController extends Controller
 
     public function removeAtr($IDEntrega){
         Entrega::find($IDEntrega)->update(["IDAvaliador"=>0]);
+    }
+
+    public function apresentacoesList(){
+        $SQL = "SELECT e.Titulo,
+            e.id as IDEntrega,
+            e.Autores,
+            e.Descricao,
+            e.Apresentador,
+            CASE WHEN ap.Apresentou = 0 THEN 0 ELSE 1 END as Apresentou
+        FROM entergas e
+        INNER JOIN submissoes s ON(s.id = e.IDSubmissao)
+        INNER JOIN users i ON (i.id = e.IDInscrito)
+        INNER JOIN apresentacoes ap ON(e.id = ap.IDEntrega)
+        WHERE e.Status = 'Aprovado'";
+        $registros = DB::select($SQL);
+
+        if(count($registros) > 0){
+            foreach($registros as $r){
+                $apst = '';
+                if($r->Apresentou == 1){
+                    $apst = 'checked';
+                }
+                $item = [];
+                $item[] = $r->Titulo;
+                $item[] = $r->Autores;
+                $item[] = $r->Descricao;
+                $item[] = $r->Apresentador;
+                $item[] = "<input type='checkbox' name='Apresentou[]' $apst value='$r->IDEntrega'>";
+                $itensJSON[] = $item;
+            }
+        }else{
+            $itensJSON = [];
+        }
+        
+        $resultados = [
+            "recordsTotal" => intval(count($registros)),
+            "recordsFiltered" => intval(count($registros)),
+            "data" => $itensJSON 
+        ];
+        
+        echo json_encode($resultados);
+    }
+
+    public function saveApresentacoes(Request $request){
+        try{
+            Apresentacao::where('IDAtividade','>',0)->update(['Apresentou'=>0]);
+            foreach($request->Apresentou as $a){
+                Apresentacao::where('IDEntrega',$a)->update(['Apresentou'=>1]);
+            }
+            $rota = 'Submissoes/Apresentacoes';
+            $mensagem = "Presença Concluida";
+            $status = 'success';
+        }catch(\Throwable $th){
+            $mensagem = 'Erro '. $th->getMessage();
+            $rota = 'Submissoes/Apresentacoes';
+            $status = 'error';
+        }finally{
+            return redirect()->route($rota)->with($status, $mensagem);
+        }
     }
 
     public function getEntregues($IDSubmissao){
