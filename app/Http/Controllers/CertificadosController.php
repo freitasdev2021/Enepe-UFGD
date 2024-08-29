@@ -101,7 +101,7 @@ class CertificadosController extends Controller
         try{
             $data = $request->all();
             //CONFERÊNCIA DE ERROS
-            if($data['id']){
+            if($request->id){
                 if($request->file('Arquivo')){
                     $Foto = $request->file('Arquivo')->getClientOriginalName();
                     Storage::disk('public')->delete('modelos/'.$request->oldModelo);
