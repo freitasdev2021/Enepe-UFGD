@@ -15,6 +15,7 @@
               <h5 class="card-title">{{$m->Nome}}</h5>
               <br>
               <button data-excluir="{{route('Modelos/Excluir',$m->id)}}" type="button" class="btn delete btn-danger">Excluir</button>
+              <a class="btn btn-success" href="{{route('Certificados/Modelos/Edit',$m->id)}}">Editar</a>
             </div>
         </div>
         @endforeach

@@ -30,7 +30,7 @@
                      <x-Modulo nome="Eventos" icon="bx bxs-calendar-event" rota="Eventos/index" endereco="Eventos"/>
                      @else
                      <x-Modulo nome="Submissões" icon="bx bx-task" rota="Submissoes/index" endereco="Submissoes"/> 
-                     <x-Modulo nome="Palestras" icon="bx bx-user-pin" rota="Palestras/index" endereco="Palestras"/>
+                     <x-Modulo nome="Atividades" icon="bx bx-user-pin" rota="Palestras/index" endereco="Palestras"/>
                      <x-Modulo nome="Apresentações" icon="bx bxs-pencil" rota="Atividades/index" endereco="Atividades"/>
                      @endif
                     @endif

@@ -9,6 +9,7 @@ use App\Models\User;
 use FPDF;
 use App\Models\Certificados;
 use Intervention\Image\ImageManager;
+use Storage;
 use Illuminate\Support\Facades\Session;
 use Intervention\Image\Drivers\Gd\Driver;
 use App\Models\Evento;
@@ -46,7 +47,7 @@ class CertificadosController extends Controller
 
         // Instancia o mPDF
         // Cria o PDF com FPDF
-        $pdf = new FPDF();
+        $pdf = new FPDF('L', 'mm', array(150,200));
         $pdf->AddPage();
         $pdf->Image($imagePath, 10, 10, 190);
 
@@ -100,12 +101,22 @@ class CertificadosController extends Controller
         try{
             $data = $request->all();
             //CONFERÊNCIA DE ERROS
-            if($request->file('Arquivo')){
-                $Foto = $request->file('Arquivo')->getClientOriginalName();
-                $request->file('Arquivo')->storeAs('modelos',$Foto,'public');
-                $data['Arquivo'] = $Foto;
+            if($data['id']){
+                if($request->file('Arquivo')){
+                    $Foto = $request->file('Arquivo')->getClientOriginalName();
+                    Storage::disk('public')->delete('modelos/'.$request->oldModelo);
+                    $request->file('Arquivo')->storeAs('modelos',$Foto,'public');
+                    $data['Arquivo'] = $Foto;
+                }
+                Modelo::find($data['id'])->update($data);
+            }else{
+                if($request->file('Arquivo')){
+                    $Foto = $request->file('Arquivo')->getClientOriginalName();
+                    $request->file('Arquivo')->storeAs('modelos',$Foto,'public');
+                    $data['Arquivo'] = $Foto;
+                }
+                Modelo::create($data);
             }
-            Modelo::create($data);
             $status = 'success';
             $mensagem = 'Modelo Salvo com Sucesso';
             $aid = '';
@@ -174,14 +185,14 @@ class CertificadosController extends Controller
                         if(!str_contains($Modelo->DSModelo,'{organizador}') || !str_contains($Modelo->DSModelo,'{evento}') || !$Inscrito){
                             $STRConteudo = "";
                             if(!str_contains($Modelo->DSModelo,'{organizador}')){
-                                $STRConteudo .= str_replace(['{evento}'],[wordwrap($Evento->Titulo,50,"<br>/n")],$Modelo->DSModelo);
+                                $STRConteudo .= str_replace(['{evento}'],[$Evento->Titulo],$Modelo->DSModelo);
                             }
 
                             if(!str_contains($Modelo->DSModelo,'{evento}')){
-                                $STRConteudo .= str_replace(['{organizador}'],[wordwrap($Inscrito->name,50,"<br>/n")],$Modelo->DSModelo);
+                                $STRConteudo .= str_replace(['{organizador}'],[$Inscrito->name],$Modelo->DSModelo);
                             }
 
-                            $Conteudo = explode("|",$STRConteudo);
+                            $Conteudo = wordwrap($STRConteudo,50,"|");
                             $emissao[] = array(
                                 "Conteudo" => $Conteudo,
                                 "IDInscrito" => $Certificado['Inscritos'],
@@ -193,7 +204,7 @@ class CertificadosController extends Controller
                             );
                         }else{
                             $STRConteudo = str_replace(['{organizador}','{evento}'],[$Inscrito->name,$Evento->Titulo],$Modelo->DSModelo);
-                            $Conteudo = explode("|",$STRConteudo);
+                            $Conteudo = wordwrap($STRConteudo,50,"|");
                             $emissao[] = array(
                                 "Conteudo" => $Conteudo,
                                 "IDInscrito" => $Certificado['Inscritos'],
@@ -239,7 +250,7 @@ class CertificadosController extends Controller
                                 $STRConteudo .= str_replace(['{apresentador}','{evento}','{submissao}','{palavraschave}'],[$Inscrito->name,$Evento->Titulo,$Trabalho->Titulo,$Trabalho->palavrasChave],$Modelo->DSModelo);
                             }
 
-                            $Conteudo = explode("|",$STRConteudo);
+                            $Conteudo = wordwrap($STRConteudo,50,"|");
                             $emissao[] = array(
                                 "Conteudo" => $Conteudo,
                                 "IDInscrito" => $Certificado['Inscritos'],
@@ -251,7 +262,7 @@ class CertificadosController extends Controller
                             );
                         }else{
                             $STRConteudo = str_replace(['{apresentador}','{evento}','{submissao}','{palavraschave}','{autores}'],[$Inscrito->name,$Evento->Titulo,$Trabalho->Titulo,$Trabalho->palavrasChave,$Trabalho->Autores],$Modelo->DSModelo);
-                            $Conteudo = explode("|",$STRConteudo);
+                            $Conteudo = wordwrap($STRConteudo,50,"|");
                             $emissao[] = array(
                                 "Conteudo" => $Conteudo,
                                 "IDInscrito" => $Certificado['Inscritos'],
@@ -279,7 +290,7 @@ class CertificadosController extends Controller
                                 $STRConteudo .= str_replace(['{telespectador}'],[$Inscrito->name],$Modelo->DSModelo);
                             }
 
-                            $Conteudo = explode("|",$STRConteudo);
+                            $Conteudo = wordwrap($STRConteudo,50,"|");
                             $emissao[] = array(
                                 "Conteudo" => $Conteudo,
                                 "IDInscrito" => $Certificado['Inscritos'],
@@ -291,7 +302,7 @@ class CertificadosController extends Controller
                             );
                         }else{
                             $STRConteudo = str_replace(['{telespectador}','{evento}'],[$Inscrito->name,$Evento->Titulo],$Modelo->DSModelo);
-                            $Conteudo = explode("|",$STRConteudo);
+                            $Conteudo = wordwrap($STRConteudo,50,"|");
                             $emissao[] = array(
                                 "Conteudo" => $Conteudo,
                                 "IDInscrito" => $Certificado['Inscritos'],
@@ -318,7 +329,7 @@ class CertificadosController extends Controller
                                 $STRConteudo .= str_replace(['{avaliadorsessao}'],[$Inscrito->name],$Modelo->DSModelo);
                             }
 
-                            $Conteudo = explode("|",$STRConteudo);
+                            $Conteudo = wordwrap($STRConteudo,50,"|");
                             $emissao[] = array(
                                 "Conteudo" => $Conteudo,
                                 "IDInscrito" => $Certificado['Inscritos'],
@@ -330,7 +341,7 @@ class CertificadosController extends Controller
                             );
                         }else{
                             $STRConteudo = str_replace(['{avaliadorsessao}','{evento}'],[$Inscrito->name,$Evento->Titulo],$Modelo->DSModelo);
-                            $Conteudo = explode("|",$STRConteudo);
+                            $Conteudo = wordwrap($STRConteudo,50,"|");
                             $emissao[] = array(
                                 "Conteudo" => $Conteudo,
                                 "IDInscrito" => $Certificado['Inscritos'],
@@ -357,7 +368,7 @@ class CertificadosController extends Controller
                                 $STRConteudo .= str_replace(['{moderador}'],[$Inscrito->name],$Modelo->DSModelo);
                             }
 
-                            $Conteudo = explode("|",$STRConteudo);
+                            $Conteudo = wordwrap($STRConteudo,50,"|");
                             $emissao[] = array(
                                 "Conteudo" => $Conteudo,
                                 "IDInscrito" => $Certificado['Inscritos'],
@@ -370,7 +381,7 @@ class CertificadosController extends Controller
                             
                         }else{
                             $STRConteudo = str_replace(['{moderador}','{evento}'],[$Inscrito->name,$Evento->Titulo],$Modelo->DSModelo);
-                            $Conteudo = explode("|",$STRConteudo);
+                            $Conteudo = wordwrap($STRConteudo,50,"|");
                             $emissao[] = array(
                                 "Conteudo" => $Conteudo,
                                 "IDInscrito" => $Certificado['Inscritos'],
@@ -403,7 +414,7 @@ class CertificadosController extends Controller
                                     $STRConteudo = str_replace(['{telespectadorpalestra}','{palestra}'],[$Inscrito->name,$as->Titulo],$Modelo->DSModelo);
                                 }
 
-                                $Conteudo = explode("|",$STRConteudo);
+                                $Conteudo = wordwrap($STRConteudo,50,"|");
                                 $emissao[] = array(
                                     "Conteudo" => $Conteudo,
                                     "IDInscrito" => $Certificado['Inscritos'],
@@ -417,7 +428,7 @@ class CertificadosController extends Controller
                         }else{
                             foreach($Assistiu as $as){
                                 $STRConteudo = str_replace(['{telespectadorpalestra}','{evento}','{palestra}'],[$Inscrito->name,$Evento->Titulo,$as->Titulo],$Modelo->DSModelo);
-                                $Conteudo = explode("|",$STRConteudo);
+                                $Conteudo = wordwrap($STRConteudo,50,"|");
                                 $emissao[] = array(
                                     "Conteudo" => $Conteudo,
                                     "IDInscrito" => $Certificado['Inscritos'],
@@ -452,7 +463,7 @@ class CertificadosController extends Controller
                                     $STRConteudo .= str_replace(['{palestrante}','{evento}'],[$Inscrito->Nome,$Evento->Titulo],$Modelo->DSModelo);
                                 }
 
-                                $Conteudo = explode("|",$STRConteudo);
+                                $Conteudo = wordwrap($STRConteudo,50,"|");
                                 $emissao[] = array(
                                     "Conteudo" => $Conteudo,
                                     "IDInscrito" => $Certificado['Inscritos'],
@@ -466,7 +477,7 @@ class CertificadosController extends Controller
                         }else{
                             foreach($Palestrou as $pa){
                                 $STRConteudo = str_replace(['{palestrante}','{palestra}','{evento}'],[$Inscrito->Nome,$pa->Titulo,$Evento->Titulo],$Modelo->DSModelo);
-                                $Conteudo = explode("|",$STRConteudo);
+                                $Conteudo = wordwrap($STRConteudo,50,"|");
                                 $emissao[] = array(
                                     "Conteudo" => $Conteudo,
                                     "IDInscrito" => $Certificado['Inscritos'],
@@ -486,14 +497,14 @@ class CertificadosController extends Controller
                         if(!str_contains($Modelo->DSModelo,'{avaliador}') || !str_contains($Modelo->DSModelo,'{evento}') || !$Inscrito){
                             $STRConteudo = "";
                             if(!str_contains($Modelo->DSModelo,'{avaliador}')){
-                                $STRConteudo .= str_replace(['{evento}'],[wordwrap($Evento->Titulo,50,"<br>/n")],$Modelo->DSModelo);
+                                $STRConteudo .= str_replace(['{evento}'],[$Evento->Titulo],$Modelo->DSModelo);
                             }
 
                             if(!str_contains($Modelo->DSModelo,'{evento}')){
-                                $STRConteudo .= str_replace(['{avaliador}'],[wordwrap($Inscrito->name,50,"<br>/n")],$Modelo->DSModelo);
+                                $STRConteudo .= str_replace(['{avaliador}'],[$Inscrito->name],$Modelo->DSModelo);
                             }
 
-                            $Conteudo = explode("|",$STRConteudo);
+                            $Conteudo = wordwrap($STRConteudo,50,"|");
                             $emissao[] = array(
                                 "Conteudo" => $Conteudo,
                                 "IDInscrito" => $Certificado['Inscritos'],
@@ -505,7 +516,7 @@ class CertificadosController extends Controller
                             );
                         }else{
                             $STRConteudo = str_replace(['{avaliador}','{evento}'],[$Inscrito->name,$Evento->Titulo],$Modelo->DSModelo);
-                            $Conteudo = explode("|",$STRConteudo);
+                            $Conteudo = wordwrap($STRConteudo,50,"|");
     
                             $emissao[] = array(
                                 "Conteudo" => $Conteudo,
@@ -525,7 +536,7 @@ class CertificadosController extends Controller
             //
             if(count($erros) == 0){
                 foreach($emissao as $e){
-                    self::setCertificado($e['Conteudo'],$e['IDInscrito'],$e['Arquivo'],$e['Inscrito'],$e['Evento'],$e['IDEvento'],$e['Modelo']);
+                    self::setCertificado(explode("|",$e['Conteudo']),$e['IDInscrito'],$e['Arquivo'],$e['Inscrito'],$e['Evento'],$e['IDEvento'],$e['Modelo']);
                 }
                 $mensagem = 'Salvo com Sucesso';
                 $status = 'success';
@@ -555,6 +566,12 @@ class CertificadosController extends Controller
     public function getTrabalho($IDApresentador,$IDEvento){
         return DB::select("SELECT e.Titulo,e.Autores,e.palavrasChave FROM entergas e INNER JOIN submissoes s ON(s.id = e.IDSubmissao) WHERE s.IDEvento = $IDEvento AND e.IDInscrito = $IDApresentador")[0];
     }
+
+    public function delCertificado($numero){
+        Certificados::where('Codigo',$numero)->delete();
+        Storage::disk('public')->delete('modelos/'.'certificado_'.$numero);
+    }
+
     //DELETE CERTIFICADO
     public function delete($id){
         Modelo::find($id)->delete();
@@ -574,6 +591,7 @@ class CertificadosController extends Controller
         $publicCertificatesPath = public_path('certificados');
         $certificadoManager = new ImageManager(new Driver());
         $CDCertificado = rand(100000,999999).$IDInscrito;
+        //dd(explode('|',$text));
         array_push($text,"Codigo: ".$CDCertificado);
         // Definir as propriedades da fonte
         $fontSize = 50;
@@ -652,6 +670,7 @@ class CertificadosController extends Controller
                 p.Nome,
                 p.Email,
                 p.id as IDInscrito,
+                MAX(c.Codigo) as Codigo,
                 MAX(c.IDModelo) as IDModelo,
                 MAX(c.Certificado) as Certificado
                 FROM 
@@ -674,7 +693,8 @@ class CertificadosController extends Controller
                     u.Email as Email,
                     u.id as IDInscrito,
                     c.Certificado as Certificado,
-                    c.IDModelo as IDModelo
+                    c.IDModelo as IDModelo,
+                    c.Codigo
                 FROM 
                     users u
                 INNER JOIN 
@@ -694,7 +714,8 @@ class CertificadosController extends Controller
                     u.Email as Email,
                     u.id as IDInscrito,
                     c.IDModelo,
-                    c.Certificado
+                    c.Certificado,
+                    c.Codigo
                 FROM users u
                 LEFT JOIN certificados c ON(u.id = c.IDInscrito)
                 LEFT JOIN modelos m ON(m.id = c.IDModelo)
@@ -707,7 +728,8 @@ class CertificadosController extends Controller
                     u.Email as Email,
                     u.id as IDInscrito,
                     c.IDModelo,
-                    c.Certificado
+                    c.Certificado,
+                    c.Codigo
                 FROM users u
                 LEFT JOIN certificados c ON(u.id = c.IDInscrito)
                 LEFT JOIN modelos m ON(m.id = c.IDModelo)
@@ -720,7 +742,8 @@ class CertificadosController extends Controller
                     u.Email as Email,
                     u.id as IDInscrito,
                     c.IDModelo,
-                    c.Certificado
+                    c.Certificado,
+                    c.Codigo
                 FROM users u
                 INNER JOIN inscricoes i ON(i.IDUser = u.id)
                 LEFT JOIN certificados c ON(u.id = c.IDInscrito)
@@ -734,11 +757,16 @@ class CertificadosController extends Controller
         $itensJSON = [];
         if (count($registros) > 0) {
             foreach ($registros as $r) {
+                $RemoveCRT = !empty($r->Certificado) ? '"'. strval(route('Certificados/Excluir',$r->Codigo)). '"' : 0;
                 $item = [];
                 $item[] = $r->Nome;
                 $item[] = $r->Email;
                 $item[] = self::getSelectModelos($r->IDInscrito,$r->IDModelo)."<input type='hidden' id='inscrito_$r->IDInscrito' name='IDInscrito[]'>";
-                $item[] = !empty($r->Certificado) ? "<a href=".url('storage/modelos/'.$r->Certificado)." class='btn btn-fr btn-xs text-white' download>Baixar</a> <a class='btn btn-fr btn-xs text white' href=".route('Certificados/pdf',$r->Certificado).">Baixar PDF</a> <a class='btn btn-fr btn-xs text white' href=".route('Certificados/Email',['email'=>$r->Email,'certificado'=>$r->Certificado]).">Enviar por Email</a> <a href=".url('storage/modelos/'.$r->Certificado)." class='btn btn-fr btn-xs text-white' target='_blank'>Abrir</a>" : 'Ainda Não Emitido';
+                $item[] = !empty($r->Certificado) ? "<a href=".url('storage/modelos/'.$r->Certificado)." class='btn btn-fr btn-xs text-white' download>Baixar</a> 
+                <a class='btn btn-fr btn-xs text white' href=".route('Certificados/pdf',$r->Certificado).">Baixar PDF</a> 
+                <a class='btn btn-fr btn-xs text white' href=".route('Certificados/Email',['email'=>$r->Email,'certificado'=>$r->Certificado]).">Enviar por Email</a> 
+                <button type='button' class='btn btn-fr btn-xs text-white' onclick='delCertificado($RemoveCRT)'>Excluir</button>
+                <a href=".url('storage/modelos/'.$r->Certificado)." class='btn btn-fr btn-xs text-white' target='_blank'>Abrir</a>" : 'Ainda Não Emitido';
                 $itensJSON[] = $item;
             }
         }
@@ -753,7 +781,13 @@ class CertificadosController extends Controller
 
     }
 
-    public function cadastroModelos(){
-        return view('Certificados.cadastro');
+    public function cadastroModelos($id=null){
+        $view = array();
+        if($id){
+            $view = array(
+                "Registro"=> Modelo::find($id)
+            );
+        }
+        return view('Certificados.cadastro',$view);
     }
 }

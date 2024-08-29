@@ -18,41 +18,45 @@
                      </div>
                      <br>
                      @endif
+                     @if(isset($Registro))
+                     <input type="hidden" name="id" value="{{$Registro->id}}">
+                     @endif
                      <div class="row">
                         <div class="col-sm-6">
                             <label>Nome do Modelo</label>
-                            <input type="name" class="form-control" name="Nome">
+                            <input type="name" class="form-control" name="Nome" value="{{isset($Registro) ? $Registro->Nome : '' }}">
                         </div>
                         <div class="col-sm-6">
                             <label>Tipo do Modelo</label>
                             <select name="TPModelo" class="form-control">
                                 <option value="">Selecione</option>
-                                <option value="Organizadores">Organizadores</option>
-                                <option value="Apresentadores">Apresentadores</option>
-                                <option value="Telespectadores">Telespectadores</option>
-                                <option value="Avaliador de Sessão">Avaliador de Sessão</option>
-                                <option value="Moderador de Sessão">Moderador de Sessão</option>
-                                <option value="Telespectador de Palestra">Telespectador de Palestra</option>     
-                                <option value="Palestrante">Palestrante</option>    
+                                <option value="Organizadores" {{isset($Registro) && $Registro->TPModelo == "Organizadores" ? 'selected' : '' }}>Organizadores</option>
+                                <option value="Apresentadores" {{isset($Registro) && $Registro->TPModelo == "Apresentadores" ? 'selected' : '' }}>Apresentadores</option>
+                                <option value="Telespectadores" {{isset($Registro) && $Registro->TPModelo == "Telespectadores" ? 'selected' : '' }}>Telespectadores</option>
+                                <option value="Avaliador de Sessão" {{isset($Registro) && $Registro->TPModelo == "Avaliador de Sessão" ? 'selected' : '' }}>Avaliador de Sessão</option>
+                                <option value="Moderador de Sessão" {{isset($Registro) && $Registro->TPModelo == "Moderador de Sessão" ? 'selected' : '' }}>Moderador de Sessão</option>
+                                <option value="Telespectador de Palestra" {{isset($Registro) && $Registro->TPModelo == "Telespectador de Palestra" ? 'selected' : '' }}>Telespectador de Palestra</option>     
+                                <option value="Palestrante" {{isset($Registro) && $Registro->TPModelo == "Palestrante" ? 'selected' : '' }}>Palestrante</option>    
                             </select>
                         </div>
                      </div>
                      <div class="row">
                         <div class="col-sm-12">
                             <label>Modelo</label>
-                            <textarea name="DSModelo" class="form-control" placeholder="Exemplo: o {organizador} assistiu o {evento} | com carga horaria de | 40 Horas"></textarea>
+                            <textarea name="DSModelo" class="form-control" placeholder="Exemplo: o {organizador} assistiu o {evento} | com carga horaria de | 40 Horas">{{isset($Registro) ? $Registro->DSModelo : '' }}</textarea>
                         </div>
                      </div>
                      <div class="row">
                         <div class="col-sm-12">
                             <label>Arquivo do Modelo</label>
                             <input type="file" class="form-control" onchange="displaySelectedImage(event, 'selectedModelo')" name="Arquivo" accept="image/*">
+                            <input type="hidden" name="oldModelo" value="{{isset($Registro) ? $Registro->Arquivo : ''}}">
                         </div>
                      </div>
                      <div class="row">
                         <div class="col-sm-12">
                             <br>
-                            <img src="" width="100%" height="500px" id="selectedModelo">
+                            <img src="{{isset($Registro) ? url('storage/modelos/'.$Registro->Arquivo) : ''}}" width="100%" height="500px" id="selectedModelo">
                         </div>
                      </div>
                      <br>

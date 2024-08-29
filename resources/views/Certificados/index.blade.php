@@ -66,6 +66,15 @@
             $("input[name=Tipo]").val($(this).val())
         })
 
+        function delCertificado(url){
+            $.ajax({
+                url: url,
+                method : 'GET'
+            }).done(function(response){
+                window.location.reload()
+            })
+        }
+
         function setInscrito(IDInscrito){
             $("#inscrito_"+IDInscrito).val(IDInscrito)
         }

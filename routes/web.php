@@ -181,12 +181,14 @@ Route::middleware('auth')->group(function () {
         Route::post('Submissoes/Delete', [SubmissoesController::class, 'delete'])->name('Submissoes/Delete');
         Route::post('Submissoes/Entregues/setAvaliador', [SubmissoesController::class, 'setAvaliador'])->name('Submissoes/Entregues/setAvaliador');
         //CERTIFICADOS
+        Route::get('Certificados/Excluir/{numero}',[CertificadosController::class,'delCertificado'])->name("Certificados/Excluir");
         Route::get('Modelos/Excluir/{id}', [CertificadosController::class, 'delete'])->name('Modelos/Excluir');
         Route::post('Certificados/Modelos/Save', [CertificadosController::class, 'saveModelo'])->name('Certificados/Modelos/Save');
         Route::get('Certificados/list', [CertificadosController::class, 'getCertificados'])->name('Certificados/list');
         Route::get('Certifica', [CertificadosController::class, 'index'])->name('Certifica/index');
         Route::get('Certificados/Modelos', [CertificadosController::class, 'modelos'])->name('Certificados/Modelos');
         Route::get('Certificados/Modelos/Cadastro', [CertificadosController::class, 'cadastroModelos'])->name('Certificados/Modelos/Novo');
+        Route::get('Certificados/Modelos/Cadastro/{id}', [CertificadosController::class, 'cadastroModelos'])->name('Certificados/Modelos/Edit');
         Route::post('Certificados/Save', [CertificadosController::class, 'gerarCertificados'])->name('Certificados/Save');
         Route::post('Eventos/saveInscricaoAluno',[EventosController::class,'saveInscricaoAluno'])->name('Eventos/saveInscricaoAluno');
         //INSCRIÇÕES
