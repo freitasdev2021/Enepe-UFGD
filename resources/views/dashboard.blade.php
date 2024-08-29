@@ -186,6 +186,10 @@
                             <input type="file" name="ModeloApresentacao" class="form-control">
                             <input type="hidden" name="oldModeloApresentacao">
                         </div>
+                        <div class="col-sm-12">
+                            <label>Tipos de Atividades</label>
+                            <input type="text" name="TPAtividade" class="form-control">
+                        </div>
                     </div>
                     <br>
                     <div class="row">
@@ -195,7 +199,7 @@
                             <input type="checkbox" name="Site[]" value="Inscritos">&nbsp;Inscricoes
                             <input type="checkbox" name="Site[]" value="Submissoes">&nbsp;Submissoes
                             <input type="checkbox" name="Site[]" value="Normas">&nbsp;Normas
-                            <input type="checkbox" name="Site[]" value="Palestras">&nbsp;Palestras
+                            <input type="checkbox" name="Site[]" value="Palestras">&nbsp;Atividades
                             <input type="checkbox" name="Site[]" value="Contatos">&nbsp;Contatos
                             <input type="checkbox" name="Site[]" value="Prazo de Submissoes">&nbsp;Prazo de Submissões
                             <input type="checkbox" name="Site[]" value="Prazo de Inscricoes">&nbsp;Prazo de Inscrições

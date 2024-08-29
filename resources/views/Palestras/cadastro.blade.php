@@ -30,7 +30,7 @@
                             <input type="text" name="Titulo" class="form-control" value="{{isset($Registro) ? $Registro->Titulo : ''}}" required>
                         </div>
                         <div class="col-sm-4">
-                            <label>Palestrante</label>
+                            <label>Coordenador</label>
                             <select name="IDPalestrante" class="form-control">
                                 <option value="">Selecione</option>
                                 @foreach($palestrantes as $p)

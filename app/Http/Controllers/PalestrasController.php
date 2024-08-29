@@ -16,19 +16,19 @@ use Storage;
 class PalestrasController extends Controller
 {
     public const submodulos = array([
-        "nome" => "Palestras",
+        "nome" => "Atividades",
         "rota" => "Palestras/index",
         "endereco" => 'index'
     ]);
 
     public const modulosPalestrantes = array([
-        "nome" => "Palestras",
+        "nome" => "Atividades",
         "rota" => "Palestras/index",
         "endereco" => 'index'
     ]);
 
     public const submodulosPalestrantes = array([
-        "nome" => "Palestrantes",
+        "nome" => "Coordenadores",
         "rota" => "Palestras/index",
         "endereco" => 'index'
     ],[

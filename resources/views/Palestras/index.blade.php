@@ -20,8 +20,8 @@
                       <tr>
                         <th style="text-align:center;" scope="col">Evento</th>
                         <th style="text-align:center;" scope="col">Título</th>
-                        <th style="text-align:center;" scope="col">Palestrante</th>
-                        <th style="text-align:center;" scope="col">Palestra</th>
+                        <th style="text-align:center;" scope="col">Coordenador</th>
+                        <th style="text-align:center;" scope="col">Atividade</th>
                         <th style="text-align:center;" scope="col">Data</th>
                         <th style="text-align:center;" scope="col">Início</th>
                         <th style="text-align:center;" scope="col">Término</th>

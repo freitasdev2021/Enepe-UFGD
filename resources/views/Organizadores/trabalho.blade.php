@@ -43,19 +43,19 @@
                     <div class="bg-secondary p-2">
                         <strong>Título:</strong>
                         <p>
-                            <strong>{{(Auth::user()->tipo == 1) ? $Entregas->Titulo : $Entregas[0]->Titulo}}</strong>
+                            <strong>{{$Entregas[0]->Titulo}}</strong>
                         </p>
                     </div>
                     <br>
                     <div class="bg-warning p-2">
-                        <strong>{{(Auth::user()->tipo == 1) ? $Entregas->Status : $Entregas[0]->Status}}</strong>
+                        <strong>{{$Entregas[0]->Status}}</strong>
                     </div>
                     <br>
                     <div class="bg-primary p-2">
                         <strong>Feedback:</strong>
                         <br>
                         <p>
-                            <strong>{{(Auth::user()->tipo == 1) ? $Entregas->Feedback : $Entregas[0]->Feedback}}</strong>
+                            <strong>{{$Entregas[0]->Feedback}}</strong>
                         </p>
                     </div>
                 @endif
@@ -126,9 +126,9 @@
                 <br>
                 {{-- {{dd($debug)}} --}}
                 <div class="col-sm-12 text-left row">
-                    @if(empty($Entregas) || !empty($Entregas) && $Status == "Aprovado com Ressalvas")
+                    @if(empty($Entregas) || !empty($Entregas) && $Entregas[0]->Status == "Aprovado com Ressalvas")
                         <button class="btn bg-fr text-white col-auto">Salvar</button>&nbsp;
-                        @if(!empty($Entregas) && Auth::user()->tipo == 3 && $Status == "Aprovado com Ressalvas")
+                        @if(!empty($Entregas) && $Entregas[0]->Status == "Aprovado com Ressalvas")
                             <button class="btn btn-warning revisar col-auto" data-trabalho="{{route('Submissoes/getTrabalho',$IDEntrega)}}">Revisar</button>
                         @endif
                     @endif

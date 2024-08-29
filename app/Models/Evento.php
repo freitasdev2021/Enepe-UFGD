@@ -26,6 +26,7 @@ class Evento extends Model
         'ModeloApresentacao',
         'Categorias',
         'Modalidades',
-        'Site'
+        'Site',
+        'TPAtividade'
     ];
 }

@@ -93,6 +93,11 @@
                             <input type="file" name="ModeloApresentacao" class="form-control">
                             <input type="hidden" name="oldModeloApresentacao" value="{{isset($Registro) ? $Registro->ModeloApresentacao : ''}}">
                         </div>
+                        <div class="col-sm-12">
+                            <label>Tipos de Atividades</label>
+                            <input type="text" name="TPAtividade" class="form-control" maxlength="45" value="{{isset($Registro) ? $Registro->TPAtividade : ''}}">
+                            <input type="hidden" name="oldModeloApresentacao" value="{{isset($Registro) ? $Registro->ModeloApresentacao : ''}}">
+                        </div>
                     </div>
                     <br>
                     <div class="row">

@@ -51,7 +51,7 @@ Route::get('/dashboard', function () {
     LEFT JOIN 
         inscricoes i ON i.IDEvento = e.id
     WHERE 
-        e.Termino > NOW()
+        e.id IN(SELECT IDEvento FROM bancaevento bv WHERE bv.IDUser = $currentId)
     GROUP BY 
         e.Titulo                
     ");
@@ -168,6 +168,7 @@ Route::middleware('auth')->group(function () {
         Route::post('Avaliadores/Save', [AvaliadoresController::class, 'save'])->name('Avaliadores/Save');
         Route::post('Avaliadores/Delete', [AvaliadoresController::class, 'delete'])->name('Avaliadores/Delete');
         //SUBMISSOES
+        Route::get('Submissoes/Trabalho/{id}',[SubmissoesController::class,'getTrabalhoOrganizador'])->name('Submissoes/Trabalho');
         Route::get('Submissoes/Apresentacoes',[SubmissoesController::class,'apresentacoes'])->name('Submissoes/Apresentacoes');
         Route::get('Submissoes/Apresentacoes/list',[SubmissoesController::class,'apresentacoesList'])->name('Submissoes/Apresentacoes/list');
         Route::post('Submissoes/Apresentacoes/Save',[SubmissoesController::class,'saveApresentacoes'])->name('Submissoes/Apresentacoes/Save');

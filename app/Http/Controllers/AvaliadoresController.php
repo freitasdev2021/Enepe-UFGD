@@ -55,28 +55,33 @@ class AvaliadoresController extends Controller
                 $rota = 'Avaliadores/Novo';
                 $aid = '';
                 $data['password'] = Hash::make($RandPW);
-                $Evento = Evento::find($request->IDEvento);
-                MailController::send($request->email,'Confirmação - Avaliador','Mail.cadastroavaliador',array('Evento'=> $Evento->Titulo,'Senha'=> $RandPW,'Email'=> $request->email));
-                $User = User::create($data);
-                Banca::create([
-                    "IDUser"=> $User->id,
-                    "IDEvento"=> $request->IDEvento,
-                    "Tipo"=> 2
-                ]);
+                if(User::where('email',$request->email)->exists()){
+                    User::where('email',$request->email)->first();
+                    Banca::where('IDUser')->update(['IDEvento'=>Session::get('IDEvento')]);
+                }else{
+                    $Evento = Evento::find(Session::get('IDEvento'));
+                    MailController::send($request->email,'Confirmação - Avaliador','Mail.cadastroavaliador',array('Evento'=> $Evento->Titulo,'Senha'=> $RandPW,'Email'=> $request->email));
+                    $User = User::create($data);
+                    Banca::create([
+                        "IDUser"=> $User->id,
+                        "IDEvento"=> Session::get('IDEvento'),
+                        "Tipo"=> 2
+                    ]);
+                }
             }else{
                 $rota = 'Avaliadores/Edit';
                 if($request->alteraSenha){
                     $RandPW = rand(100000,999999);
-                    $Evento = Evento::find($request->IDEvento);
+                    $Evento = Evento::find(Session::get('IDEvento'));
                     $data['password'] = Hash::make($RandPW);
                     MailController::send($request->email,'Confirmação - Avaliador','Mail.cadastroavaliador',array('Senha'=> $RandPW,'Email'=> $request->email,'Evento'=> $Evento->Titulo));
                 }
                 
-                if(!empty($request->IDEvento) && !Banca::where('IDEvento',$request->IDEvento)->exists()){
+                if(!empty(Session::get('IDEvento')) && !Banca::where('IDEvento',Session::get('IDEvento'))->exists()){
                     Banca::where('IDUser',$request->id)->update([
-                        "IDEvento"->$request->IDEvento
+                        "IDEvento"=>Session::get('IDEvento')
                     ]);
-                    $Evento = Evento::find($request->IDEvento);
+                    $Evento = Evento::find(Session::get('IDEvento'));
                     MailController::send($request->email,'Confirmação - Avaliador','Mail.cadastroavaliador',array('Evento'=> $Evento->Titulo,'Senha'=> "A Mesma",'Email'=> $request->email));
                 }
 

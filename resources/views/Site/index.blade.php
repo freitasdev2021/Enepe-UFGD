@@ -163,7 +163,7 @@
             @if(in_array("Palestras",$Site))
             <div class="card">
                <div class="card-header">
-                  <strong>Palestras</strong>
+                  <strong>{{$Evento->TPAtividade}}</strong>
                </div>
                <div class="card-body">
                   <div class="row salas">

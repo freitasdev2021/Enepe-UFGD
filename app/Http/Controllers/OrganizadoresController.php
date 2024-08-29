@@ -56,28 +56,33 @@ class OrganizadoresController extends Controller
                 $rota = 'Organizadores/Novo';
                 $aid = '';
                 $data['password'] = Hash::make($RandPW);
-                $Evento = Evento::find($request->IDEvento);
-                MailController::send($request->email,'Confirmação - Organizador','Mail.cadastroorganizador',array('Evento'=> $Evento->Titulo,'Senha'=> $RandPW,'Email'=> $request->email));
-                $User = User::create($data);
-                Banca::create([
-                    "IDUser"=> $User->id,
-                    "IDEvento"=> $request->IDEvento,
-                    "Tipo"=> 1
-                ]);
+                if(User::where('email',$request->email)->exists()){
+                    User::where('email',$request->email)->first();
+                    Banca::where('IDUser')->update(['IDEvento'=>Session::get('IDEvento')]);
+                }else{
+                    $Evento = Evento::find(Session::get('IDEvento'));
+                    MailController::send($request->email,'Confirmação - Organizador','Mail.cadastroorganizador',array('Evento'=> $Evento->Titulo,'Senha'=> $RandPW,'Email'=> $request->email));
+                    $User = User::create($data);
+                    Banca::create([
+                        "IDUser"=> $User->id,
+                        "IDEvento"=> Session::get('IDEvento'),
+                        "Tipo"=> 1
+                    ]);
+                }
             }else{
                 $rota = 'Organizadores/Edit';
                 if($request->alteraSenha){
                     $RandPW = rand(100000,999999);
                     $data['password'] = Hash::make($RandPW);
-                    $Evento = Evento::find($request->IDEvento);
+                    $Evento = Evento::find(Session::get('IDEvento'));
                     MailController::send($request->email,'Confirmação - Organizador','Mail.cadastroorganizador',array('Evento'=> $Evento->Titulo,'Senha'=> $RandPW,'Email'=> $request->email));
                 }
 
-                if(!empty($request->IDEvento) && !Banca::where('IDEvento',$request->IDEvento)->exists()){
+                if(!empty(Session::get('IDEvento')) && !Banca::where('IDEvento',Session::get('IDEvento'))->exists()){
                     Banca::where('IDUser',$request->id)->update([
-                        "IDEvento"->$request->IDEvento
+                        "IDEvento"=>Session::get('IDEvento')
                     ]);
-                    $Evento = Evento::find($request->IDEvento);
+                    $Evento = Evento::find(Session::get('IDEvento'));
                     MailController::send($request->email,'Confirmação - Organizador','Mail.cadastroorganizador',array('Evento'=> $Evento->Titulo,'Senha'=> 'A Mesma','Email'=> $request->email));
                 }
                 $aid = $request->id;

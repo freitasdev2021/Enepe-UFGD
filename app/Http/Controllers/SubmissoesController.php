@@ -191,6 +191,7 @@ class SubmissoesController extends Controller
         //dd($Entregas);
         return view('Submissoes.entrega',[
             'Submissao' => $Submissao,
+            'Status' => (Auth::user()->tipo == 1) ? $Entregas['Status'] : $Entregas[0]->Status,
             'Entrega' => (session('Submissao')) ? session('Submissao') : '',
             'Evento' => $Evento,
             'Entregas' => $Entregas,
@@ -278,25 +279,43 @@ class SubmissoesController extends Controller
             }
 
             if(count($palavras) > $submissao->MaxLength || count($palavras) < $submissao->MinLength){
-                $rota = 'Submissoes/Entrega';
-                $aid = ["IDSubmissao"=>$request->IDSubmissao,"IDEntrega" => 0];
+                $rota = (Auth::user()->tipo == 3) ? 'Submissoes/Entrega' : 'Submissoes/Trabalho';
+                $aid = ["IDSubmissao"=>$request->IDSubmissao,"IDEntrega" => (Auth::user()->tipo == 3) ? 0 : $request->IDEntrega ];
                 session()->flash('Submissao',$request->all());
                 $mensagem = "O Trabalho Submetido não atende as Exigências Estabelecida na Norma!";
                 $status = 'error';
                 return false;
             }
 
+            if(Entrega::find($request->IDEntrega)->Status == 'Reprovado' || Entrega::find($request->IDEntrega)->Status == 'Aprovado'){
+                $rota = (Auth::user()->tipo == 3) ? 'Submissoes/Entrega' : 'Submissoes/Trabalho';
+                $aid = ["IDSubmissao"=>$request->IDSubmissao,"IDEntrega" => (Auth::user()->tipo == 3) ? 0 : $request->IDEntrega ];
+                $mensagem = "O Professor Já Corrigiu o Trabalho e não ha mais o que Fazer.";
+                $status = 'error';
+                return false;
+            }
+
+
             $status = 'success';
-            $data['IDInscrito'] = Auth::user()->id;
-            $rota = 'Submissoes/Entrega';
-            $mensagem = 'Trabalho Enviado com Sucesso!';
-            $aid = ["IDSubmissao"=>$request->IDSubmissao,"IDEntrega" => 0];
-            $data['Status'] = "Aguardando Correção";
-            MailController::send(Auth::user()->email,'Aviso de Submissão','Mail.submissao',array('Status'=> "Aguardando Correção",'Mensagem'=> "Por favor Aguarde sua Submissão ser Corrigida"));
-            if(!$request->IDEntrega){
-                $data['NEntrega'] = rand(1,99999);
-                Entrega::create($data);
+            if(Auth::user()->tipo == 3){
+                $data['IDInscrito'] = Auth::user()->id;
+                MailController::send(Auth::user()->email,'Aviso de Submissão','Mail.submissao',array('Status'=> "Aguardando Correção",'Mensagem'=> "Por favor Aguarde sua Submissão ser Corrigida"));
+                $rota = 'Submissoes/Entrega';
+                $mensagem = 'Trabalho Enviado com Sucesso!';
+                $aid = ["IDSubmissao"=>$request->IDSubmissao,"IDEntrega" => 0];
+                $data['Status'] = "Aguardando Correção";
+                if(!$request->IDEntrega){
+                    $data['NEntrega'] = rand(1,99999);
+                    Entrega::create($data);
+                }else{
+                    unset($data['_token']);
+                    unset($data['_method']);
+                    Entrega::find($request->IDEntrega)->update($data);
+                }
             }else{
+                $rota = 'Submissoes/Trabalho';
+                $aid = $request->IDEntrega;
+                $mensagem = "Trabalho foi Alterado com Sucesso!";
                 unset($data['_token']);
                 unset($data['_method']);
                 Entrega::find($request->IDEntrega)->update($data);
@@ -315,6 +334,33 @@ class SubmissoesController extends Controller
         }finally{
             return redirect()->route($rota, $aid)->with($status, $mensagem);
         }
+    }
+
+    public function getTrabalhoOrganizador($IDTrabalho){
+        $Trabalho = Entrega::find($IDTrabalho);
+        $Submissao = Submissao::find($Trabalho->IDSubmissao);
+        return view('submissoes.entrega',[
+            "Entregas"=> $Trabalho,
+            "Evento" => Evento::find(Session::get('IDEvento')),
+            "IDSubmissao"=> $Trabalho->IDSubmissao,
+            "IDEntrega"=>$IDTrabalho,
+            "Submissao"=> $Submissao,
+            'Status'=> $Trabalho->Status,
+            'Tematica' => [
+                'FACALE',
+                'FACE',
+                'FACET',
+                'FADIR',
+                'FAED',
+                'FAEN',
+                'FAIND',
+                'FCA',
+                'FCBA',
+                'FCH',
+                'FCS',
+                'Outro'
+            ]
+        ]);
     }
 
     public function getSubmissoes(){
@@ -543,7 +589,7 @@ class SubmissoesController extends Controller
                 $item[] = $r->Descricao;
                 $item[] = ($r->IDAvaliador == 0) ? $selectAvaliador."<input type='hidden' value='$r->IDInscrito' name='Inscrito[]'>" : $r->Avaliador." <button class='btn btn-xs btn-danger' type='button' onclick='removerAtribuicao($RemoveATR)'>Remover Atribuição</button>";
                 $item[] = empty($r->Status) ? 'Aguardando Correção' : $r->Status;
-                $item[] = "<a href=".route('Submissoes/Correcao',$r->IDEntrega).">Abrir</a>";
+                $item[] = "<a href=".route('Submissoes/Correcao',$r->IDEntrega).">Abrir</a> <a href=".route('Submissoes/Trabalho',$r->IDEntrega).">Editar Trabalho</a>";
                 $itensJSON[] = $item;
             }
         }else{
