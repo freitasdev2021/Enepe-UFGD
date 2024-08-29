@@ -339,7 +339,7 @@ class SubmissoesController extends Controller
     public function getTrabalhoOrganizador($IDTrabalho){
         $Trabalho = Entrega::find($IDTrabalho);
         $Submissao = Submissao::find($Trabalho->IDSubmissao);
-        return view('submissoes.entrega',[
+        return view('Submissoes.entrega',[
             "Entregas"=> $Trabalho,
             "Evento" => Evento::find(Session::get('IDEvento')),
             "IDSubmissao"=> $Trabalho->IDSubmissao,
