@@ -10,6 +10,7 @@ use App\Models\Inscricao;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use App\Models\Banca;
 use Illuminate\Support\Facades\Session;
 use Storage;
 class EventosController extends Controller
@@ -301,6 +302,11 @@ class EventosController extends Controller
                 $rota = 'Eventos/Novo';
                 $aid = '';
                 $createEvento = Evento::create($data);
+                Banca::create([
+                    "IDUser"=> Auth::user()->id,
+                    "Tipo"=> 1,
+                    "IDEvento"=> $createEvento->id
+                ]);
                 Session::put('IDEvento',$createEvento->id);
             }else{
                 if($request->file('Capa')){
