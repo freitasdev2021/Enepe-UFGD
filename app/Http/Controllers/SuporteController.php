@@ -5,6 +5,7 @@ use App\Models\Conversa;
 use App\Models\Mensagem;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\User;
 use Illuminate\Http\Request;
 class SuporteController extends Controller
 {
@@ -57,7 +58,8 @@ class SuporteController extends Controller
     public function save(Request $request){
         try{
             $data = $request->all();
-            $data['IDDestinatario'] = 14;
+            $US = User::where('email','suporte@freventosdigitais.com.br')->first();
+            $data['IDDestinatario'] = $US->id;
             $data['IDRemetente'] = Auth::user()->id;
             $rota = 'Suporte/index';
             $aid = '';
