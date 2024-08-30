@@ -185,13 +185,21 @@ class SubmissoesController extends Controller
         LEFT JOIN users a ON(a.id = e.IDAvaliador)
         WHERE $AND
         ";
-
         //dd($SQL);
         $Entregas = DB::select($SQL);
+        if(count($Entregas) > 0){
+            if(Auth::user()->tipo == 1){
+                $Status = $Entregas['Status'];
+            }else{
+                $Status = $Entregas[0]->Status;
+            }
+        }else{
+            $Status = "Aguardando Correção";
+        }
         //dd($Entregas);
         return view('Submissoes.entrega',[
             'Submissao' => $Submissao,
-            'Status' => (Auth::user()->tipo == 1) ? $Entregas['Status'] : $Entregas[0]->Status,
+            'Status' => $Status,
             'Entrega' => (session('Submissao')) ? session('Submissao') : '',
             'Evento' => $Evento,
             'Entregas' => $Entregas,
@@ -286,15 +294,6 @@ class SubmissoesController extends Controller
                 $status = 'error';
                 return false;
             }
-
-            if(Entrega::find($request->IDEntrega)->Status == 'Reprovado' || Entrega::find($request->IDEntrega)->Status == 'Aprovado'){
-                $rota = (Auth::user()->tipo == 3) ? 'Submissoes/Entrega' : 'Submissoes/Trabalho';
-                $aid = ["IDSubmissao"=>$request->IDSubmissao,"IDEntrega" => (Auth::user()->tipo == 3) ? 0 : $request->IDEntrega ];
-                $mensagem = "O Professor Já Corrigiu o Trabalho e não ha mais o que Fazer.";
-                $status = 'error';
-                return false;
-            }
-
 
             $status = 'success';
             if(Auth::user()->tipo == 3){

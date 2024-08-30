@@ -126,7 +126,7 @@
                 <br>
                 {{-- {{dd($debug)}} --}}
                 <div class="col-sm-12 text-left row">
-                    @if(empty($Entregas) || !empty($Entregas) && $Status == "Aprovado com Ressalvas")
+                    @if(empty($Entregas) || !empty($Entregas) && $Status == "Aprovado com Ressalvas" || $Status = "Aguardando Correção" && Auth::user()->tipo == 1)
                         <button class="btn bg-fr text-white col-auto">Salvar</button>&nbsp;
                         @if(!empty($Entregas) && Auth::user()->tipo == 3 && $Status == "Aprovado com Ressalvas")
                             <button class="btn btn-warning revisar col-auto" data-trabalho="{{route('Submissoes/getTrabalho',$IDEntrega)}}">Revisar</button>
