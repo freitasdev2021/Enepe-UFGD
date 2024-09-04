@@ -339,7 +339,8 @@ class EventosController extends Controller
     }
 
     public function getEventos(){
-        $registros = Evento::all();
+        $currentId = Auth::user()->id;
+        $registros = DB::select("SELECT e.Titulo,e.Descricao,e.Inicio,e.Termino,e.id FROM eventos e WHERE e.id IN(SELECT bd.IDEvento FROM bancaevento bd WHERE bd.IDUser = $currentId)");
         if(count($registros) > 0){
             foreach($registros as $r){
                 $item = [];
