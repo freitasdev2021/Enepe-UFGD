@@ -228,27 +228,27 @@ class CertificadosController extends Controller
                         !$Inscrito ||
                         !$Trabalho
                         ){
-                            $STRConteudo = "";
 
-                            if(!str_contains($Modelo->DSModelo,'{apresentador}')){
-                                $STRConteudo .= str_replace(['{evento}','{submissao}','{palavraschave}','{autores}'],[$Evento->Titulo,$Trabalho->Titulo,$Trabalho->palavrasChave,$Trabalho->Autores],$Modelo->DSModelo);
+                            $STRConteudo = $Modelo->DSModelo;
+
+                            // Substituir tags uma única vez
+                            $substituicoes = [
+                                '{evento}' => $Evento->Titulo,
+                                '{submissao}' => $Trabalho->Titulo,
+                                '{palavraschave}' => $Trabalho->palavrasChave,
+                                '{autores}' => $Trabalho->Autores,
+                                '{apresentador}' => $Inscrito->name
+                            ];
+
+                            foreach ($substituicoes as $tag => $valor) {
+                                if (str_contains($STRConteudo, $tag)) {
+                                    $STRConteudo = str_replace($tag, $valor, $STRConteudo);
+                                }
                             }
 
-                            if(!str_contains($Modelo->DSModelo,'{evento}')){
-                                $STRConteudo .= str_replace(['{apresentador}','{submissao}','{palavraschave}','{autores}'],[$Inscrito->name,$Trabalho->Titulo,$Trabalho->palavrasChave,$Trabalho->Autores],$Modelo->DSModelo);
-                            }
-
-                            if(!str_contains($Modelo->DSModelo,'{submissao}')){
-                                $STRConteudo .= str_replace(['{apresentador}','{evento}','{palavraschave}','{autores}'],[$Inscrito->name,$Evento->Titulo,$Trabalho->palavrasChave,$Trabalho->Autores],$Modelo->DSModelo);
-                            }
-
-                            if(!str_contains($Modelo->DSModelo,'{palavraschave}')){
-                                $STRConteudo .= str_replace(['{apresentador}','{evento}','{submissao}','{autores}'],[$Inscrito->name,$Evento->Titulo,$Trabalho->Titulo,$Trabalho->Autores],$Modelo->DSModelo);
-                            }
-
-                            if(!str_contains($Modelo->DSModelo,'{autores}')){
-                                $STRConteudo .= str_replace(['{apresentador}','{evento}','{submissao}','{palavraschave}'],[$Inscrito->name,$Evento->Titulo,$Trabalho->Titulo,$Trabalho->palavrasChave],$Modelo->DSModelo);
-                            }
+                            // Remove as tags não substituídas, se necessário
+                            $tagsNaoSubstituidas = array_keys($substituicoes);
+                            $STRConteudo = str_replace($tagsNaoSubstituidas, '', $STRConteudo);
 
                             $Conteudo = wordwrap($STRConteudo,50,"|");
                             $emissao[] = array(
@@ -400,19 +400,24 @@ class CertificadosController extends Controller
                         //
                         if(!str_contains($Modelo->DSModelo,'{telespectadorpalestra}') || !str_contains($Modelo->DSModelo,'{evento}') || !$Assistiu || !str_contains($Modelo->DSModelo,'{palestra}') || !$Inscrito){
                             foreach($Assistiu as $as){
-                                $STRConteudo = "";
+                                $STRConteudo = $Modelo->DSModelo;
 
-                                if(!str_contains($Modelo->DSModelo,'{telespectadorpalestra}')){
-                                    $STRConteudo .= str_replace(['{palestra}','{evento}'],[$as->Titulo,$Evento->Titulo],$Modelo->DSModelo);
+                                // Substituir tags uma única vez
+                                $substituicoes = [
+                                    '{evento}' => $Evento->Titulo,
+                                    '{palestra}' => $as->Titulo,
+                                    '{telespectadorpalestra}' => $Inscrito->name
+                                ];
+
+                                foreach ($substituicoes as $tag => $valor) {
+                                    if (str_contains($STRConteudo, $tag)) {
+                                        $STRConteudo = str_replace($tag, $valor, $STRConteudo);
+                                    }
                                 }
 
-                                if(!str_contains($Modelo->DSModelo,'{palestra}')){
-                                    $STRConteudo = str_replace(['{telespectadorpalestra}','{evento}'],[$Inscrito->name,$as->Titulo,$Evento->Titulo],$Modelo->DSModelo);
-                                }
-
-                                if(!str_contains($Modelo->DSModelo,'{evento}')){
-                                    $STRConteudo = str_replace(['{telespectadorpalestra}','{palestra}'],[$Inscrito->name,$as->Titulo],$Modelo->DSModelo);
-                                }
+                                // Remove as tags não substituídas, se necessário
+                                $tagsNaoSubstituidas = array_keys($substituicoes);
+                                $STRConteudo = str_replace($tagsNaoSubstituidas, '', $STRConteudo);
 
                                 $Conteudo = wordwrap($STRConteudo,50,"|");
                                 $emissao[] = array(
@@ -449,19 +454,24 @@ class CertificadosController extends Controller
                         if(!str_contains($Modelo->DSModelo,'{palestrante}') || !str_contains($Modelo->DSModelo,'{evento}') || !$Palestrou || !str_contains($Modelo->DSModelo,'{palestra}') || !$Inscrito){
                             foreach($Palestrou as $pa){
 
-                                $STRConteudo = "";
+                                $STRConteudo = $Modelo->DSModelo;
 
-                                if(!str_contains($Modelo->DSModelo,'{palestrante}')){
-                                    $STRConteudo .= str_replace(['{palestra}','{evento}'],[$pa->Titulo,$Evento->Titulo],$Modelo->DSModelo);
+                                // Substituir tags uma única vez
+                                $substituicoes = [
+                                    '{evento}' => $Evento->Titulo,
+                                    '{palestrante}' => $Inscrito->Nome,
+                                    '{palestra}' => $pa->Titulo
+                                ];
+
+                                foreach ($substituicoes as $tag => $valor) {
+                                    if (str_contains($STRConteudo, $tag)) {
+                                        $STRConteudo = str_replace($tag, $valor, $STRConteudo);
+                                    }
                                 }
 
-                                if(!str_contains($Modelo->DSModelo,'{evento}')){
-                                    $STRConteudo .= str_replace(['{palestrante}','{palestra}'],[$Inscrito->Nome,$pa->Titulo],$Modelo->DSModelo);
-                                }
-
-                                if(!str_contains($Modelo->DSModelo,'{palestra}')){
-                                    $STRConteudo .= str_replace(['{palestrante}','{evento}'],[$Inscrito->Nome,$Evento->Titulo],$Modelo->DSModelo);
-                                }
+                                // Remove as tags não substituídas, se necessário
+                                $tagsNaoSubstituidas = array_keys($substituicoes);
+                                $STRConteudo = str_replace($tagsNaoSubstituidas, '', $STRConteudo);
 
                                 $Conteudo = wordwrap($STRConteudo,50,"|");
                                 $emissao[] = array(

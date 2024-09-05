@@ -20,7 +20,6 @@
               <h5 class="card-title">{{$a->Titulo}}</h5>
               <br>
               <p class="card-text">{{date('d/m/Y H:i:s',strtotime($a->Inicio))}}</p>
-              <p class="card-text">{{$a->Descricao}}</p>
               <ul>
                 @foreach(json_decode($a->listaApresentacoes) as $ap)
                 <li>{{$ap->titulo}} ({{$ap->apresentador}})</li>
