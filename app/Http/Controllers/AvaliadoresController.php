@@ -103,15 +103,17 @@ class AvaliadoresController extends Controller
     public function getAvaliadores(){
         $IDEvento = Session::get('IDEvento');
         $registros = DB::select("SELECT 
-        u.name,
-        u.email,
-        u.id,
-        CASE WHEN c.id IS NULL THEN 0 ELSE 1 END as Certificou,
-        CASE WHEN e.id IS NULL THEN 0 ELSE 1 END as Avaliou
-        FROM users u 
-        LEFT JOIN certificados c ON(u.id = c.IDInscrito) 
-        LEFT JOIN entergas e ON(u.id = e.IDAvaliador)
-        WHERE u.tipo = 2 AND u.id IN(SELECT IDUser FROM bancaevento WHERE bancaevento.IDEvento = $IDEvento)
+                u.id,
+                MAX(u.name) as name,
+                MAX(u.email) as email,
+                CASE WHEN MAX(c.id) IS NULL THEN 0 ELSE 1 END as Certificou,
+                CASE WHEN MAX(e.id) IS NULL THEN 0 ELSE 1 END as Avaliou
+            FROM users u 
+            LEFT JOIN certificados c ON u.id = c.IDInscrito
+            LEFT JOIN entergas e ON u.id = e.IDAvaliador
+            WHERE u.tipo = 2 
+            AND u.id IN (SELECT IDUser FROM bancaevento WHERE bancaevento.IDEvento = $IDEvento)
+            GROUP BY u.id;
         ");
         if(count($registros) > 0){
             foreach($registros as $r){
