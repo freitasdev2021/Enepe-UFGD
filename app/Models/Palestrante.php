@@ -15,6 +15,7 @@ class Palestrante extends Model
         'Nome',
         'Curriculo',
         'Foto',
-        'Email'
+        'Email',
+        'IDEvento'
     ];
 }

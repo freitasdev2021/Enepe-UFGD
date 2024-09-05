@@ -26,6 +26,7 @@
                 <table class="table table-sm tabela" id="escolas" data-rota="{{ route('Submissoes/Entregues/list', $IDSubmissao) . (isset($_GET['Modalidade']) ? '?Modalidade=' . $_GET['Modalidade'] : '') }}">
                     <thead>
                       <tr>
+                        <th style="text-align:center;" scope="col">Número</th>
                         <th style="text-align:center;" scope="col">Título</th>
                         <th style="text-align:center;" scope="col">Inscrito</th>
                         <th style="text-align:center;" scope="col">Apresentador</th>

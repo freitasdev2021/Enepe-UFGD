@@ -35,7 +35,7 @@
                      @endif
                     @endif
                     <x-Modulo nome="Suporte" icon="bx bx-support nav_icon" rota="Suporte/index" endereco="Suporte"/>
-                    <x-Modulo nome="Suporte" icon="bx bxs-cog nav_icon" rota="Configuracoes/index" endereco="Configuracoes"/>
+                    <x-Modulo nome="Alterar Senha" icon="bx bxs-cog nav_icon" rota="Configuracoes/index" endereco="Configuracoes"/>
                     {{-- <a href="https://wa.me/5531983086235" class="nav_link" target="_blank">
                      <i class='bx bx-support nav_icon'></i>
                      <span class="nav_name">Suporte</span>

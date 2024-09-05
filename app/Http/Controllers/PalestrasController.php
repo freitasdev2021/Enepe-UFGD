@@ -197,6 +197,7 @@ class PalestrasController extends Controller
                     $request->file('Foto')->storeAs('palestrantes',$Foto,'public');
                     $data['Foto'] = $Foto;
                 }
+                $data['IDEvento'] = Session::get('IDEvento');
                 Palestrante::create($data);
             }else{
                 if($request->file('Foto')){
@@ -252,7 +253,7 @@ class PalestrasController extends Controller
 
     public function getPalestrantes(){
         $IDEvento = Session::get('IDEvento');
-        $registros = DB::select("SELECT pa.Curriculo,pa.Nome,pa.Foto,pa.id FROM palestras pl INNER JOIN palestrantes pa ON(pl.IDPalestrante = pa.id) INNER JOIN eventos e ON(e.id = pl.IDEvento) AND pl.IDEvento = $IDEvento");
+        $registros = DB::select("SELECT pa.Curriculo,pa.Nome,pa.Foto,pa.id FROM palestrantes pa INNER JOIN eventos e ON(e.id = pa.IDEvento) AND pa.IDEvento = $IDEvento");
         if(count($registros) > 0){
             foreach($registros as $r){
                 $item = [];

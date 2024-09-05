@@ -241,6 +241,8 @@ class SubmissoesController extends Controller
                 "Feedback"=>$request->Feedback
             ]);
             MailController::send(Auth::user()->email,'Aviso de Correção da Submissão','Mail.submissao',array('Status'=> $request->Status,'Mensagem'=> "Sua Submissão foi Corrigida!"));
+            $IDAluno = Entrega::find($request->IDEntrega)->IDInscrito;
+            MailController::send(User::find($IDAluno)->email,'Aviso de Correção da Submissão','Mail.submissao',array('Status'=> $request->Status,'Mensagem'=> "Sua Submissão foi Corrigida!"));
             $mensagem = 'Trabalho corrigido com sucesso!';
             $rota = 'Submissoes/Entregues';
             $aid = $request->IDSubmissao;
@@ -562,6 +564,7 @@ class SubmissoesController extends Controller
             e.Descricao,
             e.Apresentador,
             e.IDAvaliador,
+            e.NEntrega,
             e.IDInscrito,
             a.name as Avaliador,
             e.Status
@@ -580,6 +583,7 @@ class SubmissoesController extends Controller
             foreach($registros as $r){
                 $RemoveATR = '"'. strval(route('Submissoes/RemoveAtr',$r->IDEntrega)). '"';
                 $item = [];
+                $item[] = $r->NEntrega;
                 $item[] = $r->Titulo;
                 $item[] = $r->Inscrito;
                 $item[] = $r->Apresentador;

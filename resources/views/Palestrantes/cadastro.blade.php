@@ -32,7 +32,7 @@
                         <div class="d-flex justify-content-center">
                             <div data-mdb-ripple-init class="btn btn-primary btn-rounded">
                                 <label class="form-label text-white m-1" for="customFile2">Upload Foto</label>
-                                <input type="file" name="Foto" class="form-control d-none" id="customFile2" onchange="displaySelectedImage(event, 'selectedAvatar')" accept="image/jpg,image/png,image/jpeg" {{!isset($Registro) ? 'required' : ''}} />
+                                <input type="file" name="Foto" class="form-control d-none" id="customFile2" onchange="displaySelectedImage(event, 'selectedAvatar')" accept="image/jpg,image/png,image/jpeg" {{!isset($Registro) ? '' : ''}} />
                                 <input name="oldFoto" type="hidden" value="{{isset($Registro) ? $Registro->Foto : ''}}">
                             </div>
                         </div>

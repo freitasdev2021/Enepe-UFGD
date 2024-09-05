@@ -71,7 +71,7 @@ class AtividadesController extends Controller
                 INNER JOIN 
                     entergas en2 ON(ap2.IDEntrega = en2.id) 
                 WHERE 
-                    ap.IDAtividade = a.id
+                    ap2.IDAtividade = a.id
             ) AS listaApresentacoes
         FROM 
             atividades a 

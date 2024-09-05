@@ -719,7 +719,7 @@ class CertificadosController extends Controller
                 FROM users u
                 LEFT JOIN certificados c ON(u.id = c.IDInscrito)
                 LEFT JOIN modelos m ON(m.id = c.IDModelo)
-                WHERE u.tipo IN(1,2)
+                WHERE u.tipo IN(1,2) AND u.id IN(SELECT IDUser FROM bancaevento be WHERE be.IDEvento = $evento)
             SQL;
         }elseif(isset($_GET['Tipo']) && $_GET['Tipo'] == 'Fizeram a Avaliação'){
             $SQL = <<<SQL

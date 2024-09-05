@@ -33,7 +33,14 @@ class SuporteController extends Controller
     }
 
     public function sendMessage(Request $request){
-        Mensagem::create($request->all());
+        try{
+            $erro = "";
+            Mensagem::create($request->all());
+        }catch(\Throwable $th){
+            $erro = $th->getMessage();
+        }finally{
+            echo $erro;
+        }
     }
 
     public function cadastro($id=null){
@@ -58,12 +65,12 @@ class SuporteController extends Controller
     public function save(Request $request){
         try{
             $data = $request->all();
-            $US = User::where('email','suporte@freventosdigitais.com.br')->first();
+            $US = User::where('email','suporte@freventosdigtiais.com.br')->first();
             $data['IDDestinatario'] = $US->id;
             $data['IDRemetente'] = Auth::user()->id;
+            Conversa::create($data);
             $rota = 'Suporte/index';
             $aid = '';
-            Conversa::create($data);
             $mensagem = "Salvo";
             $status = 'success';
         }catch(\Throwable $th){

@@ -58,7 +58,7 @@
                         </div>
                         <div class="col-sm-12">
                             <label>Feedback</label>
-                            <textarea class="form-control" maxlength="100" name="Feedback" required></textarea>
+                            <textarea class="form-control" maxlength="100" name="Feedback" required>{{$Trabalho->Feedback}}</textarea>
                         </div>
                     </div>
                     <br>
