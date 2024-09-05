@@ -14,6 +14,7 @@ class Certificados extends Model
     protected $fillable = [
         'Certificado',
         'IDEvento',
+        'Disponibilizade',
         'IDInscrito',
         'Codigo',
         'IDModelo'

@@ -8,6 +8,7 @@ use App\Models\Evento;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
 use App\Models\Formulario;
+use ConsoleTVs\Charts\Facades\Charts;
 use App\Models\Resposta;
 
 class FormulariosController extends Controller
@@ -52,10 +53,60 @@ class FormulariosController extends Controller
     }
 
     public function respostas($id){
-        $Registro = DB::select("SELECT f.Formulario FROM formularios f WHERE f.id = $id")[0];
+        // Consulta SQL para obter registros de respostas
+        // Consulta SQL para obter registros de respostas
+        $registros = DB::select("
+            SELECT r.Respostas, r.id, u.name 
+            FROM respostas r 
+            INNER JOIN formularios f ON (f.id = r.IDForm) 
+            INNER JOIN users u ON (r.IDUser = u.id) 
+            WHERE f.id = :id", ['id' => $id]);
+
+        $respostaCount = [];
+
+        if (count($registros) > 0) {
+            foreach ($registros as $registro) {
+                // Decodifica as respostas JSON para um array associativo
+                $respostas = json_decode($registro->Respostas, true);
+
+                // Conta o número de respostas para cada pergunta
+                foreach ($respostas as $resposta) {
+                    $pergunta = $resposta['Conteudo']; // Supondo que a pergunta esteja no JSON
+                    $respostaTexto = isset($resposta['Resposta']) ? $resposta['Resposta'] : 'Sem Resposta';
+
+                    // Incrementa a contagem de respostas por pergunta e tipo de resposta
+                    if (!isset($respostaCount[$respostaTexto])) {
+                        $respostaCount[$respostaTexto] = [];
+                    }
+
+                    if (!isset($respostaCount[$respostaTexto][$pergunta])) {
+                        $respostaCount[$respostaTexto][$pergunta] = 0;
+                    }
+
+                    $respostaCount[$respostaTexto][$pergunta]++;
+                }
+            }
+        }
+
+        // Preparar os dados para passar para a view
+        $labels = array_keys(reset($respostaCount)); // Usando as perguntas como labels
+        $datasets = [];
+
+        // Criar datasets para cada tipo de resposta
+        foreach ($respostaCount as $resposta => $contagem) {
+            $datasets[] = [
+                'label' => $resposta, // Nome da resposta (ex: "Bom", "Ruim")
+                'data' => array_values($contagem), // Valores de contagem de respostas
+                'backgroundColor' => 'rgba(54, 162, 235, 0.6)', // Defina a cor conforme necessário
+                'borderColor' => 'rgba(54, 162, 235, 1)',
+                'borderWidth' => 1,
+            ];
+        }
+
         return view('Formularios.respostas',array(
             "submodulos" => self::cadastroSubmodulos,
-            "respostas" => json_decode($Registro->Formulario),
+            'labels' => $labels,
+            'datasets' => $datasets,
             "id" => $id
         ));
     }

@@ -28,7 +28,8 @@
                     </select>
                 </div>
                 <div class="col-auto">
-                    <button class="btn bg-fr text-white" type="submit">Filtrar</button>
+                    <button class="btn bg-fr text-white" type="submit">Filtrar</button>&nbsp;
+                    <a href='{{route('Certificados/Disponibilizar')}}' class="btn btn-success">Disponibilizar para Todos do Evento</a>
                 </div>
             </form>
             <!--LISTAS-->
@@ -38,6 +39,7 @@
                 <table class="table table-sm tabela" id="escolas" data-rota="{{route('Certificados/list')}}">
                     <thead>
                       <tr>
+                        <th style="text-align:center;" scope="col">Disponibilidade</th>
                         <th style="text-align:center;" scope="col">Nome</th>
                         <th style="text-align:center;" scope="col">Email</th>
                         <th style="text-align:center;" scope="col">Certificado</th>

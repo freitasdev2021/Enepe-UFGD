@@ -40,7 +40,9 @@
                     @endif
                     @if(isset($Registro))
                     <input type="hidden" name="id" value="{{$Registro->id}}">
-                    <input type="checkbox" name="mudarApresentacoes"> Mudar Apresentações?
+                    <div>
+                        <input type="checkbox" name="mudarApresentacoes"> Mudar Apresentações?
+                    </div>
                     @endif
                     <input type="hidden" name="IDEvento" value="{{$IDEvento}}">
                     <div class="row">
@@ -51,12 +53,6 @@
                         <div class="col-sm-4">
                             <label>Inicio</label>
                             <input type="datetime-local" name="Inicio" class="form-control" value="{{isset($Registro) ? $Registro->Inicio : ''}}" required>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <label>Descrição</label>
-                            <textarea name="Descricao" class="form-control">{{isset($Registro) ? $Registro->Descricao : ''}}</textarea>
                         </div>
                     </div>
                     <br>

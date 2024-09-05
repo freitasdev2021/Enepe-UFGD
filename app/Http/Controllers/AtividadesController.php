@@ -51,7 +51,6 @@ class AtividadesController extends Controller
         SELECT 
             a.id,
             a.Titulo,
-            a.Descricao,
             a.Inicio,
             (
                 SELECT
@@ -90,6 +89,12 @@ class AtividadesController extends Controller
         $WHERE = "";
         if(isset($_GET['Modalidade']) && !empty($_GET['Modalidade'])){
             $WHERE = " AND s.Categoria='".$_GET['Modalidade']."'";
+        }
+
+        if($id){
+            $WHERE .= " AND e.id NOT IN(SELECT ap.IDEntrega FROM apresentacoes ap WHERE ap.IDAtividade != $id)";
+        }else{
+            $WHERE .=" AND e.id NOT IN(SELECT ap.IDEntrega FROM apresentacoes ap)";
         }
 
         $SQL = "SELECT e.Titulo,
@@ -191,12 +196,11 @@ class AtividadesController extends Controller
     }
 
     public function getAtividades($IDEvento){
-        $registros = DB::select("SELECT a.IDEvento,a.id,a.Titulo,a.Descricao,a.Inicio FROM atividades a WHERE a.IDEvento = $IDEvento");
+        $registros = DB::select("SELECT a.IDEvento,a.id,a.Titulo,a.Inicio FROM atividades a WHERE a.IDEvento = $IDEvento");
         if(count($registros) > 0){
             foreach($registros as $r){
                 $item = [];
                 $item[] = $r->Titulo;
-                $item[] = $r->Descricao;
                 $item[] = Controller::data($r->Inicio,'d/m/Y H:i');
                 $item[] = "<a href=".route('Eventos/Atividades/Edit',['id'=>$r->id,'IDEvento'=>$r->IDEvento])." class='btn bg-fr text-white btn-xs'>Abrir</a>
                 <a href=".route('Atividades/Atividade',$r->id)." class='btn bg-fr text-white btn-xs'>Entrar</a>

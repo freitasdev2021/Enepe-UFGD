@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "consoletvs/charts": "^6.7",
         "firebase/php-jwt": "^6.10",
         "fpdf/fpdf": "^1.86",
         "guzzlehttp/guzzle": "^7.8",

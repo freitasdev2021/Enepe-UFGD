@@ -56,7 +56,7 @@ Route::get('/dashboard', function () {
         e.Titulo                
     ");
     return view('dashboard',[
-        "Certificados" => Certificados::where("IDInscrito",Auth::user()->id)->get(),
+        "Certificados" => Certificados::where("IDInscrito",Auth::user()->id)->where('Disponibilidade',1)->get(),
         "Formularios" => $Formularios,
         "Eventos" => $Eventos,
         "Inscritos" => count($Inscritos),
@@ -181,6 +181,7 @@ Route::middleware('auth')->group(function () {
         Route::post('Submissoes/Delete', [SubmissoesController::class, 'delete'])->name('Submissoes/Delete');
         Route::post('Submissoes/Entregues/setAvaliador', [SubmissoesController::class, 'setAvaliador'])->name('Submissoes/Entregues/setAvaliador');
         //CERTIFICADOS
+        Route::get('Certificados/Disponibilizar',[CertificadosController::class,'disponibilizar'])->name('Certificados/Disponibilizar');
         Route::get('Certificados/Excluir/{numero}',[CertificadosController::class,'delCertificado'])->name("Certificados/Excluir");
         Route::get('Modelos/Excluir/{id}', [CertificadosController::class, 'delete'])->name('Modelos/Excluir');
         Route::post('Certificados/Modelos/Save', [CertificadosController::class, 'saveModelo'])->name('Certificados/Modelos/Save');

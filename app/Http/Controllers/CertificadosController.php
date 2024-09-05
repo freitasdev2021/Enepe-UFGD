@@ -47,9 +47,9 @@ class CertificadosController extends Controller
 
         // Instancia o mPDF
         // Cria o PDF com FPDF
-        $pdf = new FPDF('L', 'mm', array(150,200));
+        $pdf = new FPDF('L', 'mm', array(508, 286)); // Configura o tamanho da página para 1920x1080 pixels em mm
         $pdf->AddPage();
-        $pdf->Image($imagePath, 10, 10, 190);
+        $pdf->Image($imagePath, 10, 10, 508 - 20);
 
         // Define o nome do arquivo PDF
         $fileName = 'certificado.pdf';
@@ -84,9 +84,9 @@ class CertificadosController extends Controller
 
         // Instancia o mPDF
         // Cria o PDF com FPDF
-        $pdf = new FPDF();
+        $pdf = new FPDF('L', 'mm', array(508, 286)); // Configura o tamanho da página para 1920x1080 pixels em mm
         $pdf->AddPage();
-        $pdf->Image($imagePath, 10, 10, 190);
+        $pdf->Image($imagePath, 10, 10, 508 - 20);
 
         // Define o nome do arquivo PDF
         $fileName = 'certificado.pdf';
@@ -672,7 +672,8 @@ class CertificadosController extends Controller
                 p.id as IDInscrito,
                 MAX(c.Codigo) as Codigo,
                 MAX(c.IDModelo) as IDModelo,
-                MAX(c.Certificado) as Certificado
+                MAX(c.Certificado) as Certificado,
+                MAX(c.Disponibilidade) as Disponibilidade
                 FROM 
                     palestrantes p
                 INNER JOIN 
@@ -686,6 +687,7 @@ class CertificadosController extends Controller
                 GROUP BY 
                     p.Nome, p.Email, p.id;
                 SQL;
+                $registros = DB::select($SQL);
         }elseif(isset($_GET['Tipo']) && $_GET['Tipo'] == 'Inscritos'){
             $SQL = <<<SQL
                 SELECT 
@@ -693,6 +695,7 @@ class CertificadosController extends Controller
                     u.Email as Email,
                     u.id as IDInscrito,
                     c.Certificado as Certificado,
+                    c.Disponibilidade,
                     c.IDModelo as IDModelo,
                     c.Codigo
                 FROM 
@@ -707,12 +710,14 @@ class CertificadosController extends Controller
                     i.IDEvento = $evento
                 ;
             SQL;
+            $registros = DB::select($SQL);
         }elseif(isset($_GET['Tipo']) && $_GET['Tipo'] == 'Organizadores e Avaliadores'){
             $SQL = <<<SQL
                 SELECT 
                     u.name as Nome,
                     u.Email as Email,
                     u.id as IDInscrito,
+                    c.Disponibilidade,
                     c.IDModelo,
                     c.Certificado,
                     c.Codigo
@@ -721,6 +726,7 @@ class CertificadosController extends Controller
                 LEFT JOIN modelos m ON(m.id = c.IDModelo)
                 WHERE u.tipo IN(1,2) AND u.id IN(SELECT IDUser FROM bancaevento be WHERE be.IDEvento = $evento)
             SQL;
+            $registros = DB::select($SQL);
         }elseif(isset($_GET['Tipo']) && $_GET['Tipo'] == 'Fizeram a Avaliação'){
             $SQL = <<<SQL
                 SELECT 
@@ -728,6 +734,7 @@ class CertificadosController extends Controller
                     u.Email as Email,
                     u.id as IDInscrito,
                     c.IDModelo,
+                    c.Disponibilidade,
                     c.Certificado,
                     c.Codigo
                 FROM users u
@@ -736,29 +743,15 @@ class CertificadosController extends Controller
                 WHERE u.id IN(SELECT IDUser FROM formularios f INNER JOIN respostas r ON(f.id = r.IDForm) WHERE f.IDEvento = $evento)
             SQL;
         }else{
-            $SQL = <<<SQL
-                SELECT 
-                    u.name as Nome,
-                    u.Email as Email,
-                    u.id as IDInscrito,
-                    c.IDModelo,
-                    c.Certificado,
-                    c.Codigo
-                FROM users u
-                INNER JOIN inscricoes i ON(i.IDUser = u.id)
-                LEFT JOIN certificados c ON(u.id = c.IDInscrito)
-                LEFT JOIN modelos m ON(m.id = c.IDModelo)
-                WHERE i.IDEvento = $evento
-            SQL;
+            $registros = [];
         }
-
-        $registros = DB::select($SQL);
 
         $itensJSON = [];
         if (count($registros) > 0) {
             foreach ($registros as $r) {
                 $RemoveCRT = !empty($r->Certificado) ? '"'. strval(route('Certificados/Excluir',$r->Codigo)). '"' : 0;
                 $item = [];
+                $item[] = ($r->Disponibilidade == 0) ? "Indisponivel para o Aluno" : 'Disponivel para o Aluno';
                 $item[] = $r->Nome;
                 $item[] = $r->Email;
                 $item[] = self::getSelectModelos($r->IDInscrito,$r->IDModelo)."<input type='hidden' id='inscrito_$r->IDInscrito' name='IDInscrito[]'>";
@@ -779,6 +772,11 @@ class CertificadosController extends Controller
 
         echo json_encode($resultados);
 
+    }
+
+    public function disponibilizar(){
+        Certificados::where('Disponibilidade',0)->where('IDEvento',Session::get('IDEvento'))->update(['Disponibilidade'=>1]);
+        return redirect()->route('Certifica/index');
     }
 
     public function cadastroModelos($id=null){

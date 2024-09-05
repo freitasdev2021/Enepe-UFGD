@@ -13,7 +13,6 @@ class Atividade extends Model
 
     protected $fillable = [
         'Titulo',
-        'Descricao',
         'Inicio',
         'Chat',
         'URLMeeting',

@@ -240,7 +240,6 @@ class SubmissoesController extends Controller
                 "Status"=> $request->Status,
                 "Feedback"=>$request->Feedback
             ]);
-            MailController::send(Auth::user()->email,'Aviso de Correção da Submissão','Mail.submissao',array('Status'=> $request->Status,'Mensagem'=> "Sua Submissão foi Corrigida!"));
             $IDAluno = Entrega::find($request->IDEntrega)->IDInscrito;
             MailController::send(User::find($IDAluno)->email,'Aviso de Correção da Submissão','Mail.submissao',array('Status'=> $request->Status,'Mensagem'=> "Sua Submissão foi Corrigida!"));
             $mensagem = 'Trabalho corrigido com sucesso!';

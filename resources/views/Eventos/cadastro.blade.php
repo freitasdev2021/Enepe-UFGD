@@ -28,74 +28,68 @@
                         <div class="col-sm-12">
                             <label>Capa do Evento</label>
                             <img src="{{isset($Registro) ? url('storage/Site/'.$Registro->Capa) : asset('img/uploadModelo.jpg') }}" id="capa" height="500px" width="100%">
-                            <input type="file" name="Capa" style="display:none;" onchange="displaySelectedImage(event, 'capa')">
-                            <input type="hidden" name="oldCapa" value="{{isset($Registro) ? $Registro->Capa : ''}}">
+                            <input required type="file" name="Capa" style="display:none;" onchange="displaySelectedImage(event, 'capa')">
+                            <input required type="hidden" name="oldCapa" value="{{isset($Registro) ? $Registro->Capa : ''}}">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-12">
                             <label>Título</label>
-                            <input type="text" name="Titulo" class="form-control" value="{{isset($Registro) ? $Registro->Titulo : ''}}" required>
+                            <input type="text" name="Titulo" class="form-control" value="{{isset($Registro) ? $Registro->Titulo : ''}}" required maxlength="250">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-6">
                             <label>Início</label>
-                            <input type="datetime-local" name="Inicio" class="form-control" value="{{(isset($Registro)) ? $Registro->Inicio : ''}}" >
+                            <input type="datetime-local" name="Inicio" class="form-control" value="{{(isset($Registro)) ? $Registro->Inicio : ''}}" required>
                         </div>
                         <div class="col-sm-6">
                             <label>Término</label>
-                            <input type="datetime-local" name="Termino" class="form-control" value="{{(isset($Registro)) ? $Registro->Termino : ''}}">
+                            <input type="datetime-local" name="Termino" class="form-control" value="{{(isset($Registro)) ? $Registro->Termino : ''}}" required>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-6">
                             <label>Início das Inscrições</label>
-                            <input type="date" name="INIInscricao" class="form-control" value="{{(isset($Registro)) ? $Registro->INIInscricao : ''}}" >
+                            <input type="date" name="INIInscricao" class="form-control" value="{{(isset($Registro)) ? $Registro->INIInscricao : ''}}" required>
                         </div>
                         <div class="col-sm-6">
                             <label>Término das Inscrições</label>
-                            <input type="date" name="TERInscricoes" class="form-control" value="{{(isset($Registro)) ? $Registro->TERInscricoes : ''}}">
+                            <input type="date" name="TERInscricoes" class="form-control" value="{{(isset($Registro)) ? $Registro->TERInscricoes : ''}}" required>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-6">
                             <label>Início das Submissões</label>
-                            <input type="datetime-local" name="INISubmissao" class="form-control" value="{{(isset($Registro)) ? $Registro->INISubmissao : ''}}" >
+                            <input type="datetime-local" name="INISubmissao" class="form-control" value="{{(isset($Registro)) ? $Registro->INISubmissao : ''}}" required>
                         </div>
                         <div class="col-sm-6">
                             <label>Término das Submissões</label>
-                            <input type="datetime-local" name="TERSubmissao" class="form-control" value="{{(isset($Registro)) ? $Registro->TERSubmissao : ''}}">
+                            <input type="datetime-local" name="TERSubmissao" class="form-control" value="{{(isset($Registro)) ? $Registro->TERSubmissao : ''}}" required>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-12">
                             <label>Normas de Apresentação</label>
-                            <textarea name="Normas" class="form-control">{{isset($Registro) ? $Registro->Normas : ''}}</textarea>
+                            <textarea name="Normas" class="form-control" required>{{isset($Registro) ? $Registro->Normas : ''}}</textarea>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-12">
                             <label>Descrição</label>
-                            <textarea name="Descricao" class="form-control">{{isset($Registro) ? $Registro->Descricao : ''}}</textarea>
+                            <textarea name="Descricao" class="form-control" required>{{isset($Registro) ? $Registro->Descricao : ''}}</textarea>
                         </div>
                     </div>
-                    {{-- <div class="row">
-                        <div class="col-sm-12">
-                            <label>Ensalamento</label>
-                            <textarea name="Ensalamento" class="form-control">{{isset($Registro) ? $Registro->Ensalamento : ''}}</textarea>
-                        </div>
-                    </div> --}}
                     <input type="hidden" name="Ensalamento">
                     <div class="row">
                         <div class="col-sm-12">
                             <label>Modelo de Apresentação</label>
                             <input type="file" name="ModeloApresentacao" class="form-control">
-                            <input type="hidden" name="oldModeloApresentacao" value="{{isset($Registro) ? $Registro->ModeloApresentacao : ''}}">
+                            <input type="hidden" name="oldModeloApresentacao" value="{{isset($Registro) ? $Registro->ModeloApresentacao : ''}}" required>
                         </div>
                         <div class="col-sm-12">
                             <label>Tipos de Atividades</label>
-                            <input type="text" name="TPAtividade" class="form-control" maxlength="45" value="{{isset($Registro) ? $Registro->TPAtividade : ''}}">
+                            <input type="text" name="TPAtividade" class="form-control" maxlength="45" value="{{isset($Registro) ? $Registro->TPAtividade : ''}}" required>
                             <input type="hidden" name="oldModeloApresentacao" value="{{isset($Registro) ? $Registro->ModeloApresentacao : ''}}">
                         </div>
                     </div>

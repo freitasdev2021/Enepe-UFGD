@@ -135,60 +135,60 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <label>Título</label>
-                            <input type="text" name="Titulo" class="form-control" required>
+                            <input type="text" name="Titulo" class="form-control" required maxlength="250">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-6">
                             <label>Início</label>
-                            <input type="datetime-local" name="Inicio" class="form-control">
+                            <input type="datetime-local" name="Inicio" class="form-control" required>
                         </div>
                         <div class="col-sm-6">
                             <label>Término</label>
-                            <input type="datetime-local" name="Termino" class="form-control">
+                            <input type="datetime-local" name="Termino" class="form-control" required>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-6">
                             <label>Início das Inscrições</label>
-                            <input type="date" name="INIInscricao" class="form-control">
+                            <input type="date" name="INIInscricao" class="form-control" required>
                         </div>
                         <div class="col-sm-6">
                             <label>Término das Inscrições</label>
-                            <input type="date" name="TERInscricoes" class="form-control">
+                            <input type="date" name="TERInscricoes" class="form-control" required>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-6">
                             <label>Início das Submissões</label>
-                            <input type="datetime-local" name="INISubmissao" class="form-control">
+                            <input type="datetime-local" name="INISubmissao" class="form-control" required>
                         </div>
                         <div class="col-sm-6">
                             <label>Término das Submissões</label>
-                            <input type="datetime-local" name="TERSubmissao" class="form-control">
+                            <input type="datetime-local" name="TERSubmissao" class="form-control" required>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-12">
                             <label>Normas de Apresentação</label>
-                            <textarea name="Normas" class="form-control"></textarea>
+                            <textarea name="Normas" class="form-control" required></textarea>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-12">
                             <label>Descrição</label>
-                            <textarea name="Descricao" class="form-control"></textarea>
+                            <textarea name="Descricao" class="form-control" required></textarea>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-sm-12">
                             <label>Modelo de Apresentação</label>
-                            <input type="file" name="ModeloApresentacao" class="form-control">
+                            <input type="file" name="ModeloApresentacao" class="form-control" required>
                             <input type="hidden" name="oldModeloApresentacao">
                         </div>
                         <div class="col-sm-12">
                             <label>Tipos de Atividades</label>
-                            <input type="text" name="TPAtividade" class="form-control">
+                            <input type="text" name="TPAtividade" class="form-control" required>
                         </div>
                     </div>
                     <br>

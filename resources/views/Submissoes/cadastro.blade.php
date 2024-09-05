@@ -38,7 +38,7 @@
                             <select name="Categoria" class="form-control">
                                 @foreach($Modalidades as $m)
                                     @if(!empty($m))
-                                        <option value="{{$m}}" {{isset($Registro) && $Registro->Modalidade == $m ? 'selected' : ''}}>{{$m}}</option>
+                                        <option value="{{$m}}" {{isset($Registro) && $Registro->Categoria == $m ? 'selected' : ''}}>{{$m}}</option>
                                     @endif
                                 @endforeach
                             </select>
