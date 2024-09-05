@@ -69,7 +69,7 @@
                         <br>
                         <a href="{{url('storage/modelos/'.$c->Certificado)}}" download class="btn bg-fr text-white">Baixar</a>
                         <br>
-                        <a href="{{route('Certificados/pdf',$c->Certificado)}}" download class="btn bg-fr text-white">Baixar PDF</a>
+                        <button onclick="convertJpgToPdf('{{ url('storage/modelos/' . $c->Certificado) }}')" class="btn bg-fr text-white">Baixar PDF</button>
                     </div>
                     @endforeach
                 @else
@@ -377,7 +377,7 @@
                     <br>
                     <a href="{{url('storage/modelos/'.$c->Certificado)}}" download class="btn bg-fr text-white">Baixar</a>
                     <br>
-                    <a href="{{route('Certificados/pdf',$c->Certificado)}}" download class="btn bg-fr text-white">Baixar PDF</a>
+                    <button onclick="convertJpgToPdf('{{ url('storage/modelos/' . $c->Certificado) }}')" class="btn bg-fr text-white">Baixar PDF</button>
                 </div>
                 @endforeach
             @else
@@ -426,7 +426,7 @@
                     <br>
                     <a href="{{asset('storage/modelos/'.$c->Certificado)}}" download class="btn bg-fr text-white">Baixar</a>
                     <br>
-                    <a href="{{route('Certificados/pdf',$c->Certificado)}}" download class="btn bg-fr text-white">Baixar PDF</a>
+                    <button onclick="convertJpgToPdf('{{ url('storage/modelos/' . $c->Certificado) }}')" class="btn bg-fr text-white">Baixar PDF</button>
                 </div>
                 @endforeach
             @else

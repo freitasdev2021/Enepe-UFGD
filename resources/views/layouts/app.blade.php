@@ -24,4 +24,27 @@
          <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
          <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
          <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- CDN do Chart.js -->
+         <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+         <script>
+            function convertJpgToPdf(caminho){
+               const { jsPDF } = window.jspdf;
+               // Definir o PDF com tamanho personalizado para 1920x1080 pixels em modo paisagem
+               const pdf = new jsPDF({
+                  orientation: 'landscape', // Orientação paisagem
+                  unit: 'px', // Unidades em pixels
+                  format: [1920, 1080], // Tamanho da página em pixels
+               });
+               
+               const img = new Image();
+               img.src = caminho; // Substitua pelo caminho da sua imagem
+
+               img.onload = function() {
+                  // Adicionar a imagem ao PDF e ajustá-la para ocupar toda a página
+                  pdf.addImage(img, 'JPEG', 0, 0, 1920, 1080);
+                  
+                  // Salvar o PDF
+                  pdf.save('certificado.pdf');
+               };
+            }
+         </script>
 </html>

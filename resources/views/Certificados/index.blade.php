@@ -59,6 +59,7 @@
             <!--//-->
         </div>
     </div>
+    {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> --}}
     <script>
         $("select[name=evento]").on("change",function(){
             $("input[name=IDEvento]").val($(this).val())
@@ -79,6 +80,29 @@
 
         function setInscrito(IDInscrito){
             $("#inscrito_"+IDInscrito).val(IDInscrito)
+        }
+
+        function convertJpgToPdf(caminho){
+            alert("teste")
+            return false
+            const { jsPDF } = window.jspdf;
+            // Definir o PDF com tamanho personalizado para 1920x1080 pixels em modo paisagem
+            const pdf = new jsPDF({
+                orientation: 'landscape', // Orientação paisagem
+                unit: 'px', // Unidades em pixels
+                format: [1920, 1080], // Tamanho da página em pixels
+            });
+            
+            const img = new Image();
+            img.src = caminho; // Substitua pelo caminho da sua imagem
+
+            img.onload = function() {
+                // Adicionar a imagem ao PDF e ajustá-la para ocupar toda a página
+                pdf.addImage(img, 'JPEG', 0, 0, 1920, 1080);
+                
+                // Salvar o PDF
+                pdf.save('certificado.pdf');
+            };
         }
     </script>
 </x-educacional-layout>

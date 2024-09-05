@@ -750,13 +750,14 @@ class CertificadosController extends Controller
         if (count($registros) > 0) {
             foreach ($registros as $r) {
                 $RemoveCRT = !empty($r->Certificado) ? '"'. strval(route('Certificados/Excluir',$r->Codigo)). '"' : 0;
+                $urlPef = '"'.url('storage/modelos/'.$r->Certificado).'"';
                 $item = [];
                 $item[] = ($r->Disponibilidade == 0) ? "Indisponivel para o Aluno" : 'Disponivel para o Aluno';
                 $item[] = $r->Nome;
                 $item[] = $r->Email;
                 $item[] = self::getSelectModelos($r->IDInscrito,$r->IDModelo)."<input type='hidden' id='inscrito_$r->IDInscrito' name='IDInscrito[]'>";
                 $item[] = !empty($r->Certificado) ? "<a href=".url('storage/modelos/'.$r->Certificado)." class='btn btn-fr btn-xs text-white' download>Baixar</a> 
-                <a class='btn btn-fr btn-xs text white' href=".route('Certificados/pdf',$r->Certificado).">Baixar PDF</a> 
+                <button type='button' onclick='convertJpgToPdf($urlPef)' class='btn btn-xs bg-fr text-white'>Baixar PDF</button>
                 <a class='btn btn-fr btn-xs text white' href=".route('Certificados/Email',['email'=>$r->Email,'certificado'=>$r->Certificado]).">Enviar por Email</a> 
                 <button type='button' class='btn btn-fr btn-xs text-white' onclick='delCertificado($RemoveCRT)'>Excluir</button>
                 <a href=".url('storage/modelos/'.$r->Certificado)." class='btn btn-fr btn-xs text-white' target='_blank'>Abrir</a>" : 'Ainda Não Emitido';
