@@ -25,14 +25,6 @@ class EventosController extends Controller
         'nome' => 'Eventos',
         'rota' => 'Eventos/Edit',
         'endereco' => 'Cadastro'
-    ],[
-        'nome' => 'Atividades',
-        'rota' => 'Eventos/Atividades/index',
-        'endereco' => 'Atividades'
-    ],[
-        'nome' => 'Inscrições',
-        'rota' => 'Eventos/Inscricoes',
-        'endereco' => 'Inscricoes'
     ]);
 
     public function index(){
@@ -87,142 +79,6 @@ class EventosController extends Controller
         }
     }
 
-    public function inscricoes($IDEvento){
-        $Evento = Evento::find($IDEvento);
-        return view("Eventos.inscritos",[
-            "IDEvento" => $IDEvento,
-            "submodulos" => self::cadastroSubmodulos,
-            'Categorias' => json_decode($Evento->Categorias,true)
-        ]);
-    }
-
-    public function inscreverAluno($IDEvento,$IDAluno=null){
-        $Evento = Evento::find($IDEvento);
-        $view = [
-            "IDEvento" => $IDEvento,
-            "submodulos" => self::cadastroSubmodulos,
-            'Categorias' => json_decode($Evento->Categorias,true)
-        ];
-
-        if($IDAluno){
-            $SQL = <<<SQL
-                SELECT
-                    u.name as Nome,
-                    i.Categoria,
-                    i.id as IDInscricao,
-                    u.email as Email,
-                    u.id as IDUser
-                FROM inscricoes i
-                INNER JOIN users u ON(u.id = i.IDUser)
-                WHERE i.IDEvento = $IDEvento AND i.IDUser = $IDAluno
-            SQL;
-            $view['Registro'] = DB::select($SQL)[0];
-        }
-        return view('Eventos.inscreverAluno',$view);
-    }
-
-    public function saveInscricaoAluno(Request $request){
-        try{
-            if(!$request->id){
-                $RandPW = rand(100000,999999);
-                $dataUser = array(
-                    "name" => $request->name,
-                    "email" => $request->email,
-                    "password" => Hash::make($RandPW),
-                    'tipo' => 3
-                );
-                $setUser = User::create($dataUser);
-                Inscricao::create([
-                    'IDUser' => $setUser->id,
-                    'IDEvento' => $request->IDEvento,
-                    'Categoria' => $request->Categoria
-                ]);
-                // Enviar e-mail de confirmação com a senha
-                MailController::send($request->email,'Confirmação de Inscrição pela Universidade','Mail.inscrito',array('Senha'=> $RandPW,'Email'=>$request->email));
-                $mensagem = 'Inscrição Concluida! O Comprovante e os dados de Acesso a Plataforma serão enviados via Email';
-                $aid = $request->IDEvento;
-                $rota = 'Eventos/Inscricoes/inscreverAluno';
-            }else{
-                //ALTERAÇÃO NORMAL
-                //dd($request->all());
-                $userUpdate = ["name"=>$request->name,"email"=>$request->email];
-                $mailUpdate = array('Senha'=> "a Mesma",'Email'=>$request->email);
-                
-                //CASO ALTEREM A SENHA
-                if($request->alteraSenha){
-                    $RandPW = rand(100000,999999);
-                    $userUpdate['password'] = Hash::make($RandPW);
-                    $mailUpdate['Senha'] = $RandPW;
-                }
-                Inscricao::where('IDUser',$request->id)->update(["Categoria"=>$request->Categoria]);
-                User::find($request->id)->update($userUpdate);
-               
-                // Enviar e-mail de confirmação com a senha
-                MailController::send($request->email,'Confirmação de Inscrição pela Universidade','Mail.inscrito',$mailUpdate);
-                $mensagem = 'Inscrição Alterada! O Comprovante e os dados de Acesso a Plataforma serão enviados via Email';
-                $rota = 'Eventos/Inscricoes/editarAluno';
-                $aid = array('IDEvento'=> $request->IDEvento,"IDAluno"=>$request->id);
-            }
-            
-            $status = 'success';
-        }catch(\Throwable $th){
-            $mensagem = 'Erro '. $th->getMessage();
-            $aid = $request->IDEvento;
-            $rota = 'Eventos/Inscricoes/inscreverAluno';
-            $status = 'error';
-        }finally{
-            return redirect()->route($rota,$aid)->with($status,$mensagem);
-        }
-    }
-
-    public function excluirInscricao(Request $request){
-
-    }
-
-    public function getInscricoes($IDEvento){
-        $SQL = <<<SQL
-            SELECT
-                u.name as Nome,
-                i.Categoria,
-                i.id as IDInscricao,
-                u.email as Email,
-                u.id as IDUser,
-                CASE WHEN c.id IS NULL THEN 0 ELSE 1 END as Certificou,
-                CASE WHEN e.id IS NULL THEN 0 ELSE 1 END as Entregou
-            FROM inscricoes i
-            INNER JOIN users u ON(u.id = i.IDUser)
-            LEFT JOIN certificados c ON(u.id = c.IDInscrito)
-            LEFT JOIN entergas e ON(e.IDInscrito = u.id)
-            WHERE i.IDEvento = $IDEvento
-        SQL;
-        $registros = DB::select($SQL);
-        if(count($registros) > 0){
-            foreach($registros as $r){
-                $ApagarInscrito = '"'.route('Inscricoes/Excluir',$r->IDInscricao).'"';
-                $item = [];
-                $item[] = $r->Nome;
-                $item[] = $r->Categoria;
-                $item[] = $r->Email;
-                $item[] = "<a href=".route('Eventos/Inscricoes/editarAluno',['IDEvento'=>$IDEvento,"IDAluno"=>$r->IDUser]).">Abrir</a> <button class='btn btn-danger text-white btn-xs' onclick='apagarInscrito($ApagarInscrito,$r->Certificou,$r->Entregou)'>Apagar</button>";
-                $itensJSON[] = $item;
-            }
-        }else{
-            $itensJSON = [];
-        }
-        
-        $resultados = [
-            "recordsTotal" => intval(count($registros)),
-            "recordsFiltered" => intval(count($registros)),
-            "data" => $itensJSON 
-        ];
-        
-        echo json_encode($resultados);
-    }
-
-    public function apagaInscrito($IDInscrito){
-       Inscricao::find($IDInscrito)->delete();
-    }
-
     public function cadastro($id=null){
         $view = array(
             'id' => '',
@@ -270,14 +126,6 @@ class EventosController extends Controller
         }finally{
             return redirect()->route($rota,$aid)->with($status,$mensagem);
         }
-    }
-
-    public function desinscrever($id){
-        Inscricao::find($id)->delete();
-    }
-
-    public function delete(Request $request){
-        return Evento::find($request->id)->delete();
     }
 
     public function save(Request $request){

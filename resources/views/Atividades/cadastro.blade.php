@@ -25,7 +25,7 @@
                     </div>
                 </form>
                 <br>
-                <form action="{{route('Eventos/Atividades/Save')}}" method="POST" class="row">
+                <form action="{{route('Atividades/Save')}}" method="POST" class="row">
                     @csrf
                     @method("POST")
                     @if(session('success'))
@@ -44,7 +44,6 @@
                         <input type="checkbox" name="mudarApresentacoes"> Mudar Apresentações?
                     </div>
                     @endif
-                    <input type="hidden" name="IDEvento" value="{{$IDEvento}}">
                     <div class="row">
                         <div class="col-sm-8">
                             <label>Titulo</label>
@@ -84,7 +83,7 @@
                     <div class="col-sm-12 text-left row">
                         <button class="btn bg-fr text-white col-auto">Salvar</button>
                         &nbsp;
-                        <a class="btn btn-light col-auto" href="{{route('Eventos/Atividades/index',$IDEvento)}}">Voltar</a>
+                        <a class="btn btn-light col-auto" href="{{route('Atividades/index')}}">Voltar</a>
                     </div>
                 </form>
             </div>

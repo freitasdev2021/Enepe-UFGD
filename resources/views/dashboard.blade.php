@@ -129,7 +129,7 @@
                         <div class="col-sm-12">
                             <label>Capa do Evento</label>
                             <img src="{{asset('img/uploadModelo.jpg')}}" id="capa" height="500px" width="100%">
-                            <input type="file" name="Capa" style="display:none;" onchange="displaySelectedImage(event, 'capa')">
+                            <input type="file" name="Capa" style="display:none;" onchange="displaySelectedImage(event, 'capa')" required>
                         </div>
                     </div>
                     <div class="row">

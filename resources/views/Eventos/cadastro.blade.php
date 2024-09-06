@@ -28,8 +28,8 @@
                         <div class="col-sm-12">
                             <label>Capa do Evento</label>
                             <img src="{{isset($Registro) ? url('storage/Site/'.$Registro->Capa) : asset('img/uploadModelo.jpg') }}" id="capa" height="500px" width="100%">
-                            <input required type="file" name="Capa" style="display:none;" onchange="displaySelectedImage(event, 'capa')">
-                            <input required type="hidden" name="oldCapa" value="{{isset($Registro) ? $Registro->Capa : ''}}">
+                            <input type="file" name="Capa" style="display:none;" onchange="displaySelectedImage(event, 'capa') {{!isset($Registro) ? 'required' : ''}}">
+                            <input type="hidden" name="oldCapa" value="{{isset($Registro) ? $Registro->Capa : ''}}">
                         </div>
                     </div>
                     <div class="row">
@@ -84,8 +84,8 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <label>Modelo de Apresentação</label>
-                            <input type="file" name="ModeloApresentacao" class="form-control">
-                            <input type="hidden" name="oldModeloApresentacao" value="{{isset($Registro) ? $Registro->ModeloApresentacao : ''}}" required>
+                            <input type="file" name="ModeloApresentacao" class="form-control" {{!isset($Registro) ? 'required' : ''}}>
+                            <input type="hidden" name="oldModeloApresentacao" value="{{isset($Registro) ? $Registro->ModeloApresentacao : ''}}">
                         </div>
                         <div class="col-sm-12">
                             <label>Tipos de Atividades</label>

@@ -2,20 +2,20 @@
     <div class="fr-card p-0 shadow col-sm-12">
         <div class="fr-card-header">
            @foreach($submodulos as $s)
-            <x-Submodulo nome="{{$s['nome']}}" endereco="{{$s['endereco']}}" rota="{{route($s['rota'],$IDEvento)}}" icon="bx bx-list-ul"/>
+            <x-Submodulo nome="{{$s['nome']}}" endereco="{{$s['endereco']}}" rota="{{route($s['rota'])}}" icon="bx bx-list-ul"/>
            @endforeach
         </div>
         <div class="fr-card-body">
             <!--CABECALHO-->
             <div class="col-sm-12 p-2 row">
                 <div class="col-auto">
-                    <a href="{{route('Eventos/Atividades/Novo',$IDEvento)}}" class="btn btn-fr">Adicionar</a>
+                    <a href="{{route('Atividades/Novo')}}" class="btn btn-fr">Adicionar</a>
                 </div>
             </div>
             <!--LISTAS-->
             <div class="col-sm-12 p-2">
                 <hr>
-                <table class="table table-sm tabela" id="escolas" data-rota="{{route('Eventos/Atividades/list',$IDEvento)}}">
+                <table class="table table-sm tabela" id="escolas" data-rota="{{route('Atividades/list',$IDEvento)}}">
                     <thead>
                       <tr>
                         <th style="text-align:center;" scope="col">Titulo</th>

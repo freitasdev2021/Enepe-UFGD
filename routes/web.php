@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EventosController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PalestrasController;
+use App\Http\Controllers\InscricoesController;
 use App\Http\Controllers\AvaliadoresController;
 use App\Http\Controllers\SubmissoesController;
 use App\Http\Controllers\OrganizadoresController;
@@ -93,6 +94,14 @@ Route::middleware('auth')->group(function () {
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
         //ATIVIDADES
         Route::get('/Atividades/Abrir',[DyteController::class,'abrirSala']);
+        Route::post('Atividades/Save',[AtividadesController::class,'save'])->name('Atividades/Save');
+        Route::post('Atividades/Delete',[AtividadesController::class,'delete'])->name('Atividades/Delete');
+        Route::get('Atividades/{IDEvento}',[AtividadesController::class,'index'])->name('Atividades/index');
+        Route::get('Atividades/list/{IDEvento}',[AtividadesController::class,'getAtividades'])->name('Atividades/list');
+        Route::get('Atividades/Cadastro',[AtividadesController::class,'cadastro'])->name('Atividades/Novo');
+        Route::get('Atividades/Cadastro/{id}',[AtividadesController::class,'cadastro'])->name('Atividades/Edit');
+        Route::get('Atividades/index',[AtividadesController::class,'index'])->name('Atividades/index');
+        Route::get('Atividades/Atividade/{IDAtividade}',[AtividadesController::class,'atividade'])->name('Atividades/Atividade');
         //SUBMISSOES
         Route::get('Submissoes/Entrega/{IDSubmissao}/{IDEntrega}', [SubmissoesController::class, 'entrega'])->name('Submissoes/Entrega');
         Route::post('Submissoes/Entregas/Save', [SubmissoesController::class, 'saveEntrega'])->name('Submissoes/Entregas/Save');
@@ -104,8 +113,6 @@ Route::middleware('auth')->group(function () {
         Route::post('Formularios/Responder',[FormulariosController::class,'responder'])->name('Formularios/Responder');
         Route::get('Eventos',[EventosController::class,'index'])->name('Eventos/index');
         Route::get('Eventos/list',[EventosController::class,'getEventos'])->name('Eventos/list');
-        Route::get('Atividades',[AtividadesController::class,'indexInscrito'])->name('Atividades/index');
-        Route::get('Atividades/Atividade/{IDAtividade}',[AtividadesController::class,'atividade'])->name('Atividades/Atividade');
         Route::get('Palestras', [PalestrasController::class, 'index'])->name('Palestras/index');
         Route::get('Palestras/list', [PalestrasController::class, 'getPalestras'])->name('Palestras/list');
         Route::get('Palestrantes', [PalestrasController::class, 'indexPalestrantes'])->name('Palestrantes/index');
@@ -133,18 +140,9 @@ Route::middleware('auth')->group(function () {
         //EVENTOS
         Route::get('Organizadores/Excluir/{id}',[OrganizadoresController::class,'apagaOrganizador'])->name('Organizadores/Excluir');
         Route::get('Avaliadores/Excluir/{id}',[AvaliadoresController::class,'apagaAvaliador'])->name('Avaliadores/Excluir');
-        Route::get('Eventos/Inscricoes/Excluir/{id}',[EventosController::class,'apagaInscrito'])->name('Inscricoes/Excluir');
         Route::post('Eventos/Save',[EventosController::class,'save'])->name('Eventos/Save');
         Route::post('Eventos/Delete',[EventosController::class,'delete'])->name('Eventos/Delete');
         Route::get('Eventos/Cadastro',[EventosController::class,'cadastro'])->name('Eventos/Novo');
-        //ATIVIDADES
-        Route::post('Eventos/Atividades/Save',[AtividadesController::class,'save'])->name('Eventos/Atividades/Save');
-        Route::post('Eventos/Atividades/Delete',[AtividadesController::class,'delete'])->name('Eventos/Atividades/Delete');
-        Route::get('Eventos/Atividades/{IDEvento}',[AtividadesController::class,'index'])->name('Eventos/Atividades/index');
-        Route::get('Eventos/Atividades/list/{IDEvento}',[AtividadesController::class,'getAtividades'])->name('Eventos/Atividades/list');
-        Route::get('Eventos/{IDEvento}/Atividades/Cadastro',[AtividadesController::class,'cadastro'])->name('Eventos/Atividades/Novo');
-        Route::get('Eventos/{IDEvento}/Atividades/Cadastro/{id}',[AtividadesController::class,'cadastro'])->name('Eventos/Atividades/Edit');
-        Route::get('Atividades/list',[AtividadesController::class,'getAtividades'])->name('Atividades/list');
         //SITE
         Route::get('Site',[SiteController::class,'index'])->name('Site/index');
         //PALESTRAS
@@ -191,12 +189,13 @@ Route::middleware('auth')->group(function () {
         Route::get('Certificados/Modelos/Cadastro', [CertificadosController::class, 'cadastroModelos'])->name('Certificados/Modelos/Novo');
         Route::get('Certificados/Modelos/Cadastro/{id}', [CertificadosController::class, 'cadastroModelos'])->name('Certificados/Modelos/Edit');
         Route::post('Certificados/Save', [CertificadosController::class, 'gerarCertificados'])->name('Certificados/Save');
-        Route::post('Eventos/saveInscricaoAluno',[EventosController::class,'saveInscricaoAluno'])->name('Eventos/saveInscricaoAluno');
         //INSCRIÇÕES
-        Route::get('Eventos/Inscricoes/inscreverAluno/{IDEvento}/{IDAluno}',[EventosController::class,'inscreverAluno'])->name('Eventos/Inscricoes/editarAluno');
-        Route::get('Eventos/Inscricoes/inscreverAluno/{IDEvento}',[EventosController::class,'inscreverAluno'])->name('Eventos/Inscricoes/inscreverAluno');
-        Route::get('Eventos/Inscricoes/{IDEvento}',[EventosController::class,'inscricoes'])->name('Eventos/Inscricoes');
-        Route::get('Eventos/Inscricoes/list/{IDEvento}',[EventosController::class,'getInscricoes'])->name('Eventos/Inscricoes/list');
+        Route::get('Inscricoes/Cadastro/{IDAluno}',[InscricoesController::class,'cadastro'])->name('Inscricoes/Edit');
+        Route::get('Inscricoes/Cadastro',[InscricoesController::class,'cadastro'])->name('Inscricoes/Novo');
+        Route::get('Inscricoes',[InscricoesController::class,'index'])->name('Inscricoes/index');
+        Route::get('Inscricoes/list',[InscricoesController::class,'getInscricoes'])->name('Inscricoes/list');
+        Route::post('Inscricoes/Save',[InscricoesController::class,'save'])->name('Inscricoes/Save');
+        Route::get('Inscricoes/Excluir/{id}',[InscricoesController::class,'apagaInscrito'])->name('Inscricoes/Excluir');
         //Notificações
         Route::post('Notificacoes',[NotificaController::class,'notificacoes'])->name('Notificacoes/Send');
         //

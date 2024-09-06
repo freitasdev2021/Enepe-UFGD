@@ -17,75 +17,67 @@ use App\Http\Controllers\DyteController;
 class AtividadesController extends Controller
 {
     public const submodulos = array([
-        'nome' => 'Eventos',
-        'rota' => 'Eventos/Edit',
-        'endereco' => 'Cadastro'
-    ],[
-        'nome' => 'Atividades',
-        'rota' => 'Eventos/Atividades/index',
-        'endereco' => 'Atividades'
-    ],[
-        'nome' => 'Inscrições',
-        'rota' => 'Eventos/Inscricoes',
-        'endereco' => 'Inscricoes'
+        'nome' => 'Apresentações',
+        'rota' => 'Atividades/index',
+        'endereco' => 'index'
     ]);
 
-    public function index($IDEvento){
-        return view('Atividades.index', [
-            'submodulos' => self::submodulos,
-            'IDEvento' => $IDEvento
-        ]);
+    public function index(){
+        $IDEvento = Session::get('IDEvento');
+        if(Auth::user()->tipo == 1){
+            return view('Atividades.index', [
+                'submodulos' => self::submodulos,
+                'IDEvento' => $IDEvento
+            ]);
+        }else{
+            $AND = '';
+            if(Session::has('IDEvento')){
+                $AND = ' WHERE a.IDEvento='.Session::get('IDEvento');
+            }
+    
+            if(isset($_GET['Apresentacoes']) && $_GET['Apresentacoes'] == "Minhas"){
+                $AND .= " AND en.IDInscrito=".Auth::user()->id;
+            }
+    
+            $SQL = <<<SQL
+            SELECT 
+                a.id,
+                a.Titulo,
+                a.Inicio,
+                (
+                    SELECT
+                        CONCAT(
+                            '[',
+                            GROUP_CONCAT(
+                                '{'
+                                ,'"titulo":"', en2.Titulo, '"'
+                                ,',"apresentador":"', en2.Apresentador, '"'
+                                ,'}'
+                                SEPARATOR ','
+                            ),
+                            ']'
+                        )
+                    FROM 
+                        apresentacoes ap2
+                    INNER JOIN 
+                        entergas en2 ON(ap2.IDEntrega = en2.id) 
+                    WHERE 
+                        ap2.IDAtividade = a.id
+                ) AS listaApresentacoes
+            FROM 
+                atividades a 
+            LEFT JOIN apresentacoes ap ON(a.id = ap.IDAtividade)
+            INNER JOIN entergas en ON(en.id = ap.IDEntrega)
+            $AND
+            SQL;        
+    
+            return view('Atividades.indexInscrito',[
+                'Atividades' => DB::select($SQL)
+            ]);
+        }
     }
 
-    public function indexInscrito(){
-        $AND = '';
-        if(Session::has('IDEvento')){
-            $AND = ' WHERE a.IDEvento='.Session::get('IDEvento');
-        }
-
-        if(isset($_GET['Apresentacoes']) && $_GET['Apresentacoes'] == "Minhas"){
-            $AND .= " AND en.IDInscrito=".Auth::user()->id;
-        }
-
-        $SQL = <<<SQL
-        SELECT 
-            a.id,
-            a.Titulo,
-            a.Inicio,
-            (
-                SELECT
-                    CONCAT(
-                        '[',
-                        GROUP_CONCAT(
-                            '{'
-                            ,'"titulo":"', en2.Titulo, '"'
-                            ,',"apresentador":"', en2.Apresentador, '"'
-                            ,'}'
-                            SEPARATOR ','
-                        ),
-                        ']'
-                    )
-                FROM 
-                    apresentacoes ap2
-                INNER JOIN 
-                    entergas en2 ON(ap2.IDEntrega = en2.id) 
-                WHERE 
-                    ap2.IDAtividade = a.id
-            ) AS listaApresentacoes
-        FROM 
-            atividades a 
-        LEFT JOIN apresentacoes ap ON(a.id = ap.IDAtividade)
-        INNER JOIN entergas en ON(en.id = ap.IDEntrega)
-        $AND
-        SQL;        
-
-        return view('Atividades.indexInscrito',[
-            'Atividades' => DB::select($SQL)
-        ]);
-    }
-
-    public function cadastro($IDEvento,$id = null){
-
+    public function cadastro($id = null){
         $WHERE = "";
         if(isset($_GET['Modalidade']) && !empty($_GET['Modalidade'])){
             $WHERE = " AND s.Categoria='".$_GET['Modalidade']."'";
@@ -97,6 +89,7 @@ class AtividadesController extends Controller
             $WHERE .=" AND e.id NOT IN(SELECT ap.IDEntrega FROM apresentacoes ap)";
         }
 
+        $IDEvento = Session::get('IDEvento');
         $SQL = "SELECT e.Titulo,
             e.id as IDEntrega,
             e.Autores,
@@ -114,14 +107,14 @@ class AtividadesController extends Controller
             'submodulos' => self::submodulos,
             "Aprovados" => DB::select($SQL),
             "Modalidades"=>json_decode(Evento::find($IDEvento)->Modalidades),
-            "CurrentRoute" => route('Eventos/Atividades/Novo',$IDEvento)
+            "CurrentRoute" => route('Atividades/Novo')
         );
 
         if($id){
             $view['id'] = $id;
             $view['submodulos'] = self::submodulos;
             $view['Registro'] = Atividade::find($id);
-            $view['CurrentRoute'] = route('Eventos/Atividades/Edit',["id"=>$id,"IDEvento"=>$IDEvento]);
+            $view['CurrentRoute'] = route('Atividades/Edit',$id);
             $view['Apresentadores'] = Apresentacao::where('IDAtividade',$id)->pluck('IDEntrega')->toArray();
         }
 
@@ -142,12 +135,13 @@ class AtividadesController extends Controller
     public function save(Request $request){
         try{
             $data = $request->all();
+            $data['IDEvento'] = Session::get('IDEvento');
             if(!$request->id){
 
                 //dd($accessToken);
                 ////
-                $rota = 'Eventos/Atividades/Novo';
-                $aid = $request->IDEvento;
+                $rota = 'Atividades/Novo';
+                $aid = '';
                 $meetingData = [
                     "title" => $request->Titulo,
                     "preferred_region" => "ap-south-1",
@@ -169,8 +163,8 @@ class AtividadesController extends Controller
                     ));
                 }
             }else{
-                $rota = 'Eventos/Atividades/Edit';
-                $aid = array("IDEvento" => $request->IDEvento,"id"=>$request->id);
+                $rota = 'Atividades/Edit';
+                $aid = $request->id;
                 if($request->mudarApresentacoes){
                     Apresentacao::where('IDAtividade',$request->id)->delete();
                     foreach($data['Apresentar'] as $ap){
@@ -186,8 +180,8 @@ class AtividadesController extends Controller
             $status = 'success';
         }catch(\Throwable $th){
             $mensagem = 'Erro '. $th->getMessage();
-            $aid = $request->IDEvento;
-            $rota = 'Eventos/Atividades/Novo';
+            $aid = $request->id;
+            $rota = 'Atividades/Novo';
             $status = 'error';
         }finally{
             return redirect()->route($rota, $aid)->with($status, $mensagem);
@@ -202,7 +196,7 @@ class AtividadesController extends Controller
                 $item = [];
                 $item[] = $r->Titulo;
                 $item[] = Controller::data($r->Inicio,'d/m/Y H:i');
-                $item[] = "<a href=".route('Eventos/Atividades/Edit',['id'=>$r->id,'IDEvento'=>$r->IDEvento])." class='btn bg-fr text-white btn-xs'>Abrir</a>
+                $item[] = "<a href=".route('Atividades/Edit',$r->id)." class='btn bg-fr text-white btn-xs'>Abrir</a>
                 <a href=".route('Atividades/Atividade',$r->id)." class='btn bg-fr text-white btn-xs'>Entrar</a>
                 ";
                 $itensJSON[] = $item;
