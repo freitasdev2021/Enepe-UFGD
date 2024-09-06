@@ -96,11 +96,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/Atividades/Abrir',[DyteController::class,'abrirSala']);
         Route::post('Atividades/Save',[AtividadesController::class,'save'])->name('Atividades/Save');
         Route::post('Atividades/Delete',[AtividadesController::class,'delete'])->name('Atividades/Delete');
-        Route::get('Atividades/{IDEvento}',[AtividadesController::class,'index'])->name('Atividades/index');
         Route::get('Atividades/list/{IDEvento}',[AtividadesController::class,'getAtividades'])->name('Atividades/list');
         Route::get('Atividades/Cadastro',[AtividadesController::class,'cadastro'])->name('Atividades/Novo');
         Route::get('Atividades/Cadastro/{id}',[AtividadesController::class,'cadastro'])->name('Atividades/Edit');
-        Route::get('Atividades/index',[AtividadesController::class,'index'])->name('Atividades/index');
+        Route::get('Atividades',[AtividadesController::class,'index'])->name('Atividades/index');
         Route::get('Atividades/Atividade/{IDAtividade}',[AtividadesController::class,'atividade'])->name('Atividades/Atividade');
         //SUBMISSOES
         Route::get('Submissoes/Entrega/{IDSubmissao}/{IDEntrega}', [SubmissoesController::class, 'entrega'])->name('Submissoes/Entrega');
