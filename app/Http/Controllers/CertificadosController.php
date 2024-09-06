@@ -754,6 +754,7 @@ class CertificadosController extends Controller
                 LEFT JOIN modelos m ON(m.id = c.IDModelo)
                 WHERE u.id IN(SELECT IDUser FROM formularios f INNER JOIN respostas r ON(f.id = r.IDForm) WHERE f.IDEvento = $evento)
             SQL;
+            $registros = DB::select($SQL);
         }else{
             $registros = [];
         }

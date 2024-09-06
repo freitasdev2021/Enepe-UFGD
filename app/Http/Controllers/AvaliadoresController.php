@@ -57,7 +57,11 @@ class AvaliadoresController extends Controller
                 $data['password'] = Hash::make($RandPW);
                 if(User::where('email',$request->email)->exists()){
                    $US = User::where('email',$request->email)->first();
-                   Banca::where('IDUser',$US->id)->update(['IDEvento'=>Session::get('IDEvento')]);
+                   Banca::create([
+                    "IDUser"=> $US->id,
+                    "IDEvento"=> Session::get('IDEvento'),
+                    "Tipo"=> 2
+                   ]);
                 }else{
                     $Evento = Evento::find(Session::get('IDEvento'));
                     MailController::send($request->email,'Confirmação - Avaliador','Mail.cadastroavaliador',array('Evento'=> $Evento->Titulo,'Senha'=> $RandPW,'Email'=> $request->email));

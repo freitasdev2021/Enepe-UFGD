@@ -11,10 +11,10 @@
              <div>
                 <a href="{{route('dashboard')}}" class="nav_logo"><i class='bx bxs-calendar-event text-white'></i></i><span class="nav_logo-name">FR Eventos</span> </a>
                 <div class="nav_list">
-                        <x-Modulo nome="Apresentações" icon="bx bxs-pencil" rota="Atividades/index" endereco="Atividades"/>
                     @if(in_array(Auth::user()->tipo,[1]))
                      <x-Modulo nome="Eventos" icon="bx bxs-calendar-event" rota="Eventos/index" endereco="Eventos"/>
                      @if(Session::has('IDEvento'))
+                        <x-Modulo nome="Apresentações" icon="bx bxs-pencil" rota="Atividades/index" endereco="Atividades"/>
                         <x-Modulo nome="Atividades" icon="bx bx-user-pin" rota="Palestras/index" endereco="Palestras"/>
                         <x-Modulo nome="Inscrições" icon="bx bxs-user-check" rota="Inscricoes/index" endereco="Inscricoes"/>
                         <x-Modulo nome="Coordenadores" icon="bx bxs-group" rota="Palestrantes/index" endereco="Palestrantes"/>
@@ -25,14 +25,15 @@
                         <x-Modulo nome="Formulários" icon="bx bxs-dock-top" rota="Formularios/index" endereco="Formularios"/>
                      @endif
                     @elseif(in_array(Auth::user()->tipo,[2]))
+                    <x-Modulo nome="Apresentações" icon="bx bxs-pencil" rota="Atividades/index" endereco="Atividades"/>
                     <x-Modulo nome="Submissões" icon="bx bx-task" rota="Submissoes/index" endereco="Submissoes"/> 
-                    <x-Modulo nome="Atividades" icon="bx bxs-pencil" rota="Atividades/index" endereco="Atividades"/>
                     @elseif(in_array(Auth::user()->tipo,[3]))
                      @if(!Session::has('IDEvento'))
                      <x-Modulo nome="Eventos" icon="bx bxs-calendar-event" rota="Eventos/index" endereco="Eventos"/>
                      @else
                      <x-Modulo nome="Submissões" icon="bx bx-task" rota="Submissoes/index" endereco="Submissoes"/> 
                      <x-Modulo nome="Atividades" icon="bx bx-user-pin" rota="Palestras/index" endereco="Palestras"/>
+                     <x-Modulo nome="Apresentações" icon="bx bxs-pencil" rota="Atividades/index" endereco="Atividades"/>
                      @endif
                     @endif
                     <x-Modulo nome="Suporte" icon="bx bx-support nav_icon" rota="Suporte/index" endereco="Suporte"/>
