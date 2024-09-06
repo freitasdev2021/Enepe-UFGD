@@ -163,14 +163,14 @@ class CertificadosController extends Controller
                         ->where('IDModelo', $Modelos[$i])
                         ->where('IDInscrito', $Inscrit[$i])
                         ->exists();
-                if(!$existeCertificado && !is_null($Inscrit[$i])){
+                if(!$existeCertificado && !is_null($Modelos[$i]) && !is_null($Inscrit[$i])){
                     $Certificados[] = array(
                         "Modelos" => $Modelos[$i],
                         "Inscritos" => $Inscrit[$i]
                     );
                 }
             }
-            //dd($Certificados);
+           
             $emissao = [];
             $erros = [];
             //VALIDAÇÃO DO PREENCHIMENTO
@@ -285,7 +285,7 @@ class CertificadosController extends Controller
                             if(!str_contains($Modelo->DSModelo,'{telespectador}')){
                                 $STRConteudo .= str_replace(['{evento}'],[$Evento->Titulo],$Modelo->DSModelo);
                             }
-
+                           
                             if(!str_contains($Modelo->DSModelo,'{evento}')){
                                 $STRConteudo .= str_replace(['{telespectador}'],[$Inscrito->name],$Modelo->DSModelo);
                             }
@@ -399,6 +399,7 @@ class CertificadosController extends Controller
                         $Assistiu = self::getPalestrasInscrito($Certificado['Inscritos'],Session::get('IDEvento'));
                         //
                         if(!str_contains($Modelo->DSModelo,'{telespectadorpalestra}') || !str_contains($Modelo->DSModelo,'{evento}') || !$Assistiu || !str_contains($Modelo->DSModelo,'{palestra}') || !$Inscrito){
+                            // dd($Assistiu);
                             foreach($Assistiu as $as){
                                 $STRConteudo = $Modelo->DSModelo;
 
@@ -610,6 +611,7 @@ class CertificadosController extends Controller
         $initialY = 450; // Posição inicial vertical
         $fontPath = public_path('fonts/arial.ttf');
         $certificado = $certificadoManager->read(realpath(storage_path('app/public/modelos/'.$Modelo)));
+        
         // Desenhar cada linha de texto no certificado
         foreach ($text as $index => $line) {
             $y = $initialY + ($lineHeight * $index); // Ajustar a posição vertical para cada linha
@@ -660,7 +662,7 @@ class CertificadosController extends Controller
     public function getSelectModelos($IDInscrito,$modelo){
         ob_start();
         ?>
-        <select name="modelo[]" data-inscrito="<?=$IDInscrito?>" class="form-control col-auto selectModelo" onchange="setInscrito(this.getAttribute('data-inscrito'))">
+        <select name="modelo[]" data-inscrito="<?=$IDInscrito?>" class="form-control col-auto selectModelo">
             <option value="">Selecione um Modelo</option>
             <?php foreach(Modelo::all() as $m){?>
             <option value="<?=$m->id?>" <?=($modelo == $m->id) ? 'selected' : ''?>><?=$m->Nome?></option>
@@ -765,7 +767,7 @@ class CertificadosController extends Controller
                 $item[] = ($r->Disponibilidade == 0) ? "Indisponivel para o Aluno" : 'Disponivel para o Aluno';
                 $item[] = $r->Nome;
                 $item[] = $r->Email;
-                $item[] = self::getSelectModelos($r->IDInscrito,$r->IDModelo)."<input type='hidden' id='inscrito_$r->IDInscrito' name='IDInscrito[]'>";
+                $item[] = self::getSelectModelos($r->IDInscrito,$r->IDModelo)."<input type='hidden' value='$r->IDInscrito' id='inscrito_$r->IDInscrito' name='IDInscrito[]'>";
                 $item[] = !empty($r->Certificado) ? "<a href=".url('storage/modelos/'.$r->Certificado)." class='btn btn-fr btn-xs text-white' download>Baixar</a> 
                 <button type='button' onclick='convertJpgToPdf($urlPef)' class='btn btn-xs bg-fr text-white'>Baixar PDF</button>
                 <a class='btn btn-fr btn-xs text white' href=".route('Certificados/Email',['email'=>$r->Email,'certificado'=>$r->Certificado]).">Enviar por Email</a> 
