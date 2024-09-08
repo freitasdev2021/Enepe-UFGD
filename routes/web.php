@@ -18,7 +18,7 @@ use App\Models\Formulario;
 use App\Models\Submissao;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\ExportController;
-use App\Models\Evento;
+use App\Models\Banca;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\AtividadesController;
 use App\Http\Controllers\FormulariosController;
@@ -37,6 +37,10 @@ Route::get('/dashboard', function () {
         $Formularios = Formulario::where('IDEvento',Session::get('IDEvento'))->get();
         $Inscritos = DB::select("SELECT i.id FROM inscricoes i INNER JOIN eventos ev ON(ev.id = i.IDEvento) WHERE ev.id = $IDEvento");
         $Submissoes = DB::select("SELECT e.id from entergas e INNER JOIN submissoes s ON(e.IDSubmissao = s.id) INNER JOIN eventos ev ON(ev.id = s.IDEvento) = ev.id = $IDEvento");
+    }else{
+        if(Auth::user()->tipo == 2){
+            Session::put('IDEvento',Banca::where('IDUser',Auth::user()->id)->first()->IDEvento);
+        }
     }
     $IDEvento = Session::get('IDEvento');
     $currentId = Auth::user()->id;

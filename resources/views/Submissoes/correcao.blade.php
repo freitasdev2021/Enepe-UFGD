@@ -20,7 +20,14 @@
                     @csrf
                     @method("POST")
                     <input type="hidden" name="IDEntrega" value="{{$Trabalho->id}}">
-                    <input type="hidden" name="IDSubmissao" value="{{$Trabalho->IDSubmissao}}">
+                    <label>Categoria</label>
+                    <select name="IDSubmissao" class="form-control">
+                        <option value="">Selecione</option>
+                        @foreach($Submissoes as $s)
+                        <option value="{{$s->id}}" {{($s->id == $Trabalho->IDSubmissao) ? 'selected' : ''}}>{{$s->Categoria}}</option>
+                        @endforeach
+                    </select>
+                    <hr>
                     @if(session('success'))
                     <div class="col-sm-12 shadow p-2 bg-success text-white">
                         <strong>{{session('success')}}</strong>

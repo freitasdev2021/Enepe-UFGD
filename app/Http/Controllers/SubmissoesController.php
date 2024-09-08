@@ -94,17 +94,24 @@ class SubmissoesController extends Controller
 
     public function cadastro($id = null){
         $Evento = Evento::find(Session::get('IDEvento'));
+        $Modalidades = [];
+        foreach(json_decode($Evento->Modalidades,true) as $m){
+            if(!Submissao::where('IDEvento',Session::get('IDEvento'))->where('Categoria',$m)->exists()){
+                array_push($Modalidades,$m);
+            }
+        }
         $view = array(
             'id' => '',
             'submodulos' => self::submodulos,
             'avaliadores' => User::where('tipo',2)->get(),
-            'Modalidades' => json_decode($Evento->Modalidades,true)
+            'Modalidades' => $Modalidades
         );
 
         if($id){
             $view['id'] = $id;
             $view['Registro'] = Submissao::find($id);
             $view['submodulos'] = self::cadastroSubmodulos;
+            $view['Modalidades'] = json_decode($Evento->Modalidades,true);
         }
 
         return view('Submissoes.cadastro', $view);
@@ -129,6 +136,13 @@ class SubmissoesController extends Controller
                 }
                 Submissao::create($data);
             }else{
+                if(Submissao::where('IDEvento',Session::get('IDEvento'))->where('id','!=',$request->id)->where('Categoria',$request->Categoria)->exists()){
+                    $mensagem = 'Já Existe uma Submissão com Essa Modalidade!';
+                    $status = 'error';
+                    $rota = 'Submissoes/Edit';
+                    $aid = $request->id;
+                    return false;
+                }
                 if($request->file('Regras')){
                     $Regras = $request->file('Regras')->getClientOriginalName();
                     Storage::disk('public')->delete('regras_submissao/'.$request->oldRegras);
@@ -226,7 +240,8 @@ class SubmissoesController extends Controller
     public function correcao($IDEntrega){
         return view('Submissoes.correcao',[
             'submodulos' => self::submodulos,
-            'Trabalho' => Entrega::find($IDEntrega)
+            'Trabalho' => Entrega::find($IDEntrega),
+            "Submissoes"=> Submissao::select('Categoria','id')->where('IDEvento',Session::get('IDEvento'))->get()
         ]);
     }
 
@@ -238,13 +253,14 @@ class SubmissoesController extends Controller
         try{
             Entrega::find($request->IDEntrega)->update([
                 "Status"=> $request->Status,
-                "Feedback"=>$request->Feedback
+                "Feedback"=>$request->Feedback,
+                "IDSubmissao"=>$request->IDSubmissao
             ]);
             $IDAluno = Entrega::find($request->IDEntrega)->IDInscrito;
-            MailController::send(User::find($IDAluno)->email,'Aviso de Correção da Submissão','Mail.submissao',array('Status'=> $request->Status,'Mensagem'=> "Sua Submissão foi Corrigida!"));
+            //MailController::send(User::find($IDAluno)->email,'Aviso de Correção da Submissão','Mail.submissao',array('Status'=> $request->Status,'Mensagem'=> "Sua Submissão foi Corrigida!"));
             $mensagem = 'Trabalho corrigido com sucesso!';
-            $rota = 'Submissoes/Entregues';
-            $aid = $request->IDSubmissao;
+            $rota = 'Submissoes/Correcao';
+            $aid = $request->IDEntrega;
             $status = 'success';
         }catch(\Throwable $th){
             $mensagem = 'Erro '. $th->getMessage();

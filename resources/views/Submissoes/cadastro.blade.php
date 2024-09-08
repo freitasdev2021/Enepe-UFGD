@@ -35,7 +35,8 @@
                         </div>
                         <div class="col-sm-4">
                             <label>Modalidade</label>
-                            <select name="Categoria" class="form-control">
+                            <select name="Categoria" class="form-control" required>
+                                <option value="">Selecione</option>
                                 @foreach($Modalidades as $m)
                                     @if(!empty($m))
                                         <option value="{{$m}}" {{isset($Registro) && $Registro->Categoria == $m ? 'selected' : ''}}>{{$m}}</option>

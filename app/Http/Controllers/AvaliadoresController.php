@@ -57,8 +57,7 @@ class AvaliadoresController extends Controller
                 $data['password'] = Hash::make($RandPW);
                 if(User::where('email',$request->email)->exists()){
                    $US = User::where('email',$request->email)->first();
-                   Banca::create([
-                    "IDUser"=> $US->id,
+                   Banca::where('IDUser',$US->id)->update([
                     "IDEvento"=> Session::get('IDEvento'),
                     "Tipo"=> 2
                    ]);
