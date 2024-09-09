@@ -550,11 +550,11 @@ class SubmissoesController extends Controller
     }
 
     public function getEntregues($IDSubmissao){
-    
-
+        $IDEvento = Session::get('IDEvento');
+        $Aval = DB::select("SELECT users.id,name FROM users INNER JOIN bancaevento ON(bancaevento.IDUser = users.id) WHERE bancaevento.IDEvento = $IDEvento ");
         $selectAvaliador = "<select name='IDAvaliador[]'>";
         $selectAvaliador .= "<option value=''>Selecione</option>";
-        foreach(User::select('id','name')->where('tipo',2)->get() as $a){
+        foreach($Aval as $a){
             $selectAvaliador .="<option value='$a->id'>".$a->name."</option>";
         }
         $selectAvaliador .= "</select>";

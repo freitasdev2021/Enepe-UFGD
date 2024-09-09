@@ -76,14 +76,6 @@
                 </div>
                 <div class="card-body" style="height: calc(100vh - 150px); overflow-y:scroll">
                     <dl>
-                        <dt>Regras Gerais</dt>
-                        <dd>
-                            <ul>
-                                <li>
-                                    AO QUEBRAR UMA LINHA COLOQUE "|" SEM ASPAS, E COM ESPAÇAMENTO 
-                                </li>
-                            </ul>
-                        </dd>
                         <dt>Organizadores</dt>
                         <dd>
                             <ul>

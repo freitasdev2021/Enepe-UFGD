@@ -6,6 +6,7 @@
            @endforeach
         </div>
         <div class="fr-card-body">
+            @if(count($respostas) > 0)
             <div style="width: 800px; height: 600px; margin: auto;">
                 <canvas id="myChart"></canvas> <!-- Elemento Canvas para o gráfico -->
             </div>
@@ -30,6 +31,7 @@
                     });
                 });
             </script>
+            @endif
             <!--//-->
         </div>
     </div>

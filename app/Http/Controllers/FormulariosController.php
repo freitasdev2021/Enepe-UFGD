@@ -89,6 +89,9 @@ class FormulariosController extends Controller
         }
 
         // Preparar os dados para passar para a view
+        if(!$respostaCount){
+            return false;
+        }
         $labels = array_keys(reset($respostaCount)); // Usando as perguntas como labels
         $datasets = [];
 
@@ -107,6 +110,7 @@ class FormulariosController extends Controller
             "submodulos" => self::cadastroSubmodulos,
             'labels' => $labels,
             'datasets' => $datasets,
+            'respostas' => $respostas,
             "id" => $id
         ));
     }

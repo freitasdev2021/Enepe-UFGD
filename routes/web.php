@@ -81,6 +81,7 @@ Route::middleware('auth')->group(function () {
     //CAMADA DE PROTEÇÃO GERAL
     Route::middleware('geral')->group(function(){
         //SUPORTE
+        Route::get('Suporte/Duvidas',[SuporteController::class,'duvidas'])->name('Suporte/Duvidas');
         Route::get('Configuracoes/index',[UserController::class,'index'])->name("Configuracoes/index");
         Route::post('Configuracoes/resetPassword',[UserController::class,'resetPassword'])->name('Configuracoes/UpdatePassword');
         Route::get('Suporte',[SuporteController::class,'index'])->name('Suporte/index');

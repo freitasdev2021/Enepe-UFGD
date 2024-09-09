@@ -14,11 +14,28 @@ class SuporteController extends Controller
         'nome' => 'Suporte',
         'rota' => 'Suporte/index',
         'endereco' => 'index'
+    ],[
+        'nome' => 'Duvidas',
+        'rota' => 'Suporte/Duvidas',
+        'endereco' => 'Duvidas'
     ]);
 
     public function index(){
         return view('Suporte.index',[
             "submodulos" => self::submodulos
+        ]);
+    }
+
+    public function duvidas(){
+        if(Auth::user()->tipo == 1){
+            $html = 'Suporte.organizador';
+        }elseif(Auth::user()->tipo == 2){
+            $html = 'Suporte.avaliador';
+        }elseif(Auth::user()->tipo == 3){
+            $html = 'Suporte.inscrito';
+        }
+        return view($html,[
+            'submodulos'=>self::submodulos
         ]);
     }
 
