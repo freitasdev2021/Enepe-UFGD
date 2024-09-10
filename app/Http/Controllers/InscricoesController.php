@@ -115,13 +115,14 @@ class InscricoesController extends Controller
                 i.id as IDInscricao,
                 u.email as Email,
                 u.id as IDUser,
-                CASE WHEN c.id IS NULL THEN 0 ELSE 1 END as Certificou,
-                CASE WHEN e.id IS NULL THEN 0 ELSE 1 END as Entregou
+                MAX(CASE WHEN c.id IS NULL THEN 0 ELSE 1 END) as Certificou,
+                MAX(CASE WHEN e.id IS NULL THEN 0 ELSE 1 END) as Entregou
             FROM inscricoes i
-            INNER JOIN users u ON(u.id = i.IDUser)
-            LEFT JOIN certificados c ON(u.id = c.IDInscrito)
-            LEFT JOIN entergas e ON(e.IDInscrito = u.id)
+            INNER JOIN users u ON u.id = i.IDUser
+            LEFT JOIN certificados c ON u.id = c.IDInscrito
+            LEFT JOIN entergas e ON e.IDInscrito = u.id
             WHERE i.IDEvento = $IDEvento
+            GROUP BY u.id, u.name, i.Categoria, i.id, u.email;
         SQL;
         $registros = DB::select($SQL);
         if(count($registros) > 0){
