@@ -40,36 +40,38 @@ class AtividadesController extends Controller
             }
     
             $SQL = <<<SQL
-            SELECT 
-                a.id,
-                a.Titulo,
-                a.Inicio,
-                (
-                    SELECT
-                        CONCAT(
-                            '[',
-                            GROUP_CONCAT(
-                                '{'
-                                ,'"titulo":"', en2.Titulo, '"'
-                                ,',"apresentador":"', en2.Apresentador, '"'
-                                ,'}'
-                                SEPARATOR ','
-                            ),
-                            ']'
-                        )
-                    FROM 
-                        apresentacoes ap2
-                    INNER JOIN 
-                        entergas en2 ON(ap2.IDEntrega = en2.id) 
-                    WHERE 
-                        ap2.IDAtividade = a.id
-                ) AS listaApresentacoes
-            FROM 
-                atividades a 
-            LEFT JOIN apresentacoes ap ON(a.id = ap.IDAtividade)
-            INNER JOIN entergas en ON(en.id = ap.IDEntrega)
-            $AND
-            SQL;        
+                SELECT 
+                    a.id,
+                    a.Titulo,
+                    a.Inicio,
+                    (
+                        SELECT
+                            CONCAT(
+                                '[',
+                                GROUP_CONCAT(
+                                    '{'
+                                    ,'"titulo":"', en2.Titulo, '"'
+                                    ,',"apresentador":"', en2.Apresentador, '"'
+                                    ,'}'
+                                    SEPARATOR ','
+                                ),
+                                ']'
+                            )
+                        FROM 
+                            apresentacoes ap2
+                        INNER JOIN 
+                            entergas en2 ON(ap2.IDEntrega = en2.id) 
+                        WHERE 
+                            ap2.IDAtividade = a.id
+                    ) AS listaApresentacoes
+                FROM 
+                    atividades a 
+                LEFT JOIN apresentacoes ap ON(a.id = ap.IDAtividade)
+                INNER JOIN entergas en ON(en.id = ap.IDEntrega)
+                $AND
+                GROUP BY a.id, a.Titulo, a.Inicio
+            SQL;
+
     
             return view('Atividades.indexInscrito',[
                 'Atividades' => DB::select($SQL)

@@ -20,18 +20,18 @@ class MailController extends Controller
          );
         $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
         $mail->isSMTP();                                            //Send using SMTP
-        $mail->Host       = 'mail.freventosdigitais.com.br';                     //Set the SMTP server to send through
+        $mail->Host       = 'mail.frmail.com.br';                     //Set the SMTP server to send through
         $mail->SMTPAuth   = true; //Enable SMTP authentication
         $mail->CharSet = 'UTF-8'; //charset
                                    
-        $mail->Username   = 'comunicacao@freventosdigitais.com.br';                     //SMTP username
+        $mail->Username   = 'comunicacao@frmail.com.br';                     //SMTP username
         $mail->SMTPKeepAlive = true; // Mantém a conexão SMTP viva para envios subsequentes
         $mail->Password   = 'SwPx3841';                               //SMTP password
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;            //Enable implicit TLS encryption
         $mail->Port       = ENV('MAIL_PORT'); 
         $mail->Timeout = 120; // 120 segundos
         //DESTINATÁRIO
-        $mail->setFrom('comunicacao@freventosdigitais.com.br', 'FREventos'); //Rementente
+        $mail->setFrom('comunicacao@frmail.com.br', 'FREventos'); //Rementente
         $mail->addAddress($para, 'Inscrito');     //Destinatário
         //Corpo
         $mail->isHTML(true);  // Seta o formato do e-mail para aceitar conteúdo HTML

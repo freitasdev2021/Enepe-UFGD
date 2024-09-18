@@ -149,7 +149,9 @@ class InscricoesController extends Controller
     }
 
     public function apagaInscrito($IDInscrito){
+        $IDUser = Inscricao::find($IDInscrito)->IDUser;
         Inscricao::find($IDInscrito)->delete();
+        User::find($IDUser)->delete();
      }
 
 }
