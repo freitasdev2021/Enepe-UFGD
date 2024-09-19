@@ -49,10 +49,12 @@ class SubmissoesController extends Controller
             $currentId = Auth::user()->id;
             if(Session::has('IDEvento')){
                 $AND = ' WHERE s.IDEvento='.Session::get('IDEvento');
+                $IDEvento = Session::get('IDEvento');
                 
             }
             //dd($currentId);
-            if(Entrega::where('IDInscrito',$currentId)->first()){
+            $Entrega = DB::select("SELECT s.id FROM submissoes s INNER JOIN entergas en ON(s.id = en.IDSubmissao) WHERE s.IDEvento = $IDEvento AND en.IDInscrito = $currentId");
+            if($Entrega){
                 $AND .= " AND s.id IN(SELECT IDSubmissao FROM entergas WHERE entergas.IDInscrito = $currentId)";
             }
 
