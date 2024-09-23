@@ -578,7 +578,6 @@ class SubmissoesController extends Controller
             e.Autores,
             e.palavrasChave,
             e.Tematica,
-            e.Descricao,
             e.Apresentador,
             e.IDAvaliador,
             e.NEntrega,
@@ -606,7 +605,6 @@ class SubmissoesController extends Controller
                 $item[] = $r->Apresentador;
                 $item[] = $r->palavrasChave;
                 $item[] = $r->Tematica;
-                $item[] = $r->Descricao;
                 $item[] = ($r->IDAvaliador == 0) ? $selectAvaliador."<input type='hidden' value='$r->IDInscrito' name='Inscrito[]'>" : $r->Avaliador." <button class='btn btn-xs btn-danger' type='button' onclick='removerAtribuicao($RemoveATR)'>Remover Atribuição</button>";
                 $item[] = empty($r->Status) ? 'Aguardando Correção' : $r->Status;
                 $item[] = "<a href=".route('Submissoes/Correcao',$r->IDEntrega).">Abrir</a> <a href=".route('Submissoes/Trabalho',$r->IDEntrega).">Editar Trabalho</a>";

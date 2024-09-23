@@ -32,7 +32,6 @@
                         <th style="text-align:center;" scope="col">Apresentador</th>
                         <th style="text-align:center;" scope="col">palavras-chave</th>
                         <th style="text-align:center;" scope="col">Área Temática</th>
-                        <th style="text-align:center;" scope="col">Descrição</th>
                         <th style="text-align:center;" scope="col">Avaliador</th>
                         <th style="text-align:center;" scope="col">Situação</th>
                         <th style="text-align:center;" scope="col">Opções</th>
