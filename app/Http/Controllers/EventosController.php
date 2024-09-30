@@ -116,7 +116,7 @@ class EventosController extends Controller
             $status = 'success';
             $Evento = Evento::find($request->IDEvento)->Titulo;
             //dd($data);
-            MailController::send(Auth::user()->email,'Confirmação de Inscrição','Mail.confirmacao',array('Evento'=> $Evento));
+            //MailController::send(Auth::user()->email,'Confirmação de Inscrição','Mail.confirmacao',array('Evento'=> $Evento));
             Inscricao::create($data);
         }catch(\Throwable $th){
             $mensagem = 'Erro '. $th->getMessage();

@@ -259,7 +259,7 @@ class SubmissoesController extends Controller
                 "IDSubmissao"=>$request->IDSubmissao
             ]);
             $IDAluno = Entrega::find($request->IDEntrega)->IDInscrito;
-            MailController::send(User::find($IDAluno)->email,'Aviso de Correção da Submissão','Mail.submissao',array('Status'=> $request->Status,'Mensagem'=> "Sua Submissão foi Corrigida!"));
+            //MailController::send(User::find($IDAluno)->email,'Aviso de Correção da Submissão','Mail.submissao',array('Status'=> $request->Status,'Mensagem'=> "Sua Submissão foi Corrigida!"));
             $mensagem = 'Trabalho corrigido com sucesso!';
             $rota = 'Submissoes/Correcao';
             $aid = $request->IDEntrega;
@@ -312,31 +312,31 @@ class SubmissoesController extends Controller
                 $mensagem = "O Trabalho Submetido não atende as Exigências Estabelecida na Norma!";
                 $status = 'error';
                 return false;
-            }
-
-            $status = 'success';
-            if(Auth::user()->tipo == 3){
-                $data['IDInscrito'] = Auth::user()->id;
-                MailController::send(Auth::user()->email,'Aviso de Submissão','Mail.submissao',array('Status'=> "Aguardando Correção",'Mensagem'=> "Por favor Aguarde sua Submissão ser Corrigida"));
-                $rota = 'Submissoes/Entrega';
-                $mensagem = 'Trabalho Enviado com Sucesso!';
-                $aid = ["IDSubmissao"=>$request->IDSubmissao,"IDEntrega" => 0];
-                $data['Status'] = "Aguardando Correção";
-                if(!$request->IDEntrega){
-                    $data['NEntrega'] = rand(1,99999);
-                    Entrega::create($data);
+            }else{
+                $status = 'success';
+                if(Auth::user()->tipo == 3){
+                    $data['IDInscrito'] = Auth::user()->id;
+                    //MailController::send(Auth::user()->email,'Aviso de Submissão','Mail.submissao',array('Status'=> "Aguardando Correção",'Mensagem'=> "Por favor Aguarde sua Submissão ser Corrigida"));
+                    $rota = 'Submissoes/Entrega';
+                    $mensagem = 'Trabalho Enviado com Sucesso!';
+                    $aid = ["IDSubmissao"=>$request->IDSubmissao,"IDEntrega" => 0];
+                    $data['Status'] = "Aguardando Correção";
+                    if(!$request->IDEntrega){
+                        $data['NEntrega'] = rand(1,99999);
+                        Entrega::create($data);
+                    }else{
+                        unset($data['_token']);
+                        unset($data['_method']);
+                        Entrega::find($request->IDEntrega)->update($data);
+                    }
                 }else{
+                    $rota = 'Submissoes/Trabalho';
+                    $aid = $request->IDEntrega;
+                    $mensagem = "Trabalho foi Alterado com Sucesso!";
                     unset($data['_token']);
                     unset($data['_method']);
                     Entrega::find($request->IDEntrega)->update($data);
                 }
-            }else{
-                $rota = 'Submissoes/Trabalho';
-                $aid = $request->IDEntrega;
-                $mensagem = "Trabalho foi Alterado com Sucesso!";
-                unset($data['_token']);
-                unset($data['_method']);
-                Entrega::find($request->IDEntrega)->update($data);
             }
         }catch(\Throwable $th){
             $mensagem = 'Erro '. $th->getMessage();
