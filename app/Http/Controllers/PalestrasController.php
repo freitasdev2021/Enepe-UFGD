@@ -104,7 +104,7 @@ class PalestrasController extends Controller
         $view = array(
             'id' => '',
             'submodulos' => self::submodulosPalestrantes,
-            'palestrantes' => Palestrante::all(),
+            'palestrantes' => Palestrante::all()->where("IDEvento",Session::get("IDEvento")),
             'eventos' => Evento::all()
         );
 

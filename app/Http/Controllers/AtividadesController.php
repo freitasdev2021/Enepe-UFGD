@@ -85,6 +85,8 @@ class AtividadesController extends Controller
             $WHERE = " AND s.Categoria='".$_GET['Modalidade']."'";
         }
 
+        $WHERE .= "AND s.IDEvento=".Session::get("IDEvento");
+
         if($id){
             $WHERE .= " AND e.id NOT IN(SELECT ap.IDEntrega FROM apresentacoes ap WHERE ap.IDAtividade != $id)";
         }else{

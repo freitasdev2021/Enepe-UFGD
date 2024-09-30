@@ -30,7 +30,7 @@ class CertificadosController extends Controller
     public function index(){
         return view('Certificados.index',[
             'submodulos' => self::submodulos,
-            'Modelos' => Modelo::all(),
+            'Modelos' => Modelo::all()->where("IDEvento",Session::get("IDEvento")),
             "Eventos"=> Evento::all()
         ]);
     }
@@ -100,6 +100,7 @@ class CertificadosController extends Controller
     public function saveModelo(Request $request){
         try{
             $data = $request->all();
+            $data['IDEvento'] = Session::get('IDEvento');
             //CONFERÊNCIA DE ERROS
             if($request->id){
                 if($request->file('Arquivo')){
@@ -135,7 +136,7 @@ class CertificadosController extends Controller
     public function modelos(){
         return view('Certificados.modelos',[
             'submodulos' => self::submodulos,
-            'Modelos' => Modelo::all()
+            'Modelos' => Modelo::all()->where("IDEvento",Session::get("IDEvento"))
         ]);
     }
     //GERAR CERTIFICADOS
@@ -661,11 +662,13 @@ class CertificadosController extends Controller
 
     public function getSelectModelos($IDInscrito,$modelo){
         ob_start();
+        $evento = Session::get("IDEvento");
+        $Emitiu = Certificados::where('IDEvento',$evento)->where('IDInscrito',$IDInscrito)->exists();
         ?>
         <select name="modelo[]" data-inscrito="<?=$IDInscrito?>" class="form-control col-auto selectModelo">
             <option value="">Selecione um Modelo</option>
-            <?php foreach(Modelo::all() as $m){?>
-            <option value="<?=$m->id?>" <?=($modelo == $m->id) ? 'selected' : ''?>><?=$m->Nome?></option>
+            <?php foreach(Modelo::all()->where("IDEvento",Session::get("IDEvento")) as $m){?>
+            <option value="<?=$m->id?>" <?=($modelo == $m->id && $Emitiu) ? 'selected' : ''?>><?=$m->Nome?></option>
            <?php } ?>
         </select>
         <?php
@@ -685,7 +688,8 @@ class CertificadosController extends Controller
                 MAX(c.Codigo) as Codigo,
                 MAX(c.IDModelo) as IDModelo,
                 MAX(c.Certificado) as Certificado,
-                MAX(c.Disponibilidade) as Disponibilidade
+                MAX(c.Disponibilidade) as Disponibilidade,
+                (SELECT COUNT(c2.id) FROM certificados c2 WHERE c2.IDEvento = $evento AND c2.IDInscrito = u.id) as Certificou
                 FROM 
                     palestrantes p
                 INNER JOIN 
@@ -708,6 +712,10 @@ class CertificadosController extends Controller
                     u.id as IDInscrito,
                     c.Certificado as Certificado,
                     c.Disponibilidade,
+                    (SELECT COUNT(c2.id) 
+                        FROM certificados c2 
+                        WHERE c2.IDEvento = $evento 
+                        AND c2.IDInscrito = u.id) as Certificou,
                     c.IDModelo as IDModelo,
                     c.Codigo
                 FROM 
@@ -715,12 +723,19 @@ class CertificadosController extends Controller
                 INNER JOIN 
                     inscricoes i ON i.IDUser = u.id
                 LEFT JOIN 
-                    certificados c ON u.id = c.IDInscrito
+                    certificados c ON u.id = c.IDInscrito AND c.IDEvento = $evento
                 LEFT JOIN 
                     modelos m ON m.id = c.IDModelo
                 WHERE 
                     i.IDEvento = $evento
-                ;
+                GROUP BY 
+                    c.IDModelo, -- Agrupando pelo modelo de certificado
+                    u.name, 
+                    u.Email,
+                    u.id,
+                    c.Certificado,
+                    c.Disponibilidade,
+                    c.Codigo
             SQL;
             $registros = DB::select($SQL);
         }elseif(isset($_GET['Tipo']) && $_GET['Tipo'] == 'Organizadores e Avaliadores'){
@@ -730,6 +745,7 @@ class CertificadosController extends Controller
                     u.Email as Email,
                     u.id as IDInscrito,
                     c.Disponibilidade,
+                    (SELECT COUNT(c2.id) FROM certificados c2 WHERE c2.IDEvento = $evento AND c2.IDInscrito = u.id) as Certificou,
                     c.IDModelo,
                     c.Certificado,
                     c.Codigo
@@ -746,6 +762,7 @@ class CertificadosController extends Controller
                     u.Email as Email,
                     u.id as IDInscrito,
                     c.IDModelo,
+                    (SELECT COUNT(c2.id) FROM certificados c2 WHERE c2.IDEvento = $evento AND c2.IDInscrito = u.id) as Certificou,
                     c.Disponibilidade,
                     c.Certificado,
                     c.Codigo
@@ -769,7 +786,7 @@ class CertificadosController extends Controller
                 $item[] = $r->Nome;
                 $item[] = $r->Email;
                 $item[] = self::getSelectModelos($r->IDInscrito,$r->IDModelo)."<input type='hidden' value='$r->IDInscrito' id='inscrito_$r->IDInscrito' name='IDInscrito[]'>";
-                $item[] = !empty($r->Certificado) ? "<a href=".url('storage/modelos/'.$r->Certificado)." class='btn btn-fr btn-xs text-white' download>Baixar</a> 
+                $item[] = !empty($r->Certificado) && $r->Certificou > 0 ? "<a href=".url('storage/modelos/'.$r->Certificado)." class='btn btn-fr btn-xs text-white' download>Baixar</a> 
                 <button type='button' onclick='convertJpgToPdf($urlPef)' class='btn btn-xs bg-fr text-white'>Baixar PDF</button>
                 <a class='btn btn-fr btn-xs text white' href=".route('Certificados/Email',['email'=>$r->Email,'certificado'=>$r->Certificado]).">Enviar por Email</a> 
                 <button type='button' class='btn btn-fr btn-xs text-white' onclick='delCertificado($RemoveCRT)'>Excluir</button>

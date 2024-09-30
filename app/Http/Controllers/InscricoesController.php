@@ -109,14 +109,15 @@ class InscricoesController extends Controller
     public function getInscricoes(){
         $IDEvento = Session::get("IDEvento");
         $SQL = <<<SQL
-            SELECT
+           SELECT
                 u.name as Nome,
+                u.id,
                 i.Categoria,
                 i.id as IDInscricao,
                 u.email as Email,
                 u.id as IDUser,
-                MAX(CASE WHEN c.id IS NULL THEN 0 ELSE 1 END) as Certificou,
-                MAX(CASE WHEN e.id IS NULL THEN 0 ELSE 1 END) as Entregou
+                (SELECT COUNT(c2.id) FROM certificados c2 WHERE c2.IDEvento = $IDEvento AND c2.IDInscrito = u.id) as Certificou,
+                (SELECT COUNT(e2.id) FROM entergas e2 INNER JOIN submissoes s2 ON(s2.id = e2.IDSubmissao) WHERE s2.IDEvento = $IDEvento AND e2.IDInscrito = u.id) as Entregou
             FROM inscricoes i
             INNER JOIN users u ON u.id = i.IDUser
             LEFT JOIN certificados c ON u.id = c.IDInscrito
