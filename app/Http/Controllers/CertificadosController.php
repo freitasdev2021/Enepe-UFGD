@@ -701,7 +701,13 @@ class CertificadosController extends Controller
                 WHERE 
                     pal.IDEvento = $evento
                 GROUP BY 
-                    p.Nome, p.Email, p.id;
+                    c.IDModelo, -- Agrupando pelo modelo de certificado
+                    u.name, 
+                    u.Email,
+                    u.id,
+                    c.Certificado,
+                    c.Disponibilidade,
+                    c.Codigo
                 SQL;
                 $registros = DB::select($SQL);
         }elseif(isset($_GET['Tipo']) && $_GET['Tipo'] == 'Inscritos'){
