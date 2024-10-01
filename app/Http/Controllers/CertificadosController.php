@@ -761,9 +761,9 @@ class CertificadosController extends Controller
                 WHERE u.tipo IN(1,2) AND u.id IN(SELECT IDUser FROM bancaevento be WHERE be.IDEvento = $evento)
                 GROUP BY 
                     c.IDModelo, -- Agrupando pelo modelo de certificado
-                    p.Nome, 
-                    p.Email,
-                    p.id,
+                    u.name, 
+                    u.email,
+                    u.id,
                     c.Certificado,
                     c.Disponibilidade,
                     c.Codigo
