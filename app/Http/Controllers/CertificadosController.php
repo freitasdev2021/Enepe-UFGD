@@ -689,7 +689,7 @@ class CertificadosController extends Controller
                 MAX(c.IDModelo) as IDModelo,
                 MAX(c.Certificado) as Certificado,
                 MAX(c.Disponibilidade) as Disponibilidade,
-                (SELECT COUNT(c2.id) FROM certificados c2 WHERE c2.IDEvento = $evento AND c2.IDInscrito = u.id) as Certificou
+                (SELECT COUNT(c2.id) FROM certificados c2 WHERE c2.IDEvento = $evento AND c2.IDInscrito = p.id) as Certificou
                 FROM 
                     palestrantes p
                 INNER JOIN 
@@ -702,9 +702,9 @@ class CertificadosController extends Controller
                     pal.IDEvento = $evento
                 GROUP BY 
                     c.IDModelo, -- Agrupando pelo modelo de certificado
-                    u.name, 
-                    u.Email,
-                    u.id,
+                    p.Nome, 
+                    p.Email,
+                    p.id,
                     c.Certificado,
                     c.Disponibilidade,
                     c.Codigo
@@ -759,6 +759,14 @@ class CertificadosController extends Controller
                 LEFT JOIN certificados c ON(u.id = c.IDInscrito)
                 LEFT JOIN modelos m ON(m.id = c.IDModelo)
                 WHERE u.tipo IN(1,2) AND u.id IN(SELECT IDUser FROM bancaevento be WHERE be.IDEvento = $evento)
+                GROUP BY 
+                    c.IDModelo, -- Agrupando pelo modelo de certificado
+                    p.Nome, 
+                    p.Email,
+                    p.id,
+                    c.Certificado,
+                    c.Disponibilidade,
+                    c.Codigo
             SQL;
             $registros = DB::select($SQL);
         }elseif(isset($_GET['Tipo']) && $_GET['Tipo'] == 'Fizeram a Avaliação'){
