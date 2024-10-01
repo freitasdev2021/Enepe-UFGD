@@ -682,26 +682,33 @@ class CertificadosController extends Controller
         if(isset($_GET['Tipo']) && $_GET['Tipo'] == 'Palestrantes'){
             $SQL = <<<SQL
                 SELECT 
-                p.Nome,
-                p.Email,
-                p.id as IDInscrito,
-                MAX(c.Codigo) as Codigo,
-                MAX(c.IDModelo) as IDModelo,
-                MAX(c.Certificado) as Certificado,
-                MAX(c.Disponibilidade) as Disponibilidade,
-                (SELECT COUNT(c2.id) FROM certificados c2 WHERE c2.IDEvento = $evento AND c2.IDInscrito = u.id) as Certificou
+                    p.Nome as Nome,
+                    p.Email as Email,
+                    p.id as IDInscrito,
+                    c.Certificado as Certificado,
+                    c.Disponibilidade,
+                    (SELECT COUNT(c2.id) 
+                        FROM certificados c2 
+                        WHERE c2.IDEvento = $evento
+                        AND c2.IDInscrito = p.id) as Certificou,
+                    c.IDModelo as IDModelo,
+                    c.Codigo
                 FROM 
                     palestrantes p
-                INNER JOIN 
-                    palestras pal ON p.id = pal.IDPalestrante
                 LEFT JOIN 
-                    certificados c ON p.id = c.IDInscrito
+                    certificados c ON p.id = c.IDInscrito AND c.IDEvento = $evento
                 LEFT JOIN 
                     modelos m ON m.id = c.IDModelo
                 WHERE 
-                    pal.IDEvento = $evento
+                    p.IDEvento = $evento
                 GROUP BY 
-                    p.Nome, p.Email, p.id;
+                    c.IDModelo, -- Agrupando pelo modelo de certificado
+                    p.Nome, 
+                    p.Email,
+                    p.id,
+                    c.Certificado,
+                    c.Disponibilidade,
+                    c.Codigo
                 SQL;
                 $registros = DB::select($SQL);
         }elseif(isset($_GET['Tipo']) && $_GET['Tipo'] == 'Inscritos'){
@@ -745,15 +752,23 @@ class CertificadosController extends Controller
                     u.Email as Email,
                     u.id as IDInscrito,
                     c.Disponibilidade,
-                    (SELECT COUNT(c2.id) FROM certificados c2 WHERE c2.IDEvento = $evento AND c2.IDInscrito = u.id) as Certificou,
+                    (SELECT COUNT(c2.id) 
+                        FROM certificados c2 
+                        WHERE c2.IDEvento = $evento
+                        AND c2.IDInscrito = u.id) as Certificou,
                     c.IDModelo,
                     c.Certificado,
                     c.Codigo
-                FROM users u
-                LEFT JOIN certificados c ON(u.id = c.IDInscrito)
-                LEFT JOIN modelos m ON(m.id = c.IDModelo)
-                WHERE u.tipo IN(1,2) AND u.id IN(SELECT IDUser FROM bancaevento be WHERE be.IDEvento = $evento)
-            SQL;
+                FROM 
+                    users u
+                LEFT JOIN 
+                    certificados c ON u.id = c.IDInscrito AND c.IDEvento = $evento  -- Filtrar pelo evento específico no JOIN
+                LEFT JOIN 
+                    modelos m ON m.id = c.IDModelo
+                WHERE 
+                    u.tipo IN (1,2) 
+                    AND u.id IN (SELECT IDUser FROM bancaevento be WHERE be.IDEvento = $evento)
+                SQL;
             $registros = DB::select($SQL);
         }elseif(isset($_GET['Tipo']) && $_GET['Tipo'] == 'Fizeram a Avaliação'){
             $SQL = <<<SQL
