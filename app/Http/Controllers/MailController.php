@@ -50,7 +50,7 @@ class MailController extends Controller
         $mail->Username   = 'maxhenrique308@gmail.com';                     //SMTP username
         $mail->SMTPKeepAlive = true; // Mantém a conexão SMTP viva para envios subsequentes
         $mail->Password   = 'xqkdmpvgokcqahrr';                               //SMTP password
-        //$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;            //Enable implicit TLS encryption
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;            //Enable implicit TLS encryption
         $mail->Port       = 465; 
         $mail->Timeout = 120; // 120 segundos
         //DESTINATÁRIO
