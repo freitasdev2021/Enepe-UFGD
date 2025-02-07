@@ -17,7 +17,7 @@ class MailController extends Controller
         $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
         $mail->Username   = 'maxhenrique308@gmail.com';                     //SMTP username
         $mail->Password   = 'xqkdmpvgokcqahrr';                               //SMTP password
-        //$mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
         $mail->Port       = 465; 
         //DESTINATÁRIO
         $mail->setFrom('maxhenrique308@gmail.com', 'FR Tecnologia'); //Rementente
@@ -69,13 +69,13 @@ class MailController extends Controller
     public static function sendMass($de,$para,$assunto,$view,$contentView){
         //CONFIGURAÇÕES DE SERVIDOR
         $mail = new PHPMailer(true);
-        $mail->SMTPOptions = array(
-            'ssl' => array(
-                'verify_peer' => false,
-                'verify_peer_name' => false,
-                'allow_self_signed' => true
-             )
-         );
+        // $mail->SMTPOptions = array(
+        //     'ssl' => array(
+        //         'verify_peer' => false,
+        //         'verify_peer_name' => false,
+        //         'allow_self_signed' => true
+        //      )
+        //  );
         $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
         $mail->isSMTP();                                            //Send using SMTP
         $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
